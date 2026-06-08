@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from "react-router";
 import { Navigation } from "./components/Navigation";
 import { Footer } from "./components/Footer";
 import { HomePage } from "./components/HomePage";
@@ -14,59 +15,56 @@ type Page = "home" | "about" | "services" | "news" | "media" | "arts" | "contact
 
 const pages: Page[] = ["home", "about", "services", "news", "media", "arts", "contact"];
 
-const getPageFromHash = (): Page => {
-  const page = window.location.hash.replace("#", "") as Page;
+const pagePaths: Record<Page, string> = {
+  home: "/",
+  about: "/about",
+  services: "/services",
+  news: "/news",
+  media: "/media",
+  arts: "/arts",
+  contact: "/contact",
+};
+
+const getPageFromPath = (pathname: string): Page => {
+  const page = pathname.replace(/^\/+/, "").split("/")[0] as Page;
   return pages.includes(page) ? page : "home";
 };
 
-export default function App() {
-  const [currentPage, setCurrentPage] = useState<Page>(() => getPageFromHash());
-
+function AppShell() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const currentPage = getPageFromPath(location.pathname);
+  
   const handleNavigate = (page: string) => {
     const nextPage = pages.includes(page as Page) ? (page as Page) : "home";
-    if (nextPage === currentPage) {
+    const nextPath = pagePaths[nextPage];
+
+    if (nextPath === location.pathname) {
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
-    window.history.pushState({ page: nextPage }, "", nextPage === "home" ? window.location.pathname : `#${nextPage}`);
-    setCurrentPage(nextPage);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    navigate(nextPath);
   };
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
-  }, [currentPage]);
-
-  useEffect(() => {
-    window.history.replaceState({ page: currentPage }, "", currentPage === "home" ? window.location.pathname : `#${currentPage}`);
-
-    const handlePopState = () => {
-      setCurrentPage(getPageFromHash());
-    };
-
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
-  const renderPage = () => {
-    switch (currentPage) {
-      case "home": return <HomePage onNavigate={handleNavigate} />;
-      case "about": return <AboutPage onNavigate={handleNavigate} />;
-      case "services": return <ServicesPage onNavigate={handleNavigate} />;
-      case "news": return <NewsPage onNavigate={handleNavigate} />;
-      case "media": return <MediaPage onNavigate={handleNavigate} />;
-      case "arts": return <ArtsPage onNavigate={handleNavigate} />;
-      case "contact": return <ContactPage />;
-      default: return <HomePage onNavigate={handleNavigate} />;
-    }
-  };
+  }, [location.pathname]);
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", fontFamily: "'DM Sans', sans-serif" }}>
       <Navigation currentPage={currentPage} onNavigate={handleNavigate} />
       <main style={{ flex: 1 }}>
-        {renderPage()}
+        <Routes>
+          <Route path="/" element={<HomePage onNavigate={handleNavigate} />} />
+          <Route path="/about" element={<AboutPage onNavigate={handleNavigate} />} />
+          <Route path="/services" element={<ServicesPage onNavigate={handleNavigate} />} />
+          <Route path="/news" element={<NewsPage onNavigate={handleNavigate} />} />
+          <Route path="/media" element={<MediaPage onNavigate={handleNavigate} />} />
+          <Route path="/arts" element={<ArtsPage onNavigate={handleNavigate} />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
       <Footer onNavigate={handleNavigate} />
 
@@ -109,5 +107,13 @@ export default function App() {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppShell />
+    </BrowserRouter>
   );
 }
