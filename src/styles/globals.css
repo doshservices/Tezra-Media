@@ -1,0 +1,277 @@
+@import './fonts.css';
+
+/*
+  Base styles. These were previously inlined in the Vite App shell; they live
+  here now so the Next.js root layout can load them once.
+*/
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  color: #0D0D0D;
+  background: #FFFFFF;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: 'Outfit', sans-serif;
+}
+
+::placeholder {
+  color: #C0C0CC;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F4F4F6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #010066;
+}
+
+/* Page gutter, narrowed on small screens. Used by Section and every masthead. */
+@media (max-width: 768px) {
+  .pad-section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Motion
+
+   One easing curve and two durations across the whole site, so transitions feel
+   like one system rather than per-component guesses. Everything here is opt-in
+   via a class, and all of it is switched off under prefers-reduced-motion.
+--------------------------------------------------------------------------- */
+
+:root {
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur: 640ms;
+  --dur-fast: 240ms;
+  --stagger: 70ms;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Single block fading and lifting into view. */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Container whose direct children arrive in sequence. */
+.reveal-group > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.reveal-group.is-visible > * {
+  opacity: 1;
+  transform: none;
+}
+
+.reveal-group.is-visible > *:nth-child(1)  { transition-delay: 0ms; }
+.reveal-group.is-visible > *:nth-child(2)  { transition-delay: calc(var(--stagger) * 1); }
+.reveal-group.is-visible > *:nth-child(3)  { transition-delay: calc(var(--stagger) * 2); }
+.reveal-group.is-visible > *:nth-child(4)  { transition-delay: calc(var(--stagger) * 3); }
+.reveal-group.is-visible > *:nth-child(5)  { transition-delay: calc(var(--stagger) * 4); }
+.reveal-group.is-visible > *:nth-child(6)  { transition-delay: calc(var(--stagger) * 5); }
+.reveal-group.is-visible > *:nth-child(7)  { transition-delay: calc(var(--stagger) * 6); }
+.reveal-group.is-visible > *:nth-child(8)  { transition-delay: calc(var(--stagger) * 7); }
+.reveal-group.is-visible > *:nth-child(9)  { transition-delay: calc(var(--stagger) * 8); }
+.reveal-group.is-visible > *:nth-child(n + 10) { transition-delay: calc(var(--stagger) * 9); }
+
+/* Masthead content, animated on mount rather than on scroll. */
+@keyframes heroRise {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.hero-rise > * {
+  animation: heroRise var(--dur) var(--ease) both;
+}
+
+.hero-rise > *:nth-child(1) { animation-delay: 60ms; }
+.hero-rise > *:nth-child(2) { animation-delay: 140ms; }
+.hero-rise > *:nth-child(3) { animation-delay: 220ms; }
+.hero-rise > *:nth-child(4) { animation-delay: 300ms; }
+.hero-rise > *:nth-child(5) { animation-delay: 380ms; }
+
+/* Slow push on masthead photography, so stills do not feel static. */
+@keyframes heroPan {
+  from { transform: scale(1.06); }
+  to   { transform: scale(1); }
+}
+
+.hero-media {
+  animation: heroPan 14s var(--ease) both;
+}
+
+/* Fade each route in on navigation. */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.page-transition {
+  animation: pageIn 420ms var(--ease) both;
+}
+
+/* Interactive surfaces */
+a,
+button {
+  transition:
+    color var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease),
+    opacity var(--dur-fast) var(--ease);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #010066;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal,
+  .reveal-group > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Staggered grids
+
+   Driven entirely by the .reveal wrapper that Section already applies, keyed off
+   grid class names that exist in the markup. The container does the lift; cards
+   only fade, in sequence — so the two movements never compound.
+--------------------------------------------------------------------------- */
+
+.reveal .ecosystem-grid > *,
+.reveal .values-grid > *,
+.reveal .areas-grid > *,
+.reveal .formats-grid > *,
+.reveal .latest-grid > *,
+.reveal .credibility-grid > *,
+.reveal .catalogue-grid > *,
+.reveal .case-grid > *,
+.reveal .work-grid > *,
+.reveal .articles-grid > *,
+.reveal .leadership-grid > *,
+.reveal .arts-gallery > * {
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.reveal.is-visible .ecosystem-grid > *,
+.reveal.is-visible .values-grid > *,
+.reveal.is-visible .areas-grid > *,
+.reveal.is-visible .formats-grid > *,
+.reveal.is-visible .latest-grid > *,
+.reveal.is-visible .credibility-grid > *,
+.reveal.is-visible .catalogue-grid > *,
+.reveal.is-visible .case-grid > *,
+.reveal.is-visible .work-grid > *,
+.reveal.is-visible .articles-grid > *,
+.reveal.is-visible .leadership-grid > *,
+.reveal.is-visible .arts-gallery > * {
+  opacity: 1;
+}
+
+.reveal.is-visible [class$="-grid"] > *:nth-child(1),
+.reveal.is-visible .arts-gallery > *:nth-child(1)  { transition-delay: 120ms; }
+.reveal.is-visible [class$="-grid"] > *:nth-child(2),
+.reveal.is-visible .arts-gallery > *:nth-child(2)  { transition-delay: 190ms; }
+.reveal.is-visible [class$="-grid"] > *:nth-child(3),
+.reveal.is-visible .arts-gallery > *:nth-child(3)  { transition-delay: 260ms; }
+.reveal.is-visible [class$="-grid"] > *:nth-child(4),
+.reveal.is-visible .arts-gallery > *:nth-child(4)  { transition-delay: 330ms; }
+.reveal.is-visible [class$="-grid"] > *:nth-child(5)  { transition-delay: 400ms; }
+.reveal.is-visible [class$="-grid"] > *:nth-child(6)  { transition-delay: 470ms; }
+.reveal.is-visible [class$="-grid"] > *:nth-child(7)  { transition-delay: 540ms; }
+.reveal.is-visible [class$="-grid"] > *:nth-child(8)  { transition-delay: 610ms; }
+.reveal.is-visible [class$="-grid"] > *:nth-child(n + 9) { transition-delay: 660ms; }
+
+/* Cards lift slightly under the cursor. */
+.ecosystem-grid > *,
+.work-grid > *,
+.articles-grid > *,
+.credibility-grid > * {
+  transition:
+    opacity var(--dur) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+
+.ecosystem-grid > *:hover,
+.work-grid > *:hover,
+.articles-grid > *:hover {
+  transform: translateY(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal [class$="-grid"] > *,
+  .reveal .arts-gallery > * {
+    opacity: 1 !important;
+  }
+
+  .ecosystem-grid > *:hover,
+  .work-grid > *:hover,
+  .articles-grid > *:hover {
+    transform: none;
+  }
+}

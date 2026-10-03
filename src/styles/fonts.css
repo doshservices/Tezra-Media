@@ -1,3 +1,16 @@
+/*
+  Font loading.
+
+  Draft 1 named Inter (headings) and Montserrat (homepage headline) throughout
+  the components but never loaded either one, so those headings rendered in
+  whichever default sans-serif the visitor's browser chose. Both are now loaded.
+
+  Playfair Display, DM Sans and Cormorant Garamond are the brand-guideline
+  typefaces and remain loaded. If TEZRA chooses the brand-guideline set over the
+  Draft 1 set, switch the FONT_* constants in app/components/shared.tsx — no
+  other change is needed here.
+*/
+
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
-    
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap');
