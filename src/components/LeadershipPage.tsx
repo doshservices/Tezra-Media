@@ -51,11 +51,11 @@ const CARD_SIZES = "(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 380px";
 /**
  * Card photograph frame.
  *
- * Square. A portrait needs more height than a 4:3 band to show a person
- * properly, and a full portrait frame (4:5) made the cards taller than the
- * grid wanted. This sits between the two.
+ * Slightly wider than it is tall. A portrait needs more height than a 4:3 band
+ * to show a person properly, but a square or a full 4:5 portrait made the cards
+ * taller than the grid wanted. This sits between them.
  */
-const FRAME = "1 / 1";
+const FRAME = "5 / 4";
 
 /**
  * Where to crop from when a tall photograph goes into this short frame.
@@ -126,7 +126,7 @@ export function LeadershipPage({ leaders }: { leaders: Leader[] }) {
                         color: NAVY,
                       }}
                     >
-                      <SocialMark platform="linkedin" size={17} />
+                      <SocialMark platform="linkedin" size={21} />
                     </a>
                   )}
                 </div>
