@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { brand } from "@/content/tezra";
+import { isLaunched, siteUrl } from "@/lib/site";
+import { getSettings } from "@/lib/content";
 import "@/styles/globals.css";
 
 /**
@@ -15,7 +17,7 @@ import "@/styles/globals.css";
 export const metadata: Metadata = {
   // TEZRA has not confirmed the production domain. Set NEXT_PUBLIC_SITE_URL
   // before launch so canonical and social-preview URLs resolve correctly.
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: `${brand.name} — ${brand.descriptor}`,
     template: `%s — ${brand.name}`,
@@ -23,9 +25,10 @@ export const metadata: Metadata = {
   description:
     "TEZRA is a modern media, culture, branding and business solutions group. " +
     "Rooted in Africa and connected to the world.",
-  // Brief 16: the site stays hidden from search engines until TEZRA gives
-  // written approval to launch. Remove this block at launch, not before.
-  robots: { index: false, follow: false },
+  // The site stays hidden from search engines until TEZRA gives written launch
+  // approval (feedback 3). This, /robots.txt and /sitemap.xml all read the same
+  // flag, so launch is one environment variable rather than three edits.
+  robots: isLaunched ? { index: true, follow: true } : { index: false, follow: false },
   openGraph: {
     siteName: brand.name,
     type: "website",
@@ -33,11 +36,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function FrontendLayout({
+export default async function FrontendLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Read once here rather than in every page: the footer is on all of them.
+  const settings = await getSettings();
+
   return (
     <html lang="en">
       <head>
@@ -49,7 +55,7 @@ export default function FrontendLayout({
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
           <Navigation />
           <main style={{ flex: 1 }}>{children}</main>
-          <Footer />
+          <Footer settings={settings} />
         </div>
       </body>
     </html>

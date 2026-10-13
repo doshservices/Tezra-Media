@@ -1,11 +1,22 @@
-import type { Metadata } from "next";
 import { HomePage } from "@/components/HomePage";
+import { getArticles, getArtworks, getClients, getProjects } from "@/lib/content";
 
-export const metadata: Metadata = {
-  description:
-    "TEZRA is a modern media, culture, branding and business solutions group. Rooted in Africa and connected to the world.",
-};
+/**
+ * The homepage shows what TEZRA has ticked as Featured, so they control what
+ * leads rather than it being whatever happens to be newest.
+ */
+export const revalidate = 60;
 
-export default function Page() {
-  return <HomePage />;
+export default async function Page() {
+  // Four small indexed reads, issued together rather than in sequence.
+  const [articles, projects, artworks, clients] = await Promise.all([
+    getArticles({ featured: true, limit: 4 }),
+    getProjects({ featured: true, limit: 3 }),
+    getArtworks({ featured: true, limit: 4 }),
+    getClients(),
+  ]);
+
+  return (
+    <HomePage articles={articles} projects={projects} artworks={artworks} clients={clients} />
+  );
 }

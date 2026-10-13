@@ -1,18 +1,35 @@
 {
   "name": "tezra",
   "private": true,
+  "type": "module",
   "version": "0.1.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "payload": "payload",
+    "payload:types": "payload generate:types",
+    "payload:importmap": "payload generate:importmap",
+    "payload:migrate": "payload migrate",
+    "payload:migrate:create": "payload migrate:create"
   },
   "dependencies": {
+    "@emailjs/browser": "^5.0.3",
+    "@payloadcms/db-postgres": "^3.90.2",
+    "@payloadcms/next": "^3.90.2",
+    "@payloadcms/richtext-lexical": "^3.90.2",
+    "@payloadcms/ui": "^3.90.2",
+    "graphql": "^16.14.2",
     "lucide-react": "1.50.0",
     "next": "16.3.8",
+    "payload": "^3.90.2",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@types/node": "24.10.1",

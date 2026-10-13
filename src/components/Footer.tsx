@@ -1,21 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import { brand, contact, footerColumns, socialLinks } from "@/content/tezra";
+import { brand, contact, footerColumns } from "@/content/tezra";
+import type { Settings } from "@/lib/types";
+import { SocialMark, platformName } from "./SocialIcons";
 import { FONT_BODY, FONT_HEADING } from "./shared";
 
 /**
  * Footer, following the structure in brief 14: Company, Our Platforms, Connect
  * and Legal, with Tezra Limited used for the copyright line.
  *
- * Two things are deliberately not rendered yet:
- *   - Social icons. TEZRA has not confirmed the official accounts, and an icon
- *     that links nowhere is a dead link (brief 21).
- *   - The Legal column. Privacy Policy and Terms need real, approved copy;
- *     publishing an empty policy page is worse than not linking to one. The
- *     column returns as soon as TEZRA supplies the text.
+ * Email and phone are the details TEZRA confirmed (feedback 2 and 5) and are
+ * rendered as mailto: and tel: links. The physical address is still outstanding,
+ * so that line simply does not appear.
+ *
+ * Social icons render from socialLinks. TEZRA confirmed four handles but not the
+ * platforms they belong to, so the array is still empty and the row is hidden —
+ * an icon pointing at a guessed URL is a dead link, which feedback 4 rules out.
+ * Filling socialLinks turns the row on with no change here.
+ *
+ * The Legal column is still absent. Privacy Policy and Terms of Use need real,
+ * approved wording (still to be provided); publishing an empty policy page is
+ * worse than not linking to one. The column returns with the text.
  */
-export function Footer() {
+export function Footer({ settings }: { settings: Settings }) {
+  // Site settings win where TEZRA has filled them in; the confirmed values in
+  // content/tezra.ts stand in before anyone has opened the admin panel.
+  const email = settings.email ?? contact.email;
+  const phone = settings.phone ?? contact.phone;
+  const address = settings.address ?? contact.address;
+  const socialLinks = settings.socialAccounts;
+  const mailtoHref = email ? `mailto:${email}` : "";
+  const telHref = phone ? `tel:${phone.replace(/\s+/g, "")}` : "";
 
   const linkStyle = {
     fontFamily: FONT_BODY,
@@ -34,14 +50,16 @@ export function Footer() {
     marginBottom: "20px",
   };
 
-  const hasContactDetails = contact.email || contact.phone || contact.address;
+  const hasContactDetails = email || phone || address;
 
   return (
     <footer style={{ backgroundColor: "#0D0D0D", color: "#FFFFFF" }}>
       <div className="pad-section" style={{ maxWidth: "1440px", margin: "0 auto", padding: "64px 40px 0" }}>
         <div
           className="footer-links-grid"
-          style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1.4fr 1fr", gap: "48px", marginBottom: "48px" }}
+          // Connect gets the extra width: business.development@tezragroup.com is
+          // long enough to break mid-word in a narrower column.
+          style={{ display: "grid", gridTemplateColumns: "1.8fr 1fr 1.4fr 1.35fr", gap: "40px", marginBottom: "48px" }}
         >
           {/* Master brand */}
           <div>
@@ -57,16 +75,35 @@ export function Footer() {
             </p>
 
             {socialLinks.length > 0 && (
-              <div style={{ display: "flex", gap: "16px", marginTop: "24px" }}>
+              <div style={{ display: "flex", gap: "12px", marginTop: "26px", flexWrap: "wrap" }}>
                 {socialLinks.map((social) => (
                   <a
-                    key={social.label}
+                    key={`${social.owner}-${social.platform}`}
                     href={social.url}
                     target="_blank"
                     rel="noreferrer"
-                    style={{ ...linkStyle, fontSize: "13px" }}
+                    aria-label={`${social.owner} on ${platformName(social.platform)} — ${social.handle}`}
+                    title={`${social.owner} · ${social.handle}`}
+                    style={{
+                      width: "38px",
+                      height: "38px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      border: "1px solid rgba(255,255,255,0.18)",
+                      color: "rgba(255,255,255,0.6)",
+                      transition: "color 0.2s, border-color 0.2s",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "#FFFFFF";
+                      e.currentTarget.style.borderColor = "rgba(255,255,255,0.55)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = "rgba(255,255,255,0.6)";
+                      e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)";
+                    }}
                   >
-                    {social.label}
+                    <SocialMark platform={social.platform} />
                   </a>
                 ))}
               </div>
@@ -96,10 +133,32 @@ export function Footer() {
           <div>
             <div style={headingStyle}>CONNECT</div>
             {hasContactDetails && (
-              <div style={{ fontFamily: FONT_BODY, fontSize: "13px", color: "rgba(255,255,255,0.45)", lineHeight: 1.7, marginBottom: "16px" }}>
-                {contact.email && <div style={{ color: "rgba(255,255,255,0.7)", marginBottom: "4px" }}>{contact.email}</div>}
-                {contact.address && <div>{contact.address}</div>}
-                {contact.phone && <div>{contact.phone}</div>}
+              <div style={{ fontFamily: FONT_BODY, fontSize: "13px", color: "rgba(255,255,255,0.45)", lineHeight: 1.8, marginBottom: "18px" }}>
+                {email && (
+                  <div style={{ marginBottom: "4px" }}>
+                    <a
+                      href={mailtoHref}
+                      style={{ color: "rgba(255,255,255,0.7)", textDecoration: "none", overflowWrap: "anywhere" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "#FFFFFF")}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}
+                    >
+                      {email}
+                    </a>
+                  </div>
+                )}
+                {phone && (
+                  <div style={{ marginBottom: "4px" }}>
+                    <a
+                      href={telHref}
+                      style={{ color: "rgba(255,255,255,0.7)", textDecoration: "none" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "#FFFFFF")}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}
+                    >
+                      {phone}
+                    </a>
+                  </div>
+                )}
+                {address && <div>{address}</div>}
               </div>
             )}
             <Link

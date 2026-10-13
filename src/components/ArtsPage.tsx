@@ -1,13 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+
 import { ArrowRight } from "lucide-react";
 import { artsCreativeAreas, contactLink, getVertical } from "@/content/tezra";
 import { images } from "@/content/images";
+import type { Artwork } from "@/lib/types";
 import { iconFor } from "@/content/icons";
 import {
+  Backdrop,
   AreaTile,
+  BODY_TEXT,
   BORDER,
+  MUTED_TEXT,
   ContentSlot,
   FONT_ACCENT,
   FONT_BODY,
@@ -15,6 +20,7 @@ import {
   GREY_BG,
   NAVY,
   PageHero,
+  Photo,
   PendingNote,
   PrimaryButton,
   Prose,
@@ -34,8 +40,7 @@ import {
  *
  * Draft 2 is enquiry-only, with the structure ready for payment later.
  */
-export function ArtsPage() {
-  const router = useRouter();
+export function ArtsPage({ artworks }: { artworks: Artwork[] }) {
   const vertical = getVertical("arts")!;
 
   return (
@@ -61,9 +66,9 @@ export function ArtsPage() {
       {/* Gallery atmosphere */}
       <Section padding="0 40px 84px">
         <div className="arts-gallery" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "14px" }}>
-          <img src={images.gallery} alt="Exhibition space" loading="lazy" style={{ width: "100%", height: "300px", objectFit: "cover", display: "block" }} />
-          <img src={images.artwork} alt="Artwork" loading="lazy" style={{ width: "100%", height: "300px", objectFit: "cover", display: "block", marginTop: "28px" }} />
-          <img src={images.culture} alt="Cultural experience" loading="lazy" style={{ width: "100%", height: "300px", objectFit: "cover", display: "block" }} />
+          <Photo src={images.gallery} alt="Exhibition space" height="300px" sizes="(max-width: 860px) 50vw, 25vw" />
+          <Photo src={images.artwork} alt="Artwork" height="300px" sizes="(max-width: 860px) 50vw, 25vw" style={{ marginTop: "28px" }} />
+          <Photo src={images.culture} alt="Cultural experience" height="300px" sizes="(max-width: 860px) 50vw, 25vw" />
           <div style={{ marginTop: "28px" }}>
             <ContentSlot label="TEZRA artwork to follow" aspectRatio="1 / 1.18" />
           </div>
@@ -77,28 +82,61 @@ export function ArtsPage() {
             <SectionLabel text="The Collection" />
             <SectionHeading>Artists and Artworks</SectionHeading>
           </div>
-          <SecondaryButton onClick={() => router.push(contactLink("art-acquisition"))}>
+          <SecondaryButton href={contactLink("art-acquisition")}>
             Enquire About Availability <ArrowRight size={14} />
           </SecondaryButton>
         </div>
 
-        <div className="catalogue-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "18px" }}>
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} style={{ backgroundColor: "#FFFFFF", border: `1px solid ${BORDER}` }}>
-              <ContentSlot label="Artwork" aspectRatio="1 / 1" />
-              <div style={{ padding: "18px 16px" }}>
-                <div style={{ height: "10px", width: "70%", backgroundColor: GREY_BG, marginBottom: "10px" }} />
-                <div style={{ height: "10px", width: "45%", backgroundColor: GREY_BG }} />
-              </div>
+        {artworks.length > 0 ? (
+          <div className="catalogue-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "18px" }}>
+            {artworks.map((work) => (
+              <Link
+                key={work.id}
+                href={`/arts/${work.slug}`}
+                style={{ backgroundColor: "#FFFFFF", border: `1px solid ${BORDER}`, textDecoration: "none", display: "block" }}
+              >
+                {work.image ? (
+                  <Photo src={work.image} alt={work.imageAlt ?? work.title} height="auto" sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 25vw" style={{ aspectRatio: "1 / 1" }} />
+                ) : (
+                  <ContentSlot label="Artwork" aspectRatio="1 / 1" />
+                )}
+                <div style={{ padding: "18px 16px" }}>
+                  <div style={{ fontFamily: FONT_HEADING, fontSize: "16px", fontWeight: 700, color: "#000000", lineHeight: 1.3, marginBottom: "6px" }}>
+                    {work.title}
+                  </div>
+                  <div style={{ fontFamily: FONT_BODY, fontSize: "13px", color: BODY_TEXT, marginBottom: "10px" }}>
+                    {work.artistName}
+                    {work.year ? `, ${work.year}` : ""}
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", gap: "10px", fontFamily: FONT_BODY, fontSize: "12px", fontWeight: 600, color: NAVY }}>
+                    <span>{work.availability}</span>
+                    <span style={{ color: MUTED_TEXT, fontWeight: 500 }}>{work.priceLabel}</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="catalogue-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "18px" }}>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} style={{ backgroundColor: "#FFFFFF", border: `1px solid ${BORDER}` }}>
+                  <ContentSlot label="Artwork" aspectRatio="1 / 1" />
+                  <div style={{ padding: "18px 16px" }}>
+                    <div style={{ height: "10px", width: "70%", backgroundColor: GREY_BG, marginBottom: "10px" }} />
+                    <div style={{ height: "10px", width: "45%", backgroundColor: GREY_BG }} />
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        <PendingNote>
-          Artwork images, titles, artists, availability and pricing come from TEZRA. Each piece
-          then gets its own page with artwork and artist information and an enquiry route, so a
-          single work can be sent to a buyer as a direct link.
-        </PendingNote>
+            <PendingNote>
+              Artwork images, titles, artists, availability and pricing come from TEZRA. Each piece
+              then gets its own page with artwork and artist information and an enquiry route, so a
+              single work can be sent to a buyer as a direct link.
+            </PendingNote>
+          </>
+        )}
       </Section>
 
       <Section>
@@ -127,11 +165,11 @@ export function ArtsPage() {
         style={{
           position: "relative",
           padding: "96px 40px",
-          backgroundImage: `url('${images.gallery}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          overflow: "hidden",
+          backgroundColor: NAVY,
         }}
       >
+        <Backdrop src={images.gallery} />
         <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(1,0,50,0.92)" }} />
         <div style={{ position: "relative", zIndex: 1, textAlign: "center", maxWidth: "720px", margin: "0 auto" }}>
           <SectionHeading tone="light" style={{ marginBottom: "16px" }}>
@@ -142,10 +180,10 @@ export function ArtsPage() {
             space, collection or occasion.
           </Prose>
           <div style={{ display: "flex", gap: "14px", justifyContent: "center", flexWrap: "wrap" }}>
-            <PrimaryButton onDark onClick={() => router.push(contactLink("art-acquisition"))}>
+            <PrimaryButton onDark href={contactLink("art-acquisition")}>
               Enquire to Acquire <ArrowRight size={14} />
             </PrimaryButton>
-            <SecondaryButton onDark onClick={() => router.push(contactLink("art-commission"))}>
+            <SecondaryButton onDark href={contactLink("art-commission")}>
               Commission a Work
             </SecondaryButton>
           </div>

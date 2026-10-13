@@ -1,9 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { ArrowRight, Award, Building2, Handshake, Newspaper, Quote } from "lucide-react";
 import { images } from "@/content/images";
+import type { ClientLogo } from "@/lib/types";
 import {
+  Backdrop,
   BORDER,
   FONT_BODY,
   FONT_HEADING,
@@ -27,8 +28,7 @@ import {
  * a client or partnership that has not been confirmed. The logo wall is
  * therefore built but empty — stock logos would be a fabricated claim.
  */
-export function ClientsPartnersPage() {
-  const router = useRouter();
+export function ClientsPartnersPage({ clients }: { clients: ClientLogo[] }) {
 
   const credibility = [
     { icon: Quote, title: "Testimonials", description: "In the words of the people TEZRA has worked with." },
@@ -55,12 +55,14 @@ export function ClientsPartnersPage() {
           <SectionHeading>Approved Clients and Partners</SectionHeading>
         </div>
 
-        <LogoMarquee count={10} fadeColor="#FFFFFF" />
+        <LogoMarquee logos={clients} count={10} fadeColor="#FFFFFF" />
 
-        <PendingNote>
-          A client or partner appears here only once TEZRA confirms the relationship and has
-          permission to display the logo. Nothing is shown before that.
-        </PendingNote>
+        {clients.length === 0 && (
+          <PendingNote>
+            A client or partner appears here only once TEZRA confirms the relationship and has
+            permission to display the logo. Nothing is shown before that.
+          </PendingNote>
+        )}
       </Section>
 
       <Section background={GREY_BG}>
@@ -88,11 +90,11 @@ export function ClientsPartnersPage() {
         style={{
           position: "relative",
           padding: "96px 40px",
-          backgroundImage: `url('${images.heroClients}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          overflow: "hidden",
+          backgroundColor: NAVY,
         }}
       >
+        <Backdrop src={images.heroClients} />
         <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(1,0,50,0.92)" }} />
         <div style={{ position: "relative", zIndex: 1, textAlign: "center", maxWidth: "640px", margin: "0 auto" }}>
           <SectionHeading tone="light" style={{ marginBottom: "16px" }}>
@@ -101,7 +103,7 @@ export function ClientsPartnersPage() {
           <Prose tone="light" style={{ marginBottom: "30px" }}>
             For partnerships, sponsorships and institutional collaborations.
           </Prose>
-          <PrimaryButton onDark onClick={() => router.push("/contact?enquiry=advertising-partnership")}>
+          <PrimaryButton onDark href="/contact?enquiry=advertising-partnership">
             Discuss a Partnership <ArrowRight size={14} />
           </PrimaryButton>
         </div>

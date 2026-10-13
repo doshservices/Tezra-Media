@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
+
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import {
   contactLink,
@@ -11,6 +12,7 @@ import {
   newsPrinciple,
 } from "@/content/tezra";
 import { images } from "@/content/images";
+import type { Article } from "@/lib/types";
 import { iconFor } from "@/content/icons";
 import {
   BORDER,
@@ -21,6 +23,7 @@ import {
   GREY_BG,
   NAVY,
   PageHero,
+  Photo,
   PendingNote,
   PrimaryButton,
   Prose,
@@ -37,30 +40,13 @@ import {
  * global news platform, so the old sectors and every article written against
  * them have been removed.
  *
- * The filtering below is fully working. It runs against an empty list until the
- * content manager is connected, at which point articles flow in with no change
- * to this component. Brief 8 also forbids article counts and publication
- * statistics, so none are shown.
+ * Articles come from the content manager. The filtering runs client-side over
+ * the published set, which is the right trade while TEZRA News is a reading list
+ * rather than an archive — no round trip per filter click. Brief 8 forbids
+ * article counts and publication statistics, so none are shown.
  */
 
-export interface Article {
-  id: string;
-  title: string;
-  excerpt: string;
-  category: string;
-  format: string;
-  author: string;
-  publishedAt: string;
-  readingTime: string;
-  slug: string;
-  image?: string;
-}
-
-/** Populated by the content manager. Deliberately empty — see brief 20. */
-const articles: Article[] = [];
-
-export function NewsPage() {
-  const router = useRouter();
+export function NewsPage({ articles }: { articles: Article[] }) {
   const vertical = getVertical("news")!;
   const [category, setCategory] = useState<string>("All");
   const [format, setFormat] = useState<string>("All");
@@ -72,7 +58,7 @@ export function NewsPage() {
           (category === "All" || a.category === category) &&
           (format === "All" || a.format === format),
       ),
-    [category, format],
+    [articles, category, format],
   );
 
   const pill = (label: string, active: boolean, onClick: () => void) => (
@@ -134,16 +120,18 @@ export function NewsPage() {
         {filtered.length > 0 ? (
           <div className="articles-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "32px" }}>
             {filtered.map((article) => (
-              <article
+              <Link
                 key={article.id}
-                onClick={() => router.push(`/news/${article.slug}`)}
-                style={{ cursor: "pointer" }}
+                href={`/news/${article.slug}`}
+                style={{ textDecoration: "none", display: "block" }}
               >
                 {article.image && (
-                  <img
+                  <Photo
                     src={article.image}
                     alt={article.title}
-                    style={{ width: "100%", height: "220px", objectFit: "cover", display: "block", marginBottom: "16px" }}
+                    height="220px"
+                    sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                    style={{ marginBottom: "16px" }}
                   />
                 )}
                 <div style={{ fontFamily: FONT_BODY, fontSize: "11px", fontWeight: 600, color: NAVY, marginBottom: "10px" }}>
@@ -156,9 +144,17 @@ export function NewsPage() {
                   {article.excerpt}
                 </p>
                 <div style={{ fontFamily: FONT_BODY, fontSize: "12px", color: "#888899", borderTop: `1px solid ${BORDER}`, paddingTop: "12px" }}>
-                  {article.author} · {article.publishedAt} · {article.readingTime}
+                  {/*
+                    Joined rather than interpolated with separators between: an
+                    article with no byline yet, or one too short to have a
+                    reading time, would otherwise show a stray "·" with nothing
+                    on one side of it.
+                  */}
+                  {[article.author, article.publishedLabel, article.readingTime]
+                    .filter(Boolean)
+                    .join("  ·  ")}
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         ) : (
@@ -202,7 +198,7 @@ export function NewsPage() {
             Story tips, interview requests and press enquiries reach the newsroom here.
           </Prose>
           <PrimaryButton
-            onClick={() => router.push(contactLink("news-editorial"))}
+            href={contactLink("news-editorial")}
             onDark
           >
             Contact the Newsroom <ArrowRight size={14} />

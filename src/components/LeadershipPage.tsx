@@ -1,9 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { leadershipRoles } from "@/content/tezra";
 import { images } from "@/content/images";
+import type { Leader } from "@/lib/types";
 import {
   BORDER,
   ContentSlot,
@@ -12,6 +12,7 @@ import {
   NAVY,
   PageHero,
   PendingNote,
+  Photo,
   PrimaryButton,
   Prose,
   Section,
@@ -28,8 +29,7 @@ import {
  * So the page ships as a built, styled structure with a card per named role and
  * no invented people. Each card fills in from the content manager.
  */
-export function LeadershipPage() {
-  const router = useRouter();
+export function LeadershipPage({ leaders }: { leaders: Leader[] }) {
 
   return (
     <div style={{ fontFamily: FONT_BODY }}>
@@ -41,27 +41,72 @@ export function LeadershipPage() {
       />
 
       <Section>
-        <div className="leadership-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "32px" }}>
-          {leadershipRoles.map((role) => (
-            <div key={role} style={{ border: `1px solid ${BORDER}` }}>
-              {/* Portrait slot — filled from the content manager */}
-              <ContentSlot label="Photograph to follow" aspectRatio="4 / 3" />
-              <div style={{ padding: "28px 26px" }}>
-                <div style={{ fontFamily: FONT_HEADING, fontSize: "20px", fontWeight: 700, color: NAVY, marginBottom: "8px" }}>
-                  {role}
+        {leaders.length > 0 ? (
+          <div className="leadership-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "32px" }}>
+            {leaders.map((leader) => (
+              <div key={leader.id} style={{ border: `1px solid ${BORDER}` }}>
+                {leader.photo ? (
+                  <Photo
+                    src={leader.photo}
+                    alt={leader.photoAlt ?? leader.name}
+                    height="auto"
+                    sizes="(max-width: 860px) 100vw, 50vw"
+                    style={{ aspectRatio: "4 / 3" }}
+                  />
+                ) : (
+                  <ContentSlot label="Photograph to follow" aspectRatio="4 / 3" />
+                )}
+                <div style={{ padding: "28px 26px" }}>
+                  <div style={{ fontFamily: FONT_HEADING, fontSize: "20px", fontWeight: 700, color: "#000000", marginBottom: "4px" }}>
+                    {leader.name}
+                  </div>
+                  <div style={{ fontFamily: FONT_BODY, fontSize: "13px", fontWeight: 600, color: NAVY, marginBottom: "12px" }}>
+                    {leader.position}
+                  </div>
+                  {leader.bio && (
+                    <p style={{ fontFamily: FONT_BODY, fontSize: "14px", lineHeight: 1.7, color: "#555566" }}>
+                      {leader.bio}
+                    </p>
+                  )}
+                  {leader.linkedin && (
+                    <a
+                      href={leader.linkedin}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ display: "inline-block", marginTop: "14px", fontFamily: FONT_BODY, fontSize: "13px", fontWeight: 600, color: NAVY }}
+                    >
+                      LinkedIn
+                    </a>
+                  )}
                 </div>
-                <p style={{ fontFamily: FONT_BODY, fontSize: "14px", lineHeight: 1.7, color: "#888899" }}>
-                  Name and professional biography to be supplied by TEZRA.
-                </p>
               </div>
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="leadership-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "32px" }}>
+              {leadershipRoles.map((role) => (
+                <div key={role} style={{ border: `1px solid ${BORDER}` }}>
+                  {/* Portrait slot — filled from the content manager */}
+                  <ContentSlot label="Photograph to follow" aspectRatio="4 / 3" />
+                  <div style={{ padding: "28px 26px" }}>
+                    <div style={{ fontFamily: FONT_HEADING, fontSize: "20px", fontWeight: 700, color: NAVY, marginBottom: "8px" }}>
+                      {role}
+                    </div>
+                    <p style={{ fontFamily: FONT_BODY, fontSize: "14px", lineHeight: 1.7, color: "#888899" }}>
+                      Name and professional biography to be supplied by TEZRA.
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <PendingNote>
-          For each person: name, position, professional biography, photograph, and a LinkedIn
-          or social profile where appropriate. The brief rules out creating or inferring any of
-          it, so these cards stay empty until TEZRA confirms the details.
-        </PendingNote>
+            <PendingNote>
+              For each person: name, position, professional biography, photograph, and a LinkedIn
+              or social profile where appropriate. The brief rules out creating or inferring any of
+              it, so these cards stay empty until TEZRA confirms the details.
+            </PendingNote>
+          </>
+        )}
       </Section>
 
 
@@ -74,7 +119,7 @@ export function LeadershipPage() {
             For interviews, panels and press enquiries involving TEZRA leadership.
           </Prose>
           <PrimaryButton
-            onClick={() => router.push("/contact")}
+            href="/contact"
             onDark
           >
             Get in Touch <ArrowRight size={14} />

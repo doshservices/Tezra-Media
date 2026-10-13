@@ -1,11 +1,15 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { brand, mission, overview, purpose, values, verticals } from "@/content/tezra";
 import { images, verticalImages } from "@/content/images";
+import type { Article, Artwork, ClientLogo, WorkItem } from "@/lib/types";
 import { valueIcons, verticalIcons } from "@/content/icons";
 import {
+  Backdrop,
   BORDER,
   FONT_ACCENT,
   FONT_BODY,
@@ -13,6 +17,7 @@ import {
   GREY_BG,
   LogoMarquee,
   NAVY,
+  Photo,
   PendingNote,
   PrimaryButton,
   Prose,
@@ -35,8 +40,19 @@ import {
  * imagery, which brief 18 allows; it is never used to stand in for TEZRA's own
  * work, people or clients.
  */
-export function HomePage() {
+type HomePageProps = {
+  /** Articles, projects and artworks TEZRA has ticked as Featured. */
+  articles: Article[];
+  projects: WorkItem[];
+  artworks: Artwork[];
+  clients: ClientLogo[];
+};
+
+export function HomePage({ articles, projects, artworks, clients }: HomePageProps) {
   const router = useRouter();
+
+  // The newest featured article takes over the large panel in News & Media.
+  const lead = articles[0];
   const ticker = [...verticals.map((v) => v.name), brand.philosophy];
 
   return (
@@ -52,11 +68,23 @@ export function HomePage() {
             flexDirection: "column",
             justifyContent: "center",
             padding: "100px 40px",
-            backgroundImage: `url('${images.heroHome}')`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            overflow: "hidden",
+            backgroundColor: NAVY,
           }}
         >
+          {/*
+            The hero photograph is the page's largest paint, so it goes through
+            next/image with priority rather than being a CSS background the
+            optimiser cannot resize or re-encode.
+          */}
+          <Image
+            src={images.heroHome}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            style={{ objectFit: "cover", objectPosition: "center" }}
+          />
           <div
             style={{
               position: "absolute",
@@ -105,10 +133,10 @@ export function HomePage() {
             </p>
 
             <div className="hero-buttons" style={{ display: "flex", gap: "14px", flexWrap: "wrap" }}>
-              <PrimaryButton onDark onClick={() => router.push("/contact")}>
+              <PrimaryButton onDark href="/contact">
                 Work With Us <ArrowRight size={15} />
               </PrimaryButton>
-              <SecondaryButton onDark onClick={() => router.push("/about")}>
+              <SecondaryButton onDark href="/about">
                 What Is TEZRA
               </SecondaryButton>
             </div>
@@ -160,15 +188,15 @@ export function HomePage() {
             <SectionLabel text="What Is TEZRA" />
             <SectionHeading style={{ marginBottom: "22px" }}>A connected ecosystem.</SectionHeading>
             <Prose style={{ fontSize: "17px", marginBottom: "30px" }}>{overview}</Prose>
-            <SecondaryButton onClick={() => router.push("/about")}>
+            <SecondaryButton href="/about">
               More About TEZRA <ArrowRight size={14} />
             </SecondaryButton>
           </div>
-          <img
+          <Photo
             src={images.ecosystem}
             alt="TEZRA — media, culture and brand"
-            loading="lazy"
-            style={{ width: "100%", height: "520px", objectFit: "cover", display: "block" }}
+            height="520px"
+            sizes="(max-width: 860px) 100vw, 50vw"
           />
         </div>
       </Section>
@@ -235,11 +263,12 @@ export function HomePage() {
                 }}
               >
                 <div style={{ overflow: "hidden", position: "relative" }}>
-                  <img
+                  <Photo
                     src={verticalImages[vertical.slug]}
                     alt={vertical.name}
-                    loading="lazy"
-                    style={{ width: "100%", height: "190px", objectFit: "cover", display: "block", transition: "transform 0.5s ease" }}
+                    height="190px"
+                    sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 25vw"
+                    zoomOnHover
                   />
                   <div
                     style={{
@@ -277,11 +306,11 @@ export function HomePage() {
       {/* 5 — Selected Work */}
       <Section>
         <div className="home-split" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "72px", alignItems: "center" }}>
-          <img
+          <Photo
             src={images.heroWork}
             alt="Selected work"
-            loading="lazy"
-            style={{ width: "100%", height: "460px", objectFit: "cover", display: "block" }}
+            height="460px"
+            sizes="(max-width: 860px) 100vw, 50vw"
           />
           <div>
             <SectionLabel text="Selected Work" />
@@ -290,13 +319,33 @@ export function HomePage() {
               Campaigns, productions, editorial projects, events and creative work from across
               the ecosystem — the record of what TEZRA has actually delivered.
             </Prose>
-            <SecondaryButton onClick={() => router.push("/our-work")}>
+            <SecondaryButton href="/our-work">
               View All Work <ArrowRight size={14} />
             </SecondaryButton>
-            <PendingNote>
-              Project cards go here. TEZRA supplies the verified portfolio material — the brief
-              rules out invented case studies and unverified client relationships.
-            </PendingNote>
+            {projects.length > 0 ? (
+              <ul style={{ listStyle: "none", margin: "30px 0 0", padding: 0, borderTop: `1px solid ${BORDER}` }}>
+                {projects.slice(0, 3).map((project) => (
+                  <li key={project.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    <Link
+                      href={`/our-work/${project.slug}`}
+                      style={{ display: "block", padding: "16px 0", textDecoration: "none" }}
+                    >
+                      <div style={{ fontFamily: FONT_BODY, fontSize: "11px", fontWeight: 600, color: NAVY, marginBottom: "6px" }}>
+                        {project.category.toUpperCase()}
+                      </div>
+                      <div style={{ fontFamily: FONT_HEADING, fontSize: "18px", fontWeight: 700, color: "#000000", lineHeight: 1.3 }}>
+                        {project.title}
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <PendingNote>
+                Project cards go here. TEZRA supplies the verified portfolio material — the brief
+                rules out invented case studies and unverified client relationships.
+              </PendingNote>
+            )}
           </div>
         </div>
       </Section>
@@ -308,28 +357,38 @@ export function HomePage() {
             <SectionLabel text="Latest from TEZRA" />
             <SectionHeading>News &amp; Media</SectionHeading>
           </div>
-          <SecondaryButton onClick={() => router.push("/news")}>
+          <SecondaryButton href="/news">
             Go to Tezra News <ArrowRight size={14} />
           </SecondaryButton>
         </div>
 
         <div className="latest-grid" style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr 1fr", gap: "24px" }}>
-          <div style={{ position: "relative", minHeight: "320px", backgroundImage: `url('${images.newsroom}')`, backgroundSize: "cover", backgroundPosition: "center" }}>
+          <div style={{ position: "relative", minHeight: "320px", overflow: "hidden", backgroundColor: NAVY }}>
+            <Image src={lead?.image ?? images.newsroom} alt="" fill sizes="(max-width: 900px) 100vw, 45vw" style={{ objectFit: "cover", objectPosition: "center" }} />
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(1,0,50,0.92) 0%, rgba(1,0,50,0.25) 70%)" }} />
             <div style={{ position: "relative", zIndex: 1, height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "28px" }}>
               <div style={{ fontFamily: FONT_BODY, fontSize: "11px", fontWeight: 600, color: "rgba(255,255,255,0.75)", marginBottom: "10px" }}>
-                TEZRA NEWS
+                {lead ? lead.category.toUpperCase() : "TEZRA NEWS"}
               </div>
               <h3 style={{ fontFamily: FONT_HEADING, fontSize: "24px", fontWeight: 700, color: "#FFFFFF", lineHeight: 1.25, marginBottom: "8px" }}>
-                Broad in coverage. Selective in publication.
+                {lead ? (
+                  <Link href={`/news/${lead.slug}`} style={{ color: "#FFFFFF", textDecoration: "none" }}>
+                    {lead.title}
+                  </Link>
+                ) : (
+                  "Broad in coverage. Selective in publication."
+                )}
               </h3>
               <p style={{ fontFamily: FONT_BODY, fontSize: "14px", color: "rgba(255,255,255,0.7)", lineHeight: 1.6 }}>
-                Politics, business, technology, culture and more — African and global stories.
+                {lead
+                  ? lead.excerpt
+                  : "Politics, business, technology, culture and more — African and global stories."}
               </p>
             </div>
           </div>
 
-          <div style={{ position: "relative", minHeight: "320px", backgroundImage: `url('${images.production}')`, backgroundSize: "cover", backgroundPosition: "center" }}>
+          <div style={{ position: "relative", minHeight: "320px", overflow: "hidden", backgroundColor: NAVY }}>
+            <Image src={images.production} alt="" fill sizes="(max-width: 900px) 100vw, 28vw" style={{ objectFit: "cover", objectPosition: "center" }} />
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(1,0,50,0.9) 0%, rgba(1,0,50,0.2) 70%)" }} />
             <div style={{ position: "relative", zIndex: 1, height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "24px" }}>
               <div style={{ fontFamily: FONT_BODY, fontSize: "11px", fontWeight: 600, color: "rgba(255,255,255,0.75)", marginBottom: "8px" }}>
@@ -341,7 +400,8 @@ export function HomePage() {
             </div>
           </div>
 
-          <div style={{ position: "relative", minHeight: "320px", backgroundImage: `url('${images.interview}')`, backgroundSize: "cover", backgroundPosition: "center" }}>
+          <div style={{ position: "relative", minHeight: "320px", overflow: "hidden", backgroundColor: NAVY }}>
+            <Image src={images.interview} alt="" fill sizes="(max-width: 900px) 100vw, 28vw" style={{ objectFit: "cover", objectPosition: "center" }} />
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(1,0,50,0.9) 0%, rgba(1,0,50,0.2) 70%)" }} />
             <div style={{ position: "relative", zIndex: 1, height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "24px" }}>
               <div style={{ fontFamily: FONT_BODY, fontSize: "11px", fontWeight: 600, color: "rgba(255,255,255,0.75)", marginBottom: "8px" }}>
@@ -354,10 +414,12 @@ export function HomePage() {
           </div>
         </div>
 
-        <PendingNote>
-          These panels introduce each platform. Once the content manager is live, the newest
-          published stories replace them automatically.
-        </PendingNote>
+        {articles.length === 0 && (
+          <PendingNote>
+            These panels introduce each platform. Once TEZRA publishes articles and ticks them
+            as Featured, the newest stories replace them automatically.
+          </PendingNote>
+        )}
       </Section>
 
       {/* 7 — Tezra Arts */}
@@ -374,19 +436,30 @@ export function HomePage() {
               institutional collectors.
             </Prose>
             <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-              <PrimaryButton onClick={() => router.push("/arts")}>
+              <PrimaryButton href="/arts">
                 Explore Tezra Arts <ArrowRight size={14} />
               </PrimaryButton>
-              <SecondaryButton onClick={() => router.push("/contact?enquiry=art-acquisition")}>
+              <SecondaryButton href="/contact?enquiry=art-acquisition">
                 Enquire About a Work
               </SecondaryButton>
             </div>
           </div>
           <div className="arts-mosaic" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-            <img src={images.gallery} alt="Gallery" loading="lazy" style={{ width: "100%", height: "260px", objectFit: "cover", display: "block" }} />
-            <img src={images.artwork} alt="Artwork" loading="lazy" style={{ width: "100%", height: "260px", objectFit: "cover", display: "block", marginTop: "28px" }} />
-            <img src={images.culture} alt="Cultural experience" loading="lazy" style={{ width: "100%", height: "200px", objectFit: "cover", display: "block" }} />
-            <ContentSlot label="TEZRA artwork to follow" aspectRatio="auto" />
+            <Photo src={images.gallery} alt="Gallery" height="260px" sizes="(max-width: 860px) 50vw, 25vw" />
+            <Photo src={images.artwork} alt="Artwork" height="260px" sizes="(max-width: 860px) 50vw, 25vw" style={{ marginTop: "28px" }} />
+            <Photo src={images.culture} alt="Cultural experience" height="200px" sizes="(max-width: 860px) 50vw, 25vw" />
+            {artworks[0]?.image ? (
+              <Link href={`/arts/${artworks[0].slug}`} style={{ display: "block", textDecoration: "none" }}>
+                <Photo
+                  src={artworks[0].image}
+                  alt={artworks[0].imageAlt ?? artworks[0].title}
+                  height="200px"
+                  sizes="(max-width: 860px) 50vw, 25vw"
+                />
+              </Link>
+            ) : (
+              <ContentSlot label="TEZRA artwork to follow" aspectRatio="auto" />
+            )}
           </div>
         </div>
       </Section>
@@ -399,7 +472,7 @@ export function HomePage() {
           </div>
           <SectionHeading>Trusted By</SectionHeading>
         </div>
-        <LogoMarquee fadeColor={GREY_BG} />
+        <LogoMarquee logos={clients} fadeColor={GREY_BG} />
         <div style={{ display: "flex", justifyContent: "center" }}>
           <PendingNote>
             A client or partner appears here only once TEZRA confirms the relationship and has
@@ -414,11 +487,11 @@ export function HomePage() {
         style={{
           position: "relative",
           padding: "110px 40px",
-          backgroundImage: `url('${images.strategy}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          overflow: "hidden",
+          backgroundColor: NAVY,
         }}
       >
+        <Backdrop src={images.strategy} />
         <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(1,0,50,0.92)" }} />
         <div style={{ position: "relative", zIndex: 1, textAlign: "center", maxWidth: "740px", margin: "0 auto" }}>
           <SectionHeading tone="light" style={{ fontSize: "clamp(30px, 4vw, 48px)", marginBottom: "18px" }}>
@@ -429,10 +502,10 @@ export function HomePage() {
             ecosystem you need and your enquiry reaches the right team.
           </Prose>
           <div style={{ display: "flex", gap: "14px", justifyContent: "center", flexWrap: "wrap" }}>
-            <PrimaryButton onDark onClick={() => router.push("/contact")}>
+            <PrimaryButton onDark href="/contact">
               Work With Us <ArrowRight size={14} />
             </PrimaryButton>
-            <SecondaryButton onDark onClick={() => router.push("/our-work")}>
+            <SecondaryButton onDark href="/our-work">
               See Our Work
             </SecondaryButton>
           </div>

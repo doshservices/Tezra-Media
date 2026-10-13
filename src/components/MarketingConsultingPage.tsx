@@ -1,11 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { contactLink, getVertical } from "@/content/tezra";
 import { images } from "@/content/images";
 import { iconFor } from "@/content/icons";
 import {
+  Backdrop,
   AreaTile,
   BORDER,
   ContentSlot,
@@ -13,6 +13,7 @@ import {
   GREY_BG,
   NAVY,
   PageHero,
+  Photo,
   PendingNote,
   PrimaryButton,
   Prose,
@@ -31,7 +32,6 @@ import {
  * list of marketing services.
  */
 export function MarketingConsultingPage() {
-  const router = useRouter();
   const vertical = getVertical("marketing-consulting")!;
 
   return (
@@ -55,11 +55,11 @@ export function MarketingConsultingPage() {
               branding, built on strategy rather than activity.
             </Prose>
           </div>
-          <img
+          <Photo
             src={images.strategy}
             alt="Brand strategy"
-            loading="lazy"
-            style={{ width: "100%", height: "440px", objectFit: "cover", display: "block" }}
+            height="440px"
+            sizes="(max-width: 860px) 100vw, 50vw"
           />
         </div>
       </Section>
@@ -80,7 +80,7 @@ export function MarketingConsultingPage() {
             <SectionLabel text="Selected Work" />
             <SectionHeading>Campaigns and Client Work</SectionHeading>
           </div>
-          <SecondaryButton onClick={() => router.push("/our-work")}>
+          <SecondaryButton href="/our-work">
             View All Work <ArrowRight size={14} />
           </SecondaryButton>
         </div>
@@ -108,11 +108,11 @@ export function MarketingConsultingPage() {
         style={{
           position: "relative",
           padding: "96px 40px",
-          backgroundImage: `url('${images.heroMarketing}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          overflow: "hidden",
+          backgroundColor: NAVY,
         }}
       >
+        <Backdrop src={images.heroMarketing} />
         <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(1,0,50,0.92)" }} />
         <div style={{ position: "relative", zIndex: 1, textAlign: "center", maxWidth: "680px", margin: "0 auto" }}>
           <SectionHeading tone="light" style={{ marginBottom: "16px" }}>
@@ -122,7 +122,7 @@ export function MarketingConsultingPage() {
             Tell us what you are trying to build or reposition, and we will come back with a
             view rather than a pitch.
           </Prose>
-          <PrimaryButton onDark onClick={() => router.push(contactLink("strategic-communications"))}>
+          <PrimaryButton onDark href={contactLink("strategic-communications")}>
             Enquire About Strategy <ArrowRight size={14} />
           </PrimaryButton>
         </div>

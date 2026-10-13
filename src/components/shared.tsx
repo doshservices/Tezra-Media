@@ -16,22 +16,28 @@
  */
 
 import type { CSSProperties, ReactNode } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { Reveal } from "./Reveal";
+import {
+  BODY_TEXT,
+  BORDER,
+  FONT_ACCENT,
+  FONT_BODY,
+  FONT_HEADING,
+  GREY_BG,
+  INK,
+  MAX_WIDTH,
+  MUTED_TEXT,
+  NAVY,
+  NAVY_HOVER,
+} from "./tokens";
 
-export const FONT_HEADING = "'Inter', sans-serif";
-export const FONT_BODY = "'Outfit', sans-serif";
-export const FONT_ACCENT = "'Cormorant Garamond', serif";
-
-export const NAVY = "#010066";
-export const NAVY_HOVER = "#0a0a8a";
-export const INK = "#0D0D0D";
-export const GREY_BG = "#F4F4F6";
-export const BORDER = "#E0E0E8";
-export const BODY_TEXT = "#555566";
-export const MUTED_TEXT = "#888899";
-
-export const MAX_WIDTH = "1440px";
+// The tokens themselves live in tokens.ts, which carries no "use client", so a
+// server component can read them as actual strings. Re-exported here because
+// every component already imports them from this file.
+export * from "./tokens";
 
 /**
  * Uppercase label that sits above a section title.
@@ -75,6 +81,7 @@ export function Section({
   children,
   background = "#FFFFFF",
   padding = "84px 40px",
+  maxWidth = MAX_WIDTH,
   style,
   className,
   animate = true,
@@ -82,6 +89,8 @@ export function Section({
   children: ReactNode;
   background?: string;
   padding?: string;
+  /** Narrow this for a reading column — see ARTICLE_WIDTH. */
+  maxWidth?: string;
   style?: CSSProperties;
   className?: string;
   animate?: boolean;
@@ -91,7 +100,7 @@ export function Section({
       className={`pad-section ${className ?? ""}`}
       style={{ backgroundColor: background, padding, ...style }}
     >
-      <div style={{ maxWidth: MAX_WIDTH, margin: "0 auto" }}>
+      <div style={{ maxWidth, margin: "0 auto" }}>
         {animate ? <Reveal>{children}</Reveal> : children}
       </div>
     </section>
@@ -109,6 +118,8 @@ export function PageHero({
   intro,
   image,
   height = "clamp(460px, 66vh, 660px)",
+  maxWidth = MAX_WIDTH,
+  overlay = "side",
 }: {
   eyebrow?: string;
   title: string;
@@ -116,6 +127,21 @@ export function PageHero({
   intro?: string;
   image?: string;
   height?: string;
+  /**
+   * Narrow this to match the section beneath. On an article page the headline
+   * should start on the same line as the text under it, or the masthead reads
+   * as belonging to a different page from the piece it introduces.
+   */
+  maxWidth?: string;
+  /**
+   * How the photograph is darkened for the type on top of it.
+   *
+   * "side" darkens from the left, for a page whose heading sits in the left
+   * third. "scrim" darkens from the bottom, which is what an article wants: the
+   * heading is centred over the picture, and a side gradient would hide the
+   * photograph exactly where there is nothing written.
+   */
+  overlay?: "side" | "scrim";
 }) {
   return (
     <section
@@ -132,30 +158,38 @@ export function PageHero({
     >
       {image && (
         <>
-          {/* Separate layer so the photograph can drift without moving the type. */}
-          <div
-            className="hero-media"
-            style={{
-              position: "absolute",
-              inset: 0,
-              backgroundImage: `url('${image}')`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          />
+          {/*
+            Separate layer so the photograph can drift without moving the type.
+            A next/image fill rather than a CSS background — a background cannot
+            be resized or re-encoded by the optimiser, and the masthead is the
+            heaviest image on every page. priority because it is above the fold
+            on every route, so it should not be lazy-loaded.
+          */}
+          <div className="hero-media" style={{ position: "absolute", inset: 0 }}>
+            <Image
+              src={image}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              style={{ objectFit: "cover", objectPosition: "center" }}
+            />
+          </div>
           <div
             style={{
               position: "absolute",
               inset: 0,
               background:
-                "linear-gradient(to right, rgba(1,0,60,0.93) 0%, rgba(1,0,60,0.78) 60%, rgba(1,0,60,0.62) 100%)",
+                overlay === "scrim"
+                  ? "linear-gradient(to bottom, rgba(1,0,60,0.52) 0%, rgba(1,0,60,0.62) 45%, rgba(1,0,60,0.9) 100%)"
+                  : "linear-gradient(to right, rgba(1,0,60,0.93) 0%, rgba(1,0,60,0.78) 60%, rgba(1,0,60,0.62) 100%)",
             }}
           />
         </>
       )}
       <div
         className="hero-rise"
-        style={{ position: "relative", zIndex: 1, maxWidth: MAX_WIDTH, margin: "0 auto", width: "100%" }}
+        style={{ position: "relative", zIndex: 1, maxWidth, margin: "0 auto", width: "100%" }}
       >
         {eyebrow && <SectionLabel text={eyebrow} tone="light" />}
         <h1
@@ -263,6 +297,7 @@ const buttonBase: CSSProperties = {
  */
 export function PrimaryButton({
   children,
+  href,
   onClick,
   style,
   type = "button",
@@ -270,6 +305,8 @@ export function PrimaryButton({
   onDark,
 }: {
   children: ReactNode;
+  /** Renders a next/link anchor instead of a button, so crawlers can follow it. */
+  href?: string;
   onClick?: () => void;
   style?: CSSProperties;
   type?: "button" | "submit";
@@ -283,43 +320,154 @@ export function PrimaryButton({
     ? { background: "rgba(255,255,255,0.86)", border: "#FFFFFF", text: NAVY }
     : { background: NAVY_HOVER, border: NAVY_HOVER, text: "#FFFFFF" };
 
+  const styles: CSSProperties = {
+    ...buttonBase,
+    backgroundColor: rest.background,
+    borderColor: rest.border,
+    color: rest.text,
+    width: fullWidth ? "100%" : undefined,
+    justifyContent: fullWidth ? "center" : undefined,
+    ...style,
+  };
+
+  const enter = (el: HTMLElement) => {
+    el.style.backgroundColor = hover.background;
+    el.style.borderColor = hover.border;
+    el.style.color = hover.text;
+  };
+  const leave = (el: HTMLElement) => {
+    el.style.backgroundColor = rest.background;
+    el.style.borderColor = rest.border;
+    el.style.color = rest.text;
+  };
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        style={{ ...styles, textDecoration: "none" }}
+        onMouseEnter={(e) => enter(e.currentTarget)}
+        onMouseLeave={(e) => leave(e.currentTarget)}
+      >
+        {children}
+      </Link>
+    );
+  }
+
   return (
     <button
       type={type}
       onClick={onClick}
-      style={{
-        ...buttonBase,
-        backgroundColor: rest.background,
-        borderColor: rest.border,
-        color: rest.text,
-        width: fullWidth ? "100%" : undefined,
-        justifyContent: fullWidth ? "center" : undefined,
-        ...style,
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = hover.background;
-        e.currentTarget.style.borderColor = hover.border;
-        e.currentTarget.style.color = hover.text;
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = rest.background;
-        e.currentTarget.style.borderColor = rest.border;
-        e.currentTarget.style.color = rest.text;
-      }}
+      style={styles}
+      onMouseEnter={(e) => enter(e.currentTarget)}
+      onMouseLeave={(e) => leave(e.currentTarget)}
     >
       {children}
     </button>
   );
 }
 
+/**
+ * Photograph.
+ *
+ * Wraps next/image so every picture on the site is served resized, in AVIF or
+ * WebP where the browser supports it, and lazily below the fold. The Unsplash
+ * sources are multi-megapixel originals; served raw they were the heaviest
+ * thing on the page.
+ *
+ * Uses `fill` rather than fixed width/height because the layout is fluid — the
+ * wrapper sets the box, the image covers it, and nothing shifts while it loads.
+ * The rendered element is still an <img>, so the hover-scale handlers that reach
+ * for one keep working.
+ *
+ * `sizes` matters: it tells the browser how wide the image will actually be, so
+ * it can pick the smallest useful file. Pass the real layout width — the default
+ * assumes full bleed.
+ */
+export function Photo({
+  src,
+  alt,
+  height,
+  sizes = "100vw",
+  priority = false,
+  zoomOnHover = false,
+  /** For a parent that already positions the image itself. */
+  bare = false,
+  style,
+}: {
+  src: string;
+  alt: string;
+  height?: string;
+  sizes?: string;
+  priority?: boolean;
+  zoomOnHover?: boolean;
+  bare?: boolean;
+  style?: CSSProperties;
+}) {
+  const image = (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      sizes={sizes}
+      priority={priority}
+      style={{
+        objectFit: "cover",
+        transition: zoomOnHover ? "transform 0.5s ease" : undefined,
+      }}
+    />
+  );
+
+  if (bare) return image;
+
+  return (
+    <div
+      style={{
+        position: "relative",
+        width: "100%",
+        height,
+        overflow: "hidden",
+        ...style,
+      }}
+    >
+      {image}
+    </div>
+  );
+}
+
+/**
+ * Texture layer behind a navy band.
+ *
+ * These bands sit under a 92% opaque navy wash, so the photograph reads as
+ * texture rather than as a picture. It was still being downloaded at full
+ * quality as a CSS background, which the optimiser cannot touch — so this
+ * serves it through next/image at low quality instead. Invisible at 8% through
+ * a navy wash, and a fraction of the bytes.
+ */
+export function Backdrop({ src, quality = 45 }: { src: string; quality?: number }) {
+  return (
+    <Image
+      src={src}
+      alt=""
+      fill
+      quality={quality}
+      sizes="100vw"
+      style={{ objectFit: "cover", objectPosition: "center" }}
+    />
+  );
+}
+
 /** Outlined button. `onDark` switches it to a white outline for navy sections. */
 export function SecondaryButton({
   children,
+  href,
   onClick,
   style,
   onDark,
 }: {
   children: ReactNode;
+  /** Renders a next/link anchor instead of a button, so crawlers can follow it. */
+  href?: string;
   onClick?: () => void;
   style?: CSSProperties;
   onDark?: boolean;
@@ -331,27 +479,45 @@ export function SecondaryButton({
     ? { background: "rgba(255,255,255,0.12)", border: "#FFFFFF", text: "#FFFFFF" }
     : { background: NAVY, border: NAVY, text: "#FFFFFF" };
 
+  const styles: CSSProperties = {
+    ...buttonBase,
+    backgroundColor: "transparent",
+    borderColor: rest.border,
+    color: rest.text,
+    ...style,
+  };
+
+  const enter = (el: HTMLElement) => {
+    el.style.backgroundColor = hover.background;
+    el.style.borderColor = hover.border;
+    el.style.color = hover.text;
+  };
+  const leave = (el: HTMLElement) => {
+    el.style.backgroundColor = "transparent";
+    el.style.borderColor = rest.border;
+    el.style.color = rest.text;
+  };
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        style={{ ...styles, textDecoration: "none" }}
+        onMouseEnter={(e) => enter(e.currentTarget)}
+        onMouseLeave={(e) => leave(e.currentTarget)}
+      >
+        {children}
+      </Link>
+    );
+  }
+
   return (
     <button
       type="button"
       onClick={onClick}
-      style={{
-        ...buttonBase,
-        backgroundColor: "transparent",
-        borderColor: rest.border,
-        color: rest.text,
-        ...style,
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = hover.background;
-        e.currentTarget.style.borderColor = hover.border;
-        e.currentTarget.style.color = hover.text;
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = "transparent";
-        e.currentTarget.style.borderColor = rest.border;
-        e.currentTarget.style.color = rest.text;
-      }}
+      style={styles}
+      onMouseEnter={(e) => enter(e.currentTarget)}
+      onMouseLeave={(e) => leave(e.currentTarget)}
     >
       {children}
     </button>
@@ -430,6 +596,7 @@ export function ImageCard({
   title,
   description,
   height = "220px",
+  sizes = "(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw",
   onClick,
 }: {
   image: string;
@@ -437,6 +604,8 @@ export function ImageCard({
   title: string;
   description?: string;
   height?: string;
+  /** Layout width hint for the browser's srcset choice. */
+  sizes?: string;
   onClick?: () => void;
 }) {
   return (
@@ -452,14 +621,14 @@ export function ImageCard({
         if (img) (img as HTMLImageElement).style.transform = "scale(1)";
       }}
     >
-      <div style={{ overflow: "hidden", marginBottom: "16px" }}>
-        <img
-          src={image}
-          alt={title}
-          loading="lazy"
-          style={{ width: "100%", height, objectFit: "cover", display: "block", transition: "transform 0.5s ease" }}
-        />
-      </div>
+      <Photo
+        src={image}
+        alt={title}
+        height={height}
+        sizes={sizes}
+        zoomOnHover
+        style={{ marginBottom: "16px" }}
+      />
       {label && (
         <div style={{ fontFamily: FONT_BODY, fontSize: "11px", fontWeight: 600, color: NAVY, marginBottom: "10px" }}>
           {label.toUpperCase()}
@@ -512,15 +681,24 @@ export function PendingNote({ children }: { children: ReactNode }) {
  * Pauses on hover, and respects prefers-reduced-motion.
  */
 export function LogoMarquee({
+  logos,
   count = 8,
   speed = 42,
   fadeColor = "#FFFFFF",
 }: {
+  /** Approved logos from the content manager. Empty shows the placeholder wall. */
+  logos?: { id: string; name: string; logo?: string }[];
   count?: number;
   speed?: number;
   fadeColor?: string;
 }) {
-  const cells = Array.from({ length: count });
+  // One lap of the animation is a -50% translate, so the row is rendered twice
+  // and has to be long enough to cover the viewport before it repeats. With only
+  // a couple of approved logos, repeat them until it does.
+  const supplied = logos ?? [];
+  const cells: ({ id: string; name: string; logo?: string } | null)[] = supplied.length
+    ? Array.from({ length: Math.max(supplied.length, 6) }, (_, i) => supplied[i % supplied.length])
+    : Array.from({ length: count }, () => null);
 
   return (
     <div
@@ -532,9 +710,9 @@ export function LogoMarquee({
       }}
     >
       <div className="logo-marquee-track" style={{ display: "flex", width: "max-content", animation: `logoMarquee ${speed}s linear infinite` }}>
-        {[...cells, ...cells].map((_, i) => (
+        {[...cells, ...cells].map((cell, i) => (
           <div
-            key={i}
+            key={cell ? `${cell.id}-${i}` : i}
             style={{
               width: "210px",
               height: "122px",
@@ -542,12 +720,24 @@ export function LogoMarquee({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              padding: "22px 26px",
               borderRight: `1px solid ${BORDER}`,
             }}
           >
-            <span style={{ fontFamily: FONT_BODY, fontSize: "10px", fontWeight: 600, letterSpacing: "0.16em", color: "#B8B8C4" }}>
-              LOGO
-            </span>
+            {cell?.logo ? (
+              <Image
+                src={cell.logo}
+                alt={cell.name}
+                width={160}
+                height={78}
+                sizes="210px"
+                style={{ width: "auto", height: "auto", maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
+              />
+            ) : (
+              <span style={{ fontFamily: FONT_BODY, fontSize: "10px", fontWeight: 600, letterSpacing: "0.16em", color: "#B8B8C4" }}>
+                LOGO
+              </span>
+            )}
           </div>
         ))}
       </div>

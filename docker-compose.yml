@@ -1,0 +1,32 @@
+# Local development database for the TEZRA website CMS.
+#
+# Payload stores all CMS content here. Port 5434 on the host, because other
+# projects on this machine already use 5432 and 5433.
+#
+#   docker compose up -d      start it
+#   docker compose down       stop it
+#   docker compose down -v    stop it and erase all local CMS content
+#
+# Production uses a managed Postgres instance instead; only DATABASE_URI changes.
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: tezra-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tezra
+      POSTGRES_PASSWORD: tezra_local_dev
+      POSTGRES_DB: tezra
+    ports:
+      - "5434:5432"
+    volumes:
+      - tezra-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tezra -d tezra"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  tezra-db-data:

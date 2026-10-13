@@ -6,6 +6,7 @@ import { brand, mission, overview, purpose, values, verticals, vision } from "@/
 import { images, verticalImages } from "@/content/images";
 import { valueIcons, verticalIcons } from "@/content/icons";
 import {
+  Backdrop,
   BORDER,
   FONT_ACCENT,
   FONT_BODY,
@@ -13,6 +14,7 @@ import {
   GREY_BG,
   NAVY,
   PageHero,
+  Photo,
   PendingNote,
   PrimaryButton,
   Prose,
@@ -49,12 +51,7 @@ export function AboutPage() {
             <SectionHeading style={{ marginBottom: "22px" }}>What TEZRA Is</SectionHeading>
             <Prose style={{ fontSize: "17px" }}>{overview}</Prose>
           </div>
-          <img
-            src={images.ecosystem}
-            alt="TEZRA"
-            loading="lazy"
-            style={{ width: "100%", height: "500px", objectFit: "cover", display: "block" }}
-          />
+          <Photo src={images.ecosystem} alt="TEZRA" height="500px" sizes="(max-width: 860px) 100vw, 50vw" />
         </div>
       </Section>
 
@@ -64,11 +61,11 @@ export function AboutPage() {
         style={{
           position: "relative",
           padding: "96px 40px",
-          backgroundImage: `url('${images.culture}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          overflow: "hidden",
+          backgroundColor: NAVY,
         }}
       >
+        <Backdrop src={images.culture} />
         <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(1,0,50,0.93)" }} />
         <div style={{ position: "relative", zIndex: 1, maxWidth: "1440px", margin: "0 auto" }}>
           <div style={{ maxWidth: "920px" }}>
@@ -165,11 +162,12 @@ export function AboutPage() {
                 }}
               >
                 <div style={{ overflow: "hidden", position: "relative" }}>
-                  <img
+                  <Photo
                     src={verticalImages[vertical.slug]}
                     alt={vertical.name}
-                    loading="lazy"
-                    style={{ width: "100%", height: "180px", objectFit: "cover", display: "block", transition: "transform 0.5s ease" }}
+                    height="180px"
+                    sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 25vw"
+                    zoomOnHover
                   />
                   <div style={{ position: "absolute", left: 0, bottom: 0, width: "44px", height: "44px", backgroundColor: NAVY, display: "flex", alignItems: "center", justifyContent: "center" }}>
                     {Icon && <Icon size={18} color="#FFFFFF" strokeWidth={1.6} />}
@@ -195,11 +193,11 @@ export function AboutPage() {
       {/* Long-Term Ambition — presented as future development (brief 5) */}
       <Section background={GREY_BG}>
         <div className="about-split" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "72px", alignItems: "center" }}>
-          <img
+          <Photo
             src={images.strategy}
             alt="Long-term ambition"
-            loading="lazy"
-            style={{ width: "100%", height: "380px", objectFit: "cover", display: "block" }}
+            height="380px"
+            sizes="(max-width: 860px) 100vw, 50vw"
           />
           <div>
             <SectionLabel text="Long-Term Ambition" />
@@ -224,10 +222,10 @@ export function AboutPage() {
             acquiring art, there is a route in.
           </Prose>
           <div style={{ display: "flex", gap: "14px", justifyContent: "center", flexWrap: "wrap" }}>
-            <PrimaryButton onDark onClick={() => router.push("/contact")}>
+            <PrimaryButton onDark href="/contact">
               Work With Us <ArrowRight size={14} />
             </PrimaryButton>
-            <SecondaryButton onDark onClick={() => router.push("/leadership")}>
+            <SecondaryButton onDark href="/leadership">
               Meet the Leadership
             </SecondaryButton>
           </div>

@@ -279,14 +279,30 @@ export const contactLink = (category: string, subject?: string): string => {
   return `/contact?${params.toString()}`;
 };
 
-/** Primary navigation (brief 3). */
+/**
+ * Primary navigation.
+ *
+ * Order confirmed by TEZRA (feedback 1.3): TEZRA | About | News | Media | Arts |
+ * Marketing & Consulting | Our Work | Contact, with Work With Us as the CTA.
+ *
+ * TEZRA stays the Home link and About carries the company information
+ * (feedback 1.1). Leadership and Clients & Partners keep their own pages but
+ * are reached through About and Our Work rather than the main bar (feedback 1.2).
+ *
+ * The four verticals must stay visible on desktop; narrower screens fall back to
+ * the drawer rather than dropping them (feedback 1.3).
+ *
+ * "Marketing & Consulting" is the navigation label only. The official name,
+ * Tezra Marketing and Consulting, is used in headings and body copy
+ * (feedback 1.4).
+ */
 export const navLinks = [
   { label: "TEZRA", path: "/" },
-  { label: "Media", path: "/media" },
+  { label: "About", path: "/about" },
   { label: "News", path: "/news" },
+  { label: "Media", path: "/media" },
   { label: "Arts", path: "/arts" },
   { label: "Marketing & Consulting", path: "/marketing-consulting" },
-  { label: "About", path: "/about" },
   { label: "Our Work", path: "/our-work" },
   { label: "Contact", path: "/contact" },
 ] as const;
@@ -302,6 +318,7 @@ export const footerColumns = [
       { label: "About", path: "/about" },
       { label: "Leadership", path: "/leadership" },
       { label: "Our Work", path: "/our-work" },
+      { label: "Clients & Partners", path: "/clients-partners" },
       { label: "Contact", path: "/contact" },
     ],
   },
@@ -319,21 +336,82 @@ export const footerColumns = [
 /**
  * Contact details.
  *
- * TEZRA has not yet supplied the official phone number, email address, physical
- * address, contact-form inbox or social media links (brief 19). Anything left
- * empty here is deliberately not rendered, rather than filled with a
- * placeholder — brief 20 prohibits placeholder contact details.
+ * Email and phone confirmed by TEZRA (feedback 2 and 5). The physical address
+ * is still outstanding and stays empty — it is not rendered rather than filled
+ * with a placeholder, which feedback 4 prohibits.
  */
 export const contact = {
-  email: "",
-  phone: "",
+  email: "business.development@tezragroup.com",
+  phone: "+234 704 700 2665",
+  /** Still to be provided by TEZRA. */
   address: "",
-  /** Where contact-form submissions should be delivered. Supplied by TEZRA. */
-  formRecipient: "",
+  /**
+   * Where contact-form enquiries are delivered. Confirmed by TEZRA
+   * (feedback 1.7). The seven enquiry categories are retained and arrive as a
+   * labelled line in the message; per-category routing can follow later as the
+   * internal team structure develops.
+   */
+  formRecipient: "business.development@tezragroup.com",
 } as const;
 
+/** Tel: href — strips the spaces a dialler cannot use. */
+export const telHref = contact.phone ? `tel:${contact.phone.replace(/\s+/g, "")}` : "";
+
+/** Mailto: href for the confirmed business development inbox. */
+export const mailtoHref = contact.email ? `mailto:${contact.email}` : "";
+
 /**
- * Official social channels (brief 19). Empty until TEZRA confirms the accounts —
- * an icon linking nowhere is a dead link, which brief 21 rules out.
+ * Official social accounts, confirmed by TEZRA (feedback 2):
+ *
+ *   TEZRA        @tezragroup
+ *   Tezra Media  @tezra.media
+ *   Tezra News   @tezranews
+ *   Tezra Arts   @tezraarts
+ *
+ * The handles are confirmed; the platforms they belong to are not yet, so no
+ * URL is built here. The footer renders whatever this array holds, so adding
+ * one entry per account turns the icons on with no code change. Until then
+ * nothing is linked, because an icon pointing at a guessed URL is a dead link
+ * and feedback 4 rules those out.
  */
-export const socialLinks: readonly { label: string; url: string }[] = [];
+export type SocialPlatform = "instagram" | "x" | "linkedin" | "facebook" | "youtube" | "tiktok";
+
+export type SocialAccount = {
+  /** Which part of the group the account belongs to. */
+  owner: string;
+  platform: SocialPlatform;
+  handle: string;
+  url: string;
+};
+
+/** The handles TEZRA confirmed, kept so the copy is not lost while platforms are pending. */
+export const confirmedSocialHandles = [
+  { owner: "TEZRA", handle: "@tezragroup" },
+  { owner: "Tezra Media", handle: "@tezra.media" },
+  { owner: "Tezra News", handle: "@tezranews" },
+  { owner: "Tezra Arts", handle: "@tezraarts" },
+] as const;
+
+export const socialLinks: readonly SocialAccount[] = [];
+
+/**
+ * Content manager roles, confirmed by TEZRA (feedback 1.8).
+ *
+ * Administrator has full content management and publishing rights. Editor can
+ * create and edit content, but publishing is gated by role. Individual users and
+ * email addresses are to be supplied separately.
+ */
+export const cmsRoles = [
+  {
+    slug: "administrator",
+    label: "Administrator",
+    description: "Full content management and publishing rights across the site.",
+    canPublish: true,
+  },
+  {
+    slug: "editor",
+    label: "Editor",
+    description: "Can create and edit content. Publishing is controlled by role.",
+    canPublish: false,
+  },
+] as const;

@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
+
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { workCategories } from "@/content/tezra";
 import { images } from "@/content/images";
+import type { WorkItem } from "@/lib/types";
 import { iconFor } from "@/content/icons";
 import {
   BORDER,
@@ -14,10 +16,12 @@ import {
   GREY_BG,
   NAVY,
   PageHero,
+  Photo,
   PendingNote,
   PrimaryButton,
   Prose,
   Section,
+  SecondaryButton,
   SectionHeading,
   SectionLabel,
 } from "./shared";
@@ -34,25 +38,12 @@ import {
  * against an empty list rather than populated with examples.
  */
 
-export interface WorkItem {
-  id: string;
-  title: string;
-  category: string;
-  summary: string;
-  slug: string;
-  image?: string;
-}
-
-/** Populated by the content manager from verified TEZRA projects only. */
-const workItems: WorkItem[] = [];
-
-export function OurWorkPage() {
-  const router = useRouter();
+export function OurWorkPage({ workItems }: { workItems: WorkItem[] }) {
   const [category, setCategory] = useState<string>("All");
 
   const filtered = useMemo(
     () => workItems.filter((w) => category === "All" || w.category === category),
-    [category],
+    [workItems, category],
   );
 
   const pill = (label: string, active: boolean, onClick: () => void) => (
@@ -97,12 +88,14 @@ export function OurWorkPage() {
         {filtered.length > 0 ? (
           <div className="work-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "32px" }}>
             {filtered.map((item) => (
-              <article key={item.id} onClick={() => router.push(`/our-work/${item.slug}`)} style={{ cursor: "pointer" }}>
+              <Link key={item.id} href={`/our-work/${item.slug}`} style={{ textDecoration: "none", display: "block" }}>
                 {item.image && (
-                  <img
+                  <Photo
                     src={item.image}
                     alt={item.title}
-                    style={{ width: "100%", height: "240px", objectFit: "cover", display: "block", marginBottom: "16px" }}
+                    height="240px"
+                    sizes="(max-width: 680px) 100vw, (max-width: 1000px) 50vw, 33vw"
+                    style={{ marginBottom: "16px" }}
                   />
                 )}
                 <div style={{ fontFamily: FONT_BODY, fontSize: "11px", fontWeight: 600, color: NAVY, marginBottom: "10px" }}>
@@ -114,7 +107,7 @@ export function OurWorkPage() {
                 <p style={{ fontFamily: FONT_BODY, fontSize: "15px", lineHeight: 1.7, color: "#555566" }}>
                   {item.summary}
                 </p>
-              </article>
+              </Link>
             ))}
           </div>
         ) : (
@@ -156,12 +149,18 @@ export function OurWorkPage() {
           <Prose tone="light" style={{ marginBottom: "30px" }}>
             Tell us what you are planning and which part of TEZRA it touches.
           </Prose>
-          <PrimaryButton
-            onClick={() => router.push("/contact")}
-            onDark
-          >
-            Work With Us <ArrowRight size={14} />
-          </PrimaryButton>
+          {/*
+            Clients & Partners keeps its own page but is reached from here rather
+            than from the main navigation (feedback 1.2).
+          */}
+          <div style={{ display: "flex", gap: "14px", justifyContent: "center", flexWrap: "wrap" }}>
+            <PrimaryButton href="/contact" onDark>
+              Work With Us <ArrowRight size={14} />
+            </PrimaryButton>
+            <SecondaryButton href="/clients-partners" onDark>
+              Clients &amp; Partners
+            </SecondaryButton>
+          </div>
         </div>
       </Section>
 

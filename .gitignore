@@ -9,3 +9,6 @@ build
 next-env.d.ts
 .vercel
 *.tsbuildinfo
+
+# CMS uploads — content, not code. Lives in object storage in production.
+public/uploads

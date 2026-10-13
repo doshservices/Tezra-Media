@@ -1,0 +1,115 @@
+import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
+
+/**
+ * The shapes the public site works in.
+ *
+ * Separate from lib/content.ts because that module is server-only — it opens a
+ * database connection — and the page components that render these are client
+ * components. Keeping the types here means a client component can import them
+ * without pulling the server module into the browser bundle.
+ *
+ * These are deliberately plain. They do not mirror Payload's generated types, so
+ * a collection can be reshaped without the front end noticing.
+ */
+
+export type Article = {
+  id: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  format: string;
+  author: string;
+  /** ISO, for <time dateTime> and sorting. */
+  publishedAt: string;
+  /** The same date written out, e.g. "7 October 2026". */
+  publishedLabel: string;
+  readingTime: string;
+  slug: string;
+  image?: string;
+  imageAlt?: string;
+  /** Photographer or source for the lead image, shown beneath it. */
+  imageCredit?: string;
+};
+
+export type ArticleDetail = Article & {
+  body: SerializedEditorState | null;
+  metaTitle?: string;
+  metaDescription?: string;
+};
+
+export type WorkItem = {
+  id: string;
+  title: string;
+  category: string;
+  summary: string;
+  slug: string;
+  image?: string;
+  imageAlt?: string;
+};
+
+export type WorkDetail = WorkItem & {
+  body: SerializedEditorState | null;
+  vertical?: string;
+  clientName?: string;
+  gallery: { url: string; alt?: string }[];
+  metaTitle?: string;
+  metaDescription?: string;
+};
+
+export type Artwork = {
+  id: string;
+  title: string;
+  slug: string;
+  artistName: string;
+  year?: string;
+  availability: string;
+  /** Already formatted, or "Price on request" when the price is not public. */
+  priceLabel: string;
+  image?: string;
+  imageAlt?: string;
+};
+
+export type ArtworkDetail = Artwork & {
+  medium?: string;
+  dimensions?: string;
+  artistBio?: string;
+  description: SerializedEditorState | null;
+  images: { url: string; alt?: string }[];
+  metaTitle?: string;
+  metaDescription?: string;
+};
+
+export type Leader = {
+  id: string;
+  name: string;
+  position: string;
+  bio?: string;
+  linkedin?: string;
+  photo?: string;
+  photoAlt?: string;
+};
+
+export type ClientLogo = {
+  id: string;
+  name: string;
+  relationship: string;
+  website?: string;
+  logo?: string;
+};
+
+export type SocialAccount = {
+  owner: string;
+  platform: string;
+  handle: string;
+  url: string;
+};
+
+export type Settings = {
+  email?: string;
+  phone?: string;
+  address?: string;
+  formRecipient?: string;
+  socialAccounts: SocialAccount[];
+  hasPrivacyPolicy: boolean;
+  hasTermsOfUse: boolean;
+};

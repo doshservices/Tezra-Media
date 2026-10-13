@@ -1,16 +1,21 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import emailjs from "@emailjs/browser";
 import { CheckCircle, Mail, MapPin, Phone } from "lucide-react";
 import {
   brand,
   contact,
   contactCategories,
   isContactCategory,
+  mailtoHref,
   socialLinks,
+  telHref,
 } from "@/content/tezra";
+import { localImages } from "@/content/images";
+import { emailjsConfig, isEmailjsConfigured, type EnquiryTemplateParams } from "@/lib/emailjs";
 import {
+  Backdrop,
   BORDER,
   FONT_BODY,
   FONT_HEADING,
@@ -18,6 +23,7 @@ import {
   NAVY,
   PrimaryButton,
 } from "./shared";
+import { SocialMark, platformName } from "./SocialIcons";
 
 /**
  * Work With TEZRA / Contact (brief 13).
@@ -26,49 +32,76 @@ import {
  * links to /contact?enquiry=art-acquisition (optionally with &subject=), and the
  * matching category arrives already selected.
  *
- * The form cannot deliver yet. TEZRA has not supplied the destination inbox
- * (brief 19), so rather than showing a success message for a message that went
- * nowhere, submission reports honestly that the inbox is still to be connected.
- * Setting contact.formRecipient in content/tezra.ts switches it to live
- * delivery with no other change.
+ * TEZRA confirmed the destination inbox (feedback 1.7), so the form is wired to
+ * deliver for real. Sending goes through EmailJS from the browser, which needs
+ * no server route and no secret on our side.
+ *
+ * Until the three EmailJS keys are set, submitting says plainly that it could
+ * not send and offers the business development address — rather than showing a
+ * success message for a message that went nowhere.
  */
 export function ContactPage() {
-  const params = useSearchParams();
-  const presetEnquiry = params.get("enquiry");
-  const presetSubject = params.get("subject");
-
   const [form, setForm] = useState({
     name: "",
     company: "",
     email: "",
     phone: "",
-    subject: presetSubject ?? "",
+    subject: "",
     message: "",
   });
-  const [enquiry, setEnquiry] = useState<string>(
-    isContactCategory(presetEnquiry) ? presetEnquiry! : "general",
-  );
+  const [enquiry, setEnquiry] = useState<string>("general");
+
+  /*
+    Read ?enquiry= and ?subject= after mount rather than with useSearchParams.
+    useSearchParams opts the whole route out of prerendering, which left this
+    page with no content in the static HTML at all — nothing for a crawler and a
+    blank first paint. The preselected category is an enhancement, not content,
+    so it is applied on mount and the page itself renders on the server.
+  */
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    const category = params.get("enquiry");
+    if (isContactCategory(category)) setEnquiry(category!);
+
+    const subject = params.get("subject");
+    if (subject) setForm((current) => ({ ...current, subject }));
+  }, []);
   const [state, setState] = useState<"idle" | "sending" | "sent" | "unconfigured" | "error">("idle");
   const [focused, setFocused] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // No inbox supplied yet — say so rather than claim the message was sent.
-    if (!contact.formRecipient) {
+    // No keys yet — say so rather than pretending the message went somewhere.
+    if (!isEmailjsConfigured) {
       setState("unconfigured");
       return;
     }
 
     setState("sending");
+
+    const label =
+      contactCategories.find((category) => category.value === enquiry)?.label ?? enquiry;
+
+    const params: EnquiryTemplateParams = {
+      enquiry_type: label,
+      from_name: form.name,
+      company: form.company,
+      reply_to: form.email,
+      phone: form.phone,
+      subject: form.subject || `Website enquiry: ${label}`,
+      message: form.message,
+      to_email: contact.formRecipient,
+    };
+
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, enquiry }),
+      await emailjs.send(emailjsConfig.serviceId, emailjsConfig.templateId, params, {
+        publicKey: emailjsConfig.publicKey,
       });
-      setState(response.ok ? "sent" : "error");
-    } catch {
+      setState("sent");
+    } catch (error) {
+      console.error("enquiry failed to send", error);
       setState("error");
     }
   };
@@ -98,10 +131,10 @@ export function ContactPage() {
   };
 
   const details = [
-    contact.email ? { icon: Mail, label: "Email", value: contact.email } : null,
-    contact.phone ? { icon: Phone, label: "Phone", value: contact.phone } : null,
-    contact.address ? { icon: MapPin, label: "Office", value: contact.address } : null,
-  ].filter(Boolean) as { icon: typeof Mail; label: string; value: string }[];
+    contact.email ? { icon: Mail, label: "Email", value: contact.email, href: mailtoHref } : null,
+    contact.phone ? { icon: Phone, label: "Phone", value: contact.phone, href: telHref } : null,
+    contact.address ? { icon: MapPin, label: "Office", value: contact.address, href: "" } : null,
+  ].filter(Boolean) as { icon: typeof Mail; label: string; value: string; href: string }[];
 
   const confirmation = (() => {
     if (state === "sent") {
@@ -112,14 +145,13 @@ export function ContactPage() {
     }
     if (state === "unconfigured") {
       return {
-        title: "Form not yet connected",
-        body:
-          "This form is built and ready, but TEZRA has not yet supplied the inbox that enquiries should be delivered to. Nothing has been sent. Once the destination address is confirmed, submissions will be delivered and acknowledged automatically.",
+        title: "Not sent yet",
+        body: `This form is built and the destination inbox is confirmed, but sending has not been switched on for this environment yet, so nothing has been delivered. Please email ${contact.email} directly in the meantime.`,
       };
     }
     return {
       title: "Something went wrong",
-      body: "Your message could not be sent. Please try again, or contact us directly.",
+      body: `Your message could not be sent. Please try again, or email ${contact.email} directly.`,
     };
   })();
 
@@ -135,11 +167,11 @@ export function ContactPage() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            backgroundImage: "url('/Assets/contact.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            overflow: "hidden",
+            backgroundColor: NAVY,
           }}
         >
+          <Backdrop src={localImages.contact} quality={60} />
           <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(1,0,40,0.82)" }} />
           <div style={{ position: "relative", zIndex: 1 }}>
             <div style={{ fontFamily: FONT_BODY, fontSize: "12px", fontWeight: 600, color: "rgba(255,255,255,0.72)", marginBottom: "16px" }}>
@@ -155,7 +187,7 @@ export function ContactPage() {
 
             {details.length > 0 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "22px", marginBottom: "40px" }}>
-                {details.map(({ icon: Icon, label, value }) => (
+                {details.map(({ icon: Icon, label, value, href }) => (
                   <div key={label} style={{ display: "flex", alignItems: "flex-start", gap: "16px" }}>
                     <div style={{ width: "40px", height: "40px", border: "1px solid rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       <Icon size={16} color="rgba(255,255,255,0.7)" />
@@ -164,7 +196,18 @@ export function ContactPage() {
                       <div style={{ fontFamily: FONT_BODY, fontSize: "11px", color: "rgba(255,255,255,0.35)", fontWeight: 600, marginBottom: "2px" }}>
                         {label.toUpperCase()}
                       </div>
-                      <div style={{ fontFamily: FONT_BODY, fontSize: "15px", color: "#FFFFFF" }}>{value}</div>
+                      {href ? (
+                        <a
+                          href={href}
+                          style={{ fontFamily: FONT_BODY, fontSize: "15px", color: "#FFFFFF", textDecoration: "none" }}
+                          onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
+                          onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
+                        >
+                          {value}
+                        </a>
+                      ) : (
+                        <div style={{ fontFamily: FONT_BODY, fontSize: "15px", color: "#FFFFFF" }}>{value}</div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -176,16 +219,26 @@ export function ContactPage() {
                 <div style={{ fontFamily: FONT_BODY, fontSize: "11px", color: "rgba(255,255,255,0.35)", fontWeight: 600, marginBottom: "14px" }}>
                   FOLLOW TEZRA
                 </div>
-                <div style={{ display: "flex", gap: "18px" }}>
+                <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
                   {socialLinks.map((social) => (
                     <a
-                      key={social.label}
+                      key={`${social.owner}-${social.platform}`}
                       href={social.url}
                       target="_blank"
                       rel="noreferrer"
-                      style={{ fontFamily: FONT_BODY, fontSize: "13px", color: "rgba(255,255,255,0.6)" }}
+                      aria-label={`${social.owner} on ${platformName(social.platform)} — ${social.handle}`}
+                      title={`${social.owner} · ${social.handle}`}
+                      style={{
+                        width: "38px",
+                        height: "38px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: "1px solid rgba(255,255,255,0.2)",
+                        color: "rgba(255,255,255,0.6)",
+                      }}
                     >
-                      {social.label}
+                      <SocialMark platform={social.platform} />
                     </a>
                   ))}
                 </div>

@@ -1,11 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { ArrowRight, Play } from "lucide-react";
 import { contactLink, getVertical, mediaContentTypes, mediaDirection } from "@/content/tezra";
 import { images } from "@/content/images";
 import { iconFor } from "@/content/icons";
 import {
+  Backdrop,
   AreaTile,
   BORDER,
   FONT_BODY,
@@ -13,6 +13,7 @@ import {
   GREY_BG,
   NAVY,
   PageHero,
+  Photo,
   PendingNote,
   PrimaryButton,
   Prose,
@@ -30,7 +31,6 @@ import {
  * until real material arrives.
  */
 export function MediaPage() {
-  const router = useRouter();
   const vertical = getVertical("media")!;
 
   const formatImages: Record<string, string> = {
@@ -83,11 +83,11 @@ export function MediaPage() {
             </Prose>
           </div>
           <div style={{ position: "relative" }}>
-            <img
+            <Photo
               src={images.production}
               alt="Content production"
-              loading="lazy"
-              style={{ width: "100%", height: "420px", objectFit: "cover", display: "block" }}
+              height="420px"
+              sizes="(max-width: 860px) 100vw, 50vw"
             />
             <div
               style={{
@@ -137,11 +137,11 @@ export function MediaPage() {
             const Icon = iconFor(type);
             return (
               <div key={type} style={{ position: "relative", overflow: "hidden", minHeight: "210px", display: "flex" }}>
-                <img
+                <Photo
+                  bare
                   src={formatImages[type]}
                   alt={type}
-                  loading="lazy"
-                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+                  sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
                 />
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(1,0,50,0.9) 0%, rgba(1,0,50,0.3) 75%)" }} />
                 <div style={{ position: "relative", zIndex: 1, alignSelf: "flex-end", padding: "22px", display: "flex", alignItems: "center", gap: "12px" }}>
@@ -164,11 +164,11 @@ export function MediaPage() {
         style={{
           position: "relative",
           padding: "96px 40px",
-          backgroundImage: `url('${images.interview}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          overflow: "hidden",
+          backgroundColor: NAVY,
         }}
       >
+        <Backdrop src={images.interview} />
         <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(1,0,50,0.92)" }} />
         <div style={{ position: "relative", zIndex: 1, textAlign: "center", maxWidth: "680px", margin: "0 auto" }}>
           <SectionHeading tone="light" style={{ marginBottom: "16px" }}>
@@ -178,7 +178,7 @@ export function MediaPage() {
             Events, interviews, campaign media and documentary work. Tell us what needs
             covering.
           </Prose>
-          <PrimaryButton onDark onClick={() => router.push(contactLink("media-production"))}>
+          <PrimaryButton onDark href={contactLink("media-production")}>
             Enquire About Production <ArrowRight size={14} />
           </PrimaryButton>
         </div>
