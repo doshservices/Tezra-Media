@@ -31,13 +31,17 @@ function X({ size = 18 }: Props) {
   );
 }
 
+/**
+ * LinkedIn, as the actual mark rather than an approximation of it.
+ *
+ * The others on this page are drawn as plain geometry, but a social link is
+ * only useful if it is recognised at a glance, and a stroked rectangle with an
+ * "i" and an "n" suggested in it is not recognised. This is the real glyph.
+ */
 function LinkedIn({ size = 18 }: Props) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden>
-      <rect x="3" y="3" width="18" height="18" rx="3" />
-      <path d="M7.4 10.6 v6" />
-      <circle cx="7.4" cy="7.6" r="0.9" fill="currentColor" stroke="none" />
-      <path d="M11.4 16.6 v-6 M11.4 13 a2.6 2.6 0 0 1 5.2 0 v3.6" />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.59 0 4.26 2.37 4.26 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z" />
     </svg>
   );
 }

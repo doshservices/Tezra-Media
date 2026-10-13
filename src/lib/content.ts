@@ -37,7 +37,13 @@ export type * from "./types";
  */
 
 type Media =
-  | { url?: string | null; alt?: string | null; credit?: string | null }
+  | {
+      url?: string | null;
+      alt?: string | null;
+      credit?: string | null;
+      focalX?: number | null;
+      focalY?: number | null;
+    }
   | number
   | string
   | null
@@ -52,6 +58,28 @@ const mediaUrl = (value: Media): string | undefined => {
 const mediaAlt = (value: Media): string | undefined => {
   if (value && typeof value === "object" && typeof value.alt === "string") return value.alt;
   return undefined;
+};
+
+/**
+ * The focal point, as a CSS object-position.
+ *
+ * Media has focalPoint turned on, so an editor can already drag the point that
+ * must stay in frame — and until now nothing read it, which is why a portrait
+ * cropped to a landscape card lost the top of someone's head. Payload stores
+ * the point as percentages and defaults it to the middle, so an image nobody
+ * has adjusted behaves exactly as it did before.
+ */
+const mediaFocus = (value: Media): string | undefined => {
+  if (!value || typeof value !== "object") return undefined;
+  const x = typeof value.focalX === "number" ? value.focalX : undefined;
+  const y = typeof value.focalY === "number" ? value.focalY : undefined;
+  if (x === undefined && y === undefined) return undefined;
+  // Dead centre is what Payload stores until somebody drags the point, so it
+  // means "not set" rather than "centre me". Returning nothing lets the card
+  // apply a default suited to what it is showing — faces sit high in a
+  // portrait — and a point that has actually been moved still wins.
+  if (x === 50 && y === 50) return undefined;
+  return `${x ?? 50}% ${y ?? 50}%`;
 };
 
 /** The photographer or source, where one has been recorded. */
@@ -411,6 +439,7 @@ export const getLeadership = async () =>
           linkedin: typeof record.linkedin === "string" ? record.linkedin : undefined,
           photo: mediaUrl(record.photo as Media),
           photoAlt: mediaAlt(record.photo as Media),
+          photoFocus: mediaFocus(record.photo as Media),
         } satisfies Leader;
       });
     },

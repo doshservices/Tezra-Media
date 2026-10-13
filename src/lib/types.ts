@@ -87,6 +87,8 @@ export type Leader = {
   linkedin?: string;
   photo?: string;
   photoAlt?: string;
+  /** CSS object-position from the image's focal point in the CMS. */
+  photoFocus?: string;
 };
 
 export type ClientLogo = {

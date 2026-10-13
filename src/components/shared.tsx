@@ -393,6 +393,12 @@ export function Photo({
   zoomOnHover = false,
   /** For a parent that already positions the image itself. */
   bare = false,
+  /**
+   * Which part of the picture to keep when the box crops it. Defaults to the
+   * middle, which is wrong for a portrait in a landscape frame — it takes the
+   * crop off the top of the head. Pass the focal point recorded in the CMS.
+   */
+  objectPosition,
   style,
 }: {
   src: string;
@@ -402,6 +408,7 @@ export function Photo({
   priority?: boolean;
   zoomOnHover?: boolean;
   bare?: boolean;
+  objectPosition?: string;
   style?: CSSProperties;
 }) {
   const image = (
@@ -413,6 +420,7 @@ export function Photo({
       priority={priority}
       style={{
         objectFit: "cover",
+        objectPosition,
         transition: zoomOnHover ? "transform 0.5s ease" : undefined,
       }}
     />
