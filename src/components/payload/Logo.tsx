@@ -1,13 +1,6 @@
 import React from "react";
 
-/**
- * The TEZRA lockup on the admin login screen.
- *
- * Uses the logo files TEZRA supplied, not a typeset approximation. The mark is a
- * self-contained navy badge, so the same file works on the light and dark admin
- * themes; only the wordmark needs a light variant, and CSS swaps it so it is
- * already correct before React hydrates.
- */
+/** The lockup on the admin login screen, from TEZRA's own files. */
 export const Logo: React.FC = () => (
   <span className="tz-logo">
     {/* eslint-disable-next-line @next/next/no-img-element -- a static brand asset at a fixed size; next/image adds nothing */}

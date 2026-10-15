@@ -22,14 +22,7 @@ import {
   SectionLabel,
 } from "./shared";
 
-/**
- * Tezra Media (brief 7).
- *
- * Keeps the "Watch. Listen. Engage." direction the brief asked us to retain, and
- * builds clear categories for video, audio and editorial work. Section imagery
- * carries atmosphere; nothing here is presented as a specific TEZRA production
- * until real material arrives.
- */
+/** Tezra Media. Keeps "Watch. Listen. Engage."; nothing shown as a specific production yet. */
 export function MediaPage() {
   const vertical = getVertical("media")!;
 

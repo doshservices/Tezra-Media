@@ -30,16 +30,7 @@ import {
   SectionLabel,
 } from "./shared";
 
-/**
- * Tezra Arts (brief 9).
- *
- * Reads as a distinct creative vertical rather than a collection bolted onto a
- * media site. Gallery and exhibition imagery carries the atmosphere; the actual
- * catalogue slots stay empty, because a stock photograph presented as a TEZRA
- * artwork would be a false claim (brief 18 and 20).
- *
- * Draft 2 is enquiry-only, with the structure ready for payment later.
- */
+/** Tezra Arts. Catalogue slots stay empty — a stock photo as a TEZRA artwork is a false claim. */
 export function ArtsPage({ artworks }: { artworks: Artwork[] }) {
   const vertical = getVertical("arts")!;
 

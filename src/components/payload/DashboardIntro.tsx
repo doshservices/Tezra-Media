@@ -4,18 +4,7 @@ import { headers as nextHeaders } from "next/headers";
 import { getPayload } from "payload";
 import config from "@payload-config";
 
-/**
- * The top of the admin dashboard: a welcome band, shortcuts for the things
- * people create most, and what was edited recently.
- *
- * Registered as beforeDashboard. Payload's own collection cards are hidden in
- * the stylesheet rather than deleted, so removing this component restores the
- * default view intact.
- *
- * The band is flat navy, like the call-to-action sections on the website. No
- * gradient — nothing on the TEZRA site uses one, and the panel should look like
- * it belongs to the same thing.
- */
+/** Dashboard header: welcome band, shortcuts, recent edits. Registered as beforeDashboard. */
 
 const QUICK_CREATE: { slug: string; label: string; icon: React.ReactNode }[] = [
   {
@@ -129,8 +118,7 @@ export const DashboardIntro: React.FC = async () => {
       ? user.name.split(" ")[0]
       : (user?.email?.split("@")[0] ?? "there");
 
-  // Payload has no cross-collection query, so each source is asked for its few
-  // most recent and the results are merged. Five small indexed reads.
+  // No cross-collection query in Payload, so each source is asked separately and merged.
   const batches = await Promise.all(
     RECENT_SOURCES.map(async (source) => {
       try {
@@ -146,9 +134,7 @@ export const DashboardIntro: React.FC = async () => {
         });
 
         return docs.map((doc) => {
-          // Through `unknown`: the union of every collection's shape has no
-          // index signature, so a direct cast is rejected. Each field read below
-          // is guarded on its own.
+          // Through unknown: the union of every collection's shape has no index signature.
           const record = doc as unknown as Record<string, unknown>;
           const title = record[source.titleField];
 

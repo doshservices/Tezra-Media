@@ -24,13 +24,7 @@ import {
   SectionLabel,
 } from "./shared";
 
-/**
- * About TEZRA.
- *
- * Follows the section order in brief 5: Who We Are, Why We Exist, Mission,
- * Vision, Brand Philosophy, Core Values, The TEZRA Ecosystem, Long-Term
- * Ambition. All copy is supplied verbatim by TEZRA in brief 2.
- */
+/** About TEZRA. Section order from brief 5; all copy supplied verbatim by TEZRA. */
 export function AboutPage() {
   const router = useRouter();
 

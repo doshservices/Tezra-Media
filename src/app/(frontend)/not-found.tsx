@@ -5,17 +5,12 @@ export const metadata: Metadata = {
   title: "Page not found",
 };
 
-// Inlined rather than imported from components/shared, which is a client
-// module — this page has no interactivity and should stay a server component.
+// Inlined, not imported from shared — this page stays a server component.
 const FONT_HEADING = "'Inter', sans-serif";
 const FONT_BODY = "'Outfit', sans-serif";
 const NAVY = "#010066";
 
-/**
- * Draft 1 redirected every unknown URL to the homepage. That hides broken links
- * and is poor for search, so an unknown URL now returns a real 404 and offers a
- * route back.
- */
+/** A real 404 rather than Draft 1's redirect to the homepage, which hid broken links. */
 export default function NotFound() {
   return (
     <section

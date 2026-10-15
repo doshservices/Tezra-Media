@@ -1,32 +1,10 @@
-// TEZRA branding for the Payload admin panel.
-//
-// Imported by app/(payload)/layout.tsx *after* '@payloadcms/next/css'. Payload
-// keeps its own styles in @layer payload-default and everything here is
-// unlayered, which always wins regardless of specificity — which is why none of
-// this needs !important.
-//
-// Two kinds of override live here and they age differently. Custom properties
-// (--theme-*, and the --bg-color/--color pair Payload sets on .btn--style-*)
-// are its documented theming surface and survive upgrades fine. Class selectors
-// (.nav, .nav-group, .app-header) lean on internal names that can change
-// between majors — if the panel looks wrong after an upgrade, start here.
-//
-// The look follows the public site rather than Payload's defaults, so the two
-// read as one product: navy, square corners, 1px rules, flat fills. The site has
-// no rounded corners and no gradients anywhere, so neither does this. The only
-// rounded thing in the panel is the TEZRA mark itself, which is drawn that way.
+// TEZRA branding for the Payload admin. Unlayered, so it wins without !important.
 
-// ---- Brand fonts ---------------------------------------------------------
-//
-// Declared again here because the admin route group never loads
-// styles/globals.css — Payload owns its own <html>. Same files as the site, so
-// nothing extra is downloaded once they are cached.
+// ---- Brand fonts ---- (the admin route never loads globals.css)
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
-// ---- Palette -------------------------------------------------------------
-// Mirrors components/shared.tsx so the panel and the site stay in step.
-// Duplicated rather than imported, for the same scope reason as the fonts.
+// ---- Palette ---- (mirrors components/shared.tsx)
 :root {
   --tz-navy: #010066;
   --tz-navy-hover: #0a0a8a;
@@ -40,10 +18,7 @@
     sans-serif;
   --font-serif: 'Inter', ui-sans-serif, system-ui, sans-serif;
 
-  // Payload's neutral ramp runs pure grey. The site's greys carry a slight blue
-  // cast that reads as deliberate next to the navy; re-pointing the few steps
-  // the panel actually uses for surfaces and rules carries that across without
-  // touching the rest of the scale.
+  // The site's greys carry a blue cast; re-point the steps the panel uses for surfaces and rules.
   --color-base-50: #f4f4f6;
   --color-base-100: #ebebf0;
   --color-base-150: #e0e0e8;
@@ -64,10 +39,7 @@ h4,
   font-family: var(--font-serif);
 }
 
-// ---- Primary actions -----------------------------------------------------
-// Save, Create, Log in. Payload's default is near-black; these re-point the
-// same custom properties .btn--style-primary already sets, rather than fighting
-// its rules. Square, like every button on the site.
+// ---- Primary actions ---- Save, Create, Log in. Square, like every button on the site.
 .btn {
   border-radius: 0;
 }
@@ -116,16 +88,7 @@ select,
   border-radius: 0;
 }
 
-// ---- Sidebar -------------------------------------------------------------
-//
-// White panel, quiet uppercase group labels, an icon per entry, and a navy bar
-// on the active row. Payload gives every nav entry a stable id — nav-<slug> for
-// a collection, nav-global-<slug> for a global — which is what the icons hook
-// onto. It also renders .nav__link-indicator inside the active link only, so
-// :has() can style the active row without a custom component.
-//
-// Icons are inline SVG applied as a mask rather than a background, so they take
-// their colour from currentColor and follow hover and active states for free.
+// ---- Sidebar ---- Icons are masks, so they follow currentColor through hover and active.
 .nav {
   background-color: #ffffff;
   color: var(--tz-body-text);
@@ -140,8 +103,7 @@ html[data-theme='dark'] .nav {
   border-inline-end-color: var(--theme-elevation-150);
 }
 
-// Group headings. 11px uppercase at 600 is the footer-heading treatment from the
-// site. No tracking — the site deliberately carries none on navigation.
+// Group headings, in the site's footer-heading treatment. No tracking.
 .nav-group__toggle {
   color: var(--tz-muted-text);
   font-size: 11px;
@@ -155,8 +117,7 @@ html[data-theme='dark'] .nav {
   gap: 10px;
   padding: 9px 12px;
   border-radius: 0;
-  // A transparent bar on every row, so turning it navy on the active row shifts
-  // nothing sideways.
+  // A transparent bar on every row, so turning it navy shifts nothing sideways.
   border-inline-start: 2px solid transparent;
   font-size: 14px;
   font-weight: 500;
@@ -174,10 +135,7 @@ html[data-theme='dark'] .nav__link:hover {
   color: var(--theme-elevation-900);
 }
 
-// The active row. Payload renders .nav__link-indicator only inside the current
-// page's link, so :has() marks it without knowing the route. The site shows the
-// current page with a navy rule under the label; in a vertical column that rule
-// turns on its side.
+// Payload renders .nav__link-indicator only in the current link, so :has() finds it.
 .nav__link:has(.nav__link-indicator) {
   border-inline-start-color: var(--tz-navy);
   background-color: var(--tz-grey-bg);
@@ -196,14 +154,7 @@ html[data-theme='dark'] .nav__link:has(.nav__link-indicator) {
   display: none;
 }
 
-// The icon box. --nav-icon is set per entry below; entries without one still
-// reserve the space so labels stay aligned.
-//
-// The 1px lift is not a fudge. Flexbox centres the icon on the label's em box,
-// which includes descender space, so a solid mark sits visibly low against a
-// word like "Projects" — and the error changes depending on whether the label
-// happens to contain a j or a y. Icons want the cap-height band instead, which
-// is descender-independent, and that works out to one pixel at this size.
+// Flexbox centres on the em box, which sits low for a solid mark — hence the 1px lift.
 .nav__link::before {
   content: '';
   flex: 0 0 auto;
@@ -217,9 +168,7 @@ html[data-theme='dark'] .nav__link:has(.nav__link-indicator) {
   -webkit-mask: var(--nav-icon, none) center / contain no-repeat;
 }
 
-// ---- one icon per entry --------------------------------------------------
-// Line marks matched to what each collection holds. Inline, so the sidebar needs
-// no extra requests and no icon dependency.
+// ---- one icon per entry ---- (inline, so no extra requests)
 
 #nav-news {
   --nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2'/%3E%3Cpath d='M15 18h-5M18 14h-8'/%3E%3Crect width='8' height='4' x='10' y='6' rx='1'/%3E%3C/svg%3E");
@@ -254,12 +203,7 @@ html[data-theme='dark'] .nav__link:has(.nav__link-indicator) {
   --nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z'/%3E%3C/svg%3E");
 }
 
-// ---- Sidebar header ------------------------------------------------------
-// The TEZRA lockup, with Payload's collapse control pulled alongside it.
-//
-// Payload reserves a band at the top of the nav purely so its collapse button
-// has somewhere to sit. The lockup takes over that band and the button moves to
-// the far end of the same row.
+// ---- Sidebar header ---- The lockup takes over the band Payload reserves for its collapse button.
 .nav__scroll {
   padding-block-start: 0;
 }
@@ -271,8 +215,7 @@ html[data-theme='dark'] .nav__link:has(.nav__link-indicator) {
   height: 68px;
   flex: 0 0 auto;
   text-decoration: none;
-  // Cancels the nav's side padding so the lockup lines up with the icons below,
-  // and lets the rule underneath reach both edges of the sidebar.
+  // Cancels the nav's side padding so the lockup lines up with the icons below.
   margin-inline: -20px;
   padding-inline: 20px;
   // Room for the collapse button, which overlays this row.
@@ -280,8 +223,7 @@ html[data-theme='dark'] .nav__link:has(.nav__link-indicator) {
   border-block-end: 1px solid var(--tz-border);
   margin-block-end: 16px;
 
-  // The nav column is align-items: flex-start, so without this the row shrinks
-  // to fit its contents and the rule stops short.
+  // The nav column is align-items: flex-start, so without this the rule stops short.
   align-self: stretch;
 
   // Held in place while the links scroll underneath.
@@ -322,15 +264,7 @@ html[data-theme='dark'] {
   }
 }
 
-// The collapse control. Its wrapper is a sticky, 60px-wide, zero-height strip
-// pinned to the left of the sidebar. Widening it to the full sidebar while the
-// nav is open puts the button at the right end of the lockup row; with the nav
-// closed it keeps its original width so the button stays reachable at the edge.
-//
-// Note the :has() on the parent — the toggler wrapper is a *sibling* of
-// .template-default, not a descendant, so the obvious
-// `.template-default--nav-open .template-default__nav-toggler-wrapper` never
-// matches. Scoping through the shared parent is what limits this to nav-open.
+// The toggler wrapper is a sibling of .template-default, so scope through the shared parent.
 div:has(> .template-default--nav-open) > .template-default__nav-toggler-wrapper {
   width: 275px;
 }
@@ -340,33 +274,24 @@ div:has(> .template-default--nav-open)
   > .template-default__nav-toggler-container {
   margin-inline-start: auto;
   margin-inline-end: 18px;
-  // Payload centres the button in a 56px box; match the lockup row so the two
-  // sit on the same optical line.
+  // Match the lockup row so the two sit on the same optical line.
   height: 68px;
 }
 
-// ---- Account block -------------------------------------------------------
-// components/payload/NavAccount.tsx, rendered through afterNavLinks and pushed
-// to the foot of the sidebar.
-//
-// Payload's own sign-out lives in .nav__controls at the very bottom of the nav.
-// This replaces it, so both the link and its now-empty container are hidden —
-// leaving the container behind left a tall gap, since Payload pins it there.
+// ---- Account block ---- Replaces Payload's own sign-out, which is hidden with its container.
 .nav__log-out,
 .nav__controls {
   display: none;
 }
 
-// afterNavLinks renders inline after the last group, so the nav column becomes a
-// flex column and the account block claims the free space above it.
+// The nav becomes a flex column, so the account block claims the space above it.
 .nav__wrap {
   display: flex;
   flex-direction: column;
   min-height: 100%;
 }
 
-// Payload reserves space under the nav's scroll area, which reads as dead space
-// once something is pinned to the bottom. The block brings its own padding.
+// The block brings its own padding, so Payload's reserved space would read as dead space.
 .nav__scroll {
   padding-block-end: 0;
 }
@@ -377,10 +302,7 @@ div:has(> .template-default--nav-open)
   align-items: center;
   gap: 10px;
 
-  // The divider should run the full width of the sidebar, but this sits inside
-  // the nav's 20px side padding. Pull the margins out by that much and put the
-  // same value back as padding: the rule reaches both edges while the contents
-  // stay aligned with the links above.
+  // Pull the margins out by the nav's 20px padding and put it back as padding.
   margin-inline: -20px;
   padding: 12px 20px;
   border-block-start: 1px solid var(--tz-border);
@@ -410,8 +332,7 @@ html[data-theme='dark'] .tz-account {
   flex: 1 1 auto;
 }
 
-// Square, like everything else. Users carry no photograph, so this is always
-// initials.
+// Square, like everything else. Always initials — users carry no photograph.
 .tz-avatar {
   flex: 0 0 auto;
   display: flex;
@@ -462,8 +383,7 @@ html[data-theme='dark'] .tz-account__name {
   color: var(--theme-elevation-900);
 }
 
-// The role is on display on purpose: it is the difference between being able to
-// publish and not.
+// The role is on display on purpose: it decides whether you can publish.
 .tz-account__role {
   font-size: 11px;
   font-weight: 600;
@@ -532,9 +452,7 @@ html[data-theme='dark'] {
   }
 }
 
-// Sized by its container, never fixed. Payload drops this icon into slots of
-// different sizes — the breadcrumb home link is a small box with overflow
-// hidden, where a hardcoded width silently loses an edge.
+// Sized by its container — a hardcoded width loses an edge in the breadcrumb's clipped box.
 .tz-icon {
   display: block;
   width: 100%;
@@ -542,9 +460,7 @@ html[data-theme='dark'] {
   max-height: 100%;
 }
 
-// The breadcrumb home link. Payload sizes this slot for its own wordless glyph,
-// which is small for a brand mark. Widening the slot alone is not enough — the
-// wrapper around the icon is overflow: hidden, so it has to grow too.
+// The wrapper is overflow: hidden, so widening the slot alone is not enough.
 .step-nav__home {
   width: 24px;
   height: 24px;
@@ -556,8 +472,7 @@ html[data-theme='dark'] {
   }
 }
 
-// ---- Dashboard -----------------------------------------------------------
-// components/payload/DashboardIntro.tsx, rendered through beforeDashboard.
+// ---- Dashboard ---- (components/payload/DashboardIntro.tsx, via beforeDashboard)
 
 .tz-dash {
   display: flex;
@@ -566,14 +481,12 @@ html[data-theme='dark'] {
   margin-block-end: 44px;
 }
 
-// Payload underlines links in content areas. These are cards and rows, not
-// prose, so the underline only reads as noise.
+// Cards and rows, not prose, so Payload's underline is just noise.
 .tz-dash a {
   text-decoration: none;
 }
 
-// Flat navy, like the call-to-action bands on the website. No gradient and no
-// decorative shape: nothing on the site uses either.
+// Flat navy, like the bands on the site. No gradient, nothing decorative.
 .tz-dash__band {
   padding: 38px 36px;
   background-color: var(--tz-navy);
@@ -649,8 +562,7 @@ html[data-theme='dark'] .tz-dash__sub {
   color: var(--theme-elevation-600);
 }
 
-// auto-fit rather than a fixed count, so the row reflows instead of overflowing
-// on a narrow window.
+// auto-fit, so the row reflows instead of overflowing on a narrow window.
 .tz-dash__tiles {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
@@ -796,18 +708,12 @@ html[data-theme='dark'] {
   text-align: end;
 }
 
-// Payload's own dashboard content — the grid of collection cards — is replaced
-// by the above rather than shown beneath it. The view renders exactly two
-// children, ours and its own, so hiding the sibling leaves the default intact
-// for anyone who later removes the beforeDashboard component.
+// Hide Payload's own card grid; the view renders exactly two children, so the default survives.
 .dashboard > div:not(.tz-dash) {
   display: none;
 }
 
-// ---- App header ----------------------------------------------------------
-// Payload ships it borderless, so it floats against the content with nothing
-// separating them. The rule also carries the spacing, so every view inherits it
-// without knowing about its own first child.
+// ---- App header ---- The rule carries the spacing too, so every view inherits it.
 .app-header {
   border-block-end: 1px solid var(--tz-border);
   margin-block-end: 28px;
@@ -817,15 +723,7 @@ html[data-theme='dark'] .app-header {
   border-block-end-color: var(--theme-elevation-150);
 }
 
-// ---- List tables ---------------------------------------------------------
-// Payload renders them borderless, so a list floats on the page with nothing
-// containing it. .table is the scroll wrapper — the border goes there rather
-// than on the <table>, which keeps overflow-x: auto working for lists wider than
-// the viewport.
-//
-// Cells default to vertical-align: top, invisible while every cell holds one
-// line and obvious the moment one does not: in Media the thumbnail sets the row
-// height and the filename, alt text and date all hang off the top.
+// ---- List tables ---- Border on .table, the scroll wrapper, so overflow-x keeps working.
 .table {
   border: 1px solid var(--tz-border);
 }
@@ -847,13 +745,7 @@ html[data-theme='dark'] .table {
   color: var(--tz-muted-text);
 }
 
-// ---- List header actions -------------------------------------------------
-// "Create New". Payload tucks it against the collection title in a small grey
-// pill; it is the primary action on the page, so it moves to the far end of the
-// row and takes the navy fill.
-//
-// Scoped to this actions group rather than .btn--style-pill generally — that
-// style is also used for quieter controls elsewhere in the panel.
+// ---- List header actions ---- Create New is the primary action, so it takes the navy fill.
 .list-header__title-actions {
   margin-inline-start: auto;
 }
@@ -878,19 +770,12 @@ html[data-theme='dark'] .list-header__title-actions .btn {
   --hover-color: var(--tz-navy);
 }
 
-// ---- Rich text -----------------------------------------------------------
-// Payload sets rich text in a serif face to mark it out as prose, which leaves
-// editors writing articles in a typeface the site never renders. Pointed back at
-// the site's body font, so what they type is what readers get.
+// ---- Rich text ---- Pointed at the site's body font, so what editors type is what readers get.
 .rich-text-lexical .editor-container {
   font-family: var(--font-body);
 }
 
-// An image dropped into a body is shown at whatever size it was uploaded at, so
-// a tall photograph pushes the rest of the article off the screen and the writer
-// has to scroll past their own picture to reach the next paragraph. Capped here
-// to roughly what the published page shows, which is also the more honest
-// preview. The caption sits in the drawer behind the pencil.
+// Cap the preview, or a tall photograph pushes the rest of the article off the writer's screen.
 .rich-text-lexical .LexicalEditorTheme__upload .thumbnail {
   height: auto;
   max-height: 420px;
@@ -903,15 +788,13 @@ html[data-theme='dark'] .list-header__title-actions .btn {
   object-fit: contain;
 }
 
-// A drawer holding a single caption field puts its save button across the full
-// width of the screen, which reads as far more consequential than it is.
+// A full-width save button reads as far more consequential than one caption field is.
 .drawer__content .form-submit .btn {
   width: auto;
   min-width: 180px;
 }
 
-// ---- Focus and links -----------------------------------------------------
-// Matches the site's focus ring exactly — same colour, same offset.
+// ---- Focus and links ---- Matches the site's focus ring exactly.
 :focus-visible {
   outline: 2px solid var(--tz-navy);
   outline-offset: 3px;
@@ -921,10 +804,7 @@ html[data-theme='dark'] :focus-visible {
   outline-color: #ffffff;
 }
 
-// Payload underlines links on hover throughout the panel, which reads as noise
-// on things already obviously clickable — nav rows, tiles, list rows,
-// breadcrumbs. The focus ring above still marks keyboard focus, so nothing is
-// lost for keyboard or screen-reader users.
+// Underlining nav rows, tiles and breadcrumbs is noise; the focus ring still marks focus.
 a:hover,
 a:focus-visible,
 .step-nav a:hover,
@@ -932,17 +812,7 @@ a:focus-visible,
   text-decoration: none;
 }
 
-// ---- Remaining rounded surfaces ------------------------------------------
-//
-// Payload rounds its surfaces by 3–4px. The website has no rounded corners
-// anywhere, so leaving these makes the panel read as a different product sitting
-// behind the same brand.
-//
-// Squared here are the things an editor reads as a surface — inputs, panels,
-// chips, empty states, checkboxes. The rich text editor's own floating widgets
-// (the drag handle, the insert menu, the link popover) are deliberately left
-// alone: they are transient tool chrome rather than part of the page, and
-// squaring them gains nothing.
+// ---- Remaining rounded surfaces ---- Squared, except the editor's transient tool chrome.
 .search-bar,
 .search-filter,
 .search-filter__input,
@@ -960,15 +830,7 @@ a:focus-visible,
   border-radius: 0;
 }
 
-// ---- Chips ---------------------------------------------------------------
-//
-// "Columns", "Filters", and the "Create New" / "Choose from existing" pair on
-// upload fields. Payload renders these as light grey rounded pills.
-//
-// The website already has this exact control — the format and category filters
-// on the News and Our Work pages — so these take its treatment rather than a
-// new one: square, 1px rule, navy text on white, inverting to white on navy when
-// active.
+// ---- Chips ---- Takes the treatment of the filter pills already on News and Our Work.
 .pill {
   border-radius: 0;
 }
@@ -1014,10 +876,7 @@ html[data-theme='dark'] .tz-login-note {
   color: var(--theme-elevation-600);
 }
 
-// ---- Dark theme: define the band's edges ---------------------------------
-// Navy on the near-black admin background leaves the band's edges ambiguous;
-// against the white page it reads on its own. A 1px rule gives it back its
-// shape without lightening the fill.
+// ---- Dark theme ---- A 1px rule gives the navy band back its edges on a near-black page.
 html[data-theme='dark'] .tz-dash__band {
   border: 1px solid var(--theme-elevation-150);
 }

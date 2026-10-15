@@ -21,24 +21,8 @@ import {
   SectionHeading,
 } from "./shared";
 
-/**
- * Leadership (brief 6).
- *
- * The brief names two roles and is explicit: "Names, biographies and
- * photographs will be supplied separately by TEZRA. Do not create or infer
- * leadership information." Brief 20 repeats the prohibition.
- *
- * So the page ships as a built, styled structure with a card per named role and
- * no invented people. Each card fills in from the content manager.
- */
-/**
- * Three to a row, not two.
- *
- * At two per row the cards ran most of the width of the page, which made each
- * portrait enormous and the page very tall once there were more than a handful
- * of people. Three to a row at a narrower section width gives a team grid that
- * reads at a glance; it falls to two and then one as the screen narrows.
- */
+/** Leadership. A card per named role, filled from the CMS — no invented people. */
+/** Three to a row. At two the cards ran most of the page width. */
 const GRID: CSSProperties = {
   display: "grid",
   gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
@@ -48,27 +32,10 @@ const GRID: CSSProperties = {
 /** Matches the column count above, so the browser requests the right size. */
 const CARD_SIZES = "(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 380px";
 
-/**
- * Card photograph frame.
- *
- * Slightly wider than it is tall. A portrait needs more height than a 4:3 band
- * to show a person properly, but a square or a full 4:5 portrait made the cards
- * taller than the grid wanted. This sits between them.
- */
+/** Card frame. Between a 4:3 band and a full portrait. */
 const FRAME = "5 / 4";
 
-/**
- * Where to crop from when a tall photograph goes into this short frame.
- *
- * A head-and-shoulders photograph puts the face in the upper third, so a
- * centred crop takes the top off the head. 25% was arrived at by rendering this
- * frame against the same photograph at a range of values and comparing them: it
- * keeps the whole face with the shoulders under it and a little headroom above,
- * where lower values left too much empty background and higher ones cut into
- * the hair.
- *
- * An editor who drags the focal point in the CMS overrides this, per image.
- */
+/** Faces sit in the upper third, so crop from 25% down. A CMS focal point overrides it. */
 const DEFAULT_FOCUS = "50% 25%";
 
 export function LeadershipPage({ leaders }: { leaders: Leader[] }) {
@@ -116,8 +83,7 @@ export function LeadershipPage({ leaders }: { leaders: Leader[] }) {
                       href={leader.linkedin}
                       target="_blank"
                       rel="noreferrer"
-                      /* The mark carries no text, so the link needs a name of
-                         its own or a screen reader announces only "link". */
+                      /* The mark carries no text, so the link needs a name of its own. */
                       aria-label={`${leader.name} on LinkedIn`}
                       title={`${leader.name} on LinkedIn`}
                       style={{

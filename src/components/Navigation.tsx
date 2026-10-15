@@ -7,21 +7,7 @@ import { Menu, X } from "lucide-react";
 import { brand, navLinks, primaryCta } from "@/content/tezra";
 import { BORDER, FONT_BODY, FONT_HEADING, NAVY } from "./shared";
 
-/**
- * Primary navigation, following the structure in brief 3:
- * TEZRA · Media · News · Arts · Marketing & Consulting · About · Our Work ·
- * Contact, with Work With Us as the primary call to action.
- *
- * Every destination is a next/link anchor rather than a button with a click
- * handler. That matters here: the brief asks for a search-engine-friendly site,
- * and a crawler can only follow real <a href> elements. It also restores
- * middle-click, open-in-new-tab and correct screen-reader semantics, and lets
- * Next prefetch each route.
- *
- * Eight items plus a CTA will not fit a tablet-width bar, so the drawer takes
- * over below 1100px. Whether the four verticals should instead sit under a
- * single grouped menu is an open question with TEZRA.
- */
+/** Primary navigation. Real anchors, so crawlers can follow them. Drawer below 1100px. */
 export function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);

@@ -1,17 +1,7 @@
 import type { CollectionConfig } from "payload";
 import { isAdmin, onlyAdminField } from "../access";
 
-/**
- * Content manager accounts.
- *
- * Two roles, as TEZRA specified (feedback 1.8). Individual names and email
- * addresses are to be supplied separately, so no accounts are seeded here —
- * the first administrator is created through the admin panel on first run.
- *
- * Only an administrator can create accounts or change a role. Without that an
- * editor could promote themselves and the publishing restriction would mean
- * nothing.
- */
+/** Accounts. Only an administrator can create one or change a role. */
 export const Users: CollectionConfig = {
   slug: "users",
   auth: true,
@@ -24,8 +14,7 @@ export const Users: CollectionConfig = {
     read: ({ req }) => Boolean(req.user),
     create: async ({ req }) => {
       if ((req.user as { role?: string } | undefined)?.role === "administrator") return true;
-      // The very first account has to be creatable by nobody, or the CMS could
-      // never be set up. Allowed only while the table is empty.
+      // The first account must be creatable by nobody, or the CMS could never be set up.
       const { totalDocs } = await req.payload.count({
         collection: "users",
         overrideAccess: true,

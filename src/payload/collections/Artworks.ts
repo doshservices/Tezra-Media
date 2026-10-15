@@ -3,18 +3,7 @@ import { canEdit, isAdmin, isSignedIn, publishedOrSignedIn } from "../access";
 import { restrictPublishToAdmin, seoFields, slugField } from "../fields";
 import { bodyEditor } from "../editor";
 
-/**
- * Tezra Arts catalogue.
- *
- * Draft 2 is enquiry-only — TEZRA asked for online payment to come later
- * (feedback 1.6). So price is recorded here but is shown on the site only when
- * "Show price publicly" is ticked, and the call to action is always an enquiry.
- *
- * Artist details live on the artwork rather than in a separate collection. One
- * artist can hold many works, but no artists have been supplied yet, and a
- * relationship to an empty collection is harder to fill in than a field. It can
- * be promoted to its own collection once there is a real roster.
- */
+/** Arts catalogue. Enquiry only; price shows only when ticked. Artist details sit on the work. */
 export const Artworks: CollectionConfig = {
   slug: "artworks",
   labels: { singular: "Artwork", plural: "Artworks" },

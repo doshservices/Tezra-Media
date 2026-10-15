@@ -1,12 +1,7 @@
 import React from "react";
 import Link from "next/link";
 
-/**
- * The lockup at the top of the admin sidebar, linking back to the dashboard.
- *
- * Takes over the empty band Payload reserves for its collapse control; the
- * stylesheet moves that control to the far end of this row.
- */
+/** The sidebar lockup, in the band Payload reserves for its collapse control. */
 export const NavHeader: React.FC = () => (
   <Link className="tz-nav-header" href="/admin" aria-label="TEZRA — dashboard">
     {/* eslint-disable-next-line @next/next/no-img-element -- a static brand asset at a fixed size */}

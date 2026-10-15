@@ -26,17 +26,7 @@ import {
   SectionLabel,
 } from "./shared";
 
-/**
- * Our Work / Selected Work (brief 11).
- *
- * Which of the two names appears on the page is an open question with TEZRA —
- * the brief uses both. "Our Work" is used here because that is what the
- * navigation in brief 3 specifies.
- *
- * Brief 11 and brief 20 both forbid placeholder case studies, invented results
- * and unverified client relationships, so the filtering is built and working
- * against an empty list rather than populated with examples.
- */
+/** Our Work. Filtering is built and working against an empty list — no invented case studies. */
 
 export function OurWorkPage({ workItems }: { workItems: WorkItem[] }) {
   const [category, setCategory] = useState<string>("All");
@@ -149,10 +139,7 @@ export function OurWorkPage({ workItems }: { workItems: WorkItem[] }) {
           <Prose tone="light" style={{ marginBottom: "30px" }}>
             Tell us what you are planning and which part of TEZRA it touches.
           </Prose>
-          {/*
-            Clients & Partners keeps its own page but is reached from here rather
-            than from the main navigation (feedback 1.2).
-          */}
+          {/* Clients & Partners is reached from here, not the main navigation. */}
           <div style={{ display: "flex", gap: "14px", justifyContent: "center", flexWrap: "wrap" }}>
             <PrimaryButton href="/contact" onDark>
               Work With Us <ArrowRight size={14} />

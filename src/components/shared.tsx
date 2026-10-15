@@ -1,19 +1,6 @@
 "use client";
 
-/**
- * Shared design tokens and layout primitives for the TEZRA site.
- *
- * Palette: navy, white and light grey — the identity TEZRA approved in Draft 1
- * and asked us to retain (review point 25). There is deliberately no gold accent.
- * The brand-guidelines file that shipped with the original Figma export lists a
- * gold, but Draft 1 did not use it and neither the review nor the Draft 2 brief
- * asks for it, so it is not applied here.
- *
- * Typography: Draft 1 named Inter and Montserrat but never loaded either, so
- * headings fell back to browser defaults. Both are now loaded in
- * styles/fonts.css. The font choice is still open with TEZRA — switching to the
- * brand-guideline set means editing the three constants below.
- */
+// Design tokens and the layout primitives every page is built from.
 
 import type { CSSProperties, ReactNode } from "react";
 import Image from "next/image";
@@ -34,19 +21,10 @@ import {
   NAVY_HOVER,
 } from "./tokens";
 
-// The tokens themselves live in tokens.ts, which carries no "use client", so a
-// server component can read them as actual strings. Re-exported here because
-// every component already imports them from this file.
+// Tokens live in tokens.ts so server components read real strings, not client references.
 export * from "./tokens";
 
-/**
- * Uppercase label that sits above a section title.
- *
- * The label stands on its own: no leading rule, no letter-spacing. The short
- * dash-before-eyebrow that Draft 1 used has been removed site-wide at TEZRA's
- * request. Size is 12px rather than 11px because untracked uppercase reads
- * tighter and needs the extra room.
- */
+/** Uppercase label above a section title. No rule, no letter-spacing. */
 export function SectionLabel({
   text,
   tone = "navy",
@@ -70,13 +48,7 @@ export function SectionLabel({
   );
 }
 
-/**
- * Standard content section with the site's max width and page padding.
- *
- * Content fades and lifts in as the section reaches the viewport. Pass
- * `animate={false}` where a child uses RevealGroup instead, so the block and its
- * children are not both transformed at once.
- */
+/** Content section at the site width. Pass animate={false} when a child uses RevealGroup. */
 export function Section({
   children,
   background = "#FFFFFF",
@@ -107,10 +79,7 @@ export function Section({
   );
 }
 
-/**
- * Page masthead. Photography-forward, with a navy wash over the image so the
- * type stays readable — the treatment Draft 1 used and TEZRA approved.
- */
+/** Page masthead — a photograph under a navy wash so the type stays readable. */
 export function PageHero({
   eyebrow,
   title,
@@ -127,20 +96,9 @@ export function PageHero({
   intro?: string;
   image?: string;
   height?: string;
-  /**
-   * Narrow this to match the section beneath. On an article page the headline
-   * should start on the same line as the text under it, or the masthead reads
-   * as belonging to a different page from the piece it introduces.
-   */
+  /** Narrow to match the section below so the headline lines up with the text under it. */
   maxWidth?: string;
-  /**
-   * How the photograph is darkened for the type on top of it.
-   *
-   * "side" darkens from the left, for a page whose heading sits in the left
-   * third. "scrim" darkens from the bottom, which is what an article wants: the
-   * heading is centred over the picture, and a side gradient would hide the
-   * photograph exactly where there is nothing written.
-   */
+  /** "side" darkens from the left; "scrim" from the bottom, for a centred heading. */
   overlay?: "side" | "scrim";
 }) {
   return (
@@ -158,13 +116,7 @@ export function PageHero({
     >
       {image && (
         <>
-          {/*
-            Separate layer so the photograph can drift without moving the type.
-            A next/image fill rather than a CSS background — a background cannot
-            be resized or re-encoded by the optimiser, and the masthead is the
-            heaviest image on every page. priority because it is above the fold
-            on every route, so it should not be lazy-loaded.
-          */}
+          {/* Its own layer so the photograph can drift without moving the type. */}
           <div className="hero-media" style={{ position: "absolute", inset: 0 }}>
             <Image
               src={image}
@@ -291,10 +243,7 @@ const buttonBase: CSSProperties = {
   border: "1px solid transparent",
 };
 
-/**
- * Solid call-to-action. `onDark` inverts it to white-on-navy. Hover handlers
- * restore the button's own resting colours, so it never ends up navy-on-navy.
- */
+/** Solid call to action. onDark inverts it to white-on-navy. */
 export function PrimaryButton({
   children,
   href,
@@ -367,23 +316,7 @@ export function PrimaryButton({
   );
 }
 
-/**
- * Photograph.
- *
- * Wraps next/image so every picture on the site is served resized, in AVIF or
- * WebP where the browser supports it, and lazily below the fold. The Unsplash
- * sources are multi-megapixel originals; served raw they were the heaviest
- * thing on the page.
- *
- * Uses `fill` rather than fixed width/height because the layout is fluid — the
- * wrapper sets the box, the image covers it, and nothing shifts while it loads.
- * The rendered element is still an <img>, so the hover-scale handlers that reach
- * for one keep working.
- *
- * `sizes` matters: it tells the browser how wide the image will actually be, so
- * it can pick the smallest useful file. Pass the real layout width — the default
- * assumes full bleed.
- */
+/** next/image wrapper: resized, AVIF or WebP, lazy below the fold. Pass a real `sizes`. */
 export function Photo({
   src,
   alt,
@@ -393,11 +326,7 @@ export function Photo({
   zoomOnHover = false,
   /** For a parent that already positions the image itself. */
   bare = false,
-  /**
-   * Which part of the picture to keep when the box crops it. Defaults to the
-   * middle, which is wrong for a portrait in a landscape frame — it takes the
-   * crop off the top of the head. Pass the focal point recorded in the CMS.
-   */
+  /** Which part of the picture to keep when the box crops it. Defaults to the middle. */
   objectPosition,
   style,
 }: {
@@ -443,15 +372,7 @@ export function Photo({
   );
 }
 
-/**
- * Texture layer behind a navy band.
- *
- * These bands sit under a 92% opaque navy wash, so the photograph reads as
- * texture rather than as a picture. It was still being downloaded at full
- * quality as a CSS background, which the optimiser cannot touch — so this
- * serves it through next/image at low quality instead. Invisible at 8% through
- * a navy wash, and a fraction of the bytes.
- */
+/** Texture behind a navy band. Served at low quality — it sits under a 92% wash. */
 export function Backdrop({ src, quality = 45 }: { src: string; quality?: number }) {
   return (
     <Image
@@ -652,14 +573,7 @@ export function ImageCard({
   );
 }
 
-/**
- * Quiet one-line note marking a section whose real content TEZRA still owes us.
- *
- * Kept deliberately small. The brief forbids invented leadership, clients,
- * projects and case studies, but a page full of large placeholder panels reads
- * as unfinished — so the section around this note is designed and populated, and
- * this just marks what is still to come.
- */
+/** Small note marking content TEZRA still owes us. Deliberately quiet. */
 export function PendingNote({ children }: { children: ReactNode }) {
   return (
     <p
@@ -679,15 +593,7 @@ export function PendingNote({ children }: { children: ReactNode }) {
   );
 }
 
-/**
- * Continuously scrolling logo wall for Clients & Partners.
- *
- * The cells are empty by design: brief 12 and 20 allow only organisations TEZRA
- * has confirmed and has permission to display. Swap the placeholder span for an
- * <img> per approved logo and the marquee carries them unchanged.
- *
- * Pauses on hover, and respects prefers-reduced-motion.
- */
+/** Scrolling logo wall. Cells stay empty until TEZRA confirm permission to display. */
 export function LogoMarquee({
   logos,
   count = 8,
@@ -700,9 +606,7 @@ export function LogoMarquee({
   speed?: number;
   fadeColor?: string;
 }) {
-  // One lap of the animation is a -50% translate, so the row is rendered twice
-  // and has to be long enough to cover the viewport before it repeats. With only
-  // a couple of approved logos, repeat them until it does.
+  // The row renders twice for a -50% lap, so repeat a short list until it fills the viewport.
   const supplied = logos ?? [];
   const cells: ({ id: string; name: string; logo?: string } | null)[] = supplied.length
     ? Array.from({ length: Math.max(supplied.length, 6) }, (_, i) => supplied[i % supplied.length])
@@ -768,11 +672,7 @@ export function LogoMarquee({
   );
 }
 
-/**
- * Framed slot for real content that has not arrived — a leadership portrait, a
- * client logo, a specific artwork. Used only where filling it with stock would
- * be a false claim about TEZRA's people, clients or work (brief 18 and 20).
- */
+/** Framed slot for real content that has not arrived. Never filled with stock. */
 export function ContentSlot({
   label,
   aspectRatio = "4 / 3",

@@ -1,16 +1,6 @@
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
 
-/**
- * The shapes the public site works in.
- *
- * Separate from lib/content.ts because that module is server-only — it opens a
- * database connection — and the page components that render these are client
- * components. Keeping the types here means a client component can import them
- * without pulling the server module into the browser bundle.
- *
- * These are deliberately plain. They do not mirror Payload's generated types, so
- * a collection can be reshaped without the front end noticing.
- */
+/** The shapes the site works in. Separate from content.ts, which is server-only. */
 
 export type Article = {
   id: string;

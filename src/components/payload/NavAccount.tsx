@@ -3,14 +3,7 @@ import Link from "next/link";
 
 import { getCurrentUser } from "./currentUser";
 
-/**
- * The signed-in account block pinned to the foot of the sidebar: initials, name,
- * role and sign-out. Registered as admin.components.afterNavLinks.
- *
- * The role line is the point of it. An Editor who tries to publish gets a
- * refusal, and seeing "Editor" under their own name explains why before they
- * run into it.
- */
+/** Account block at the foot of the sidebar. The role line explains refusals before they happen. */
 export const NavAccount: React.FC = async () => {
   const user = await getCurrentUser();
 
@@ -30,8 +23,7 @@ export const NavAccount: React.FC = async () => {
         </span>
       </Link>
 
-      {/* A plain link rather than Payload's LogOutButton, which is not a public
-          export and would break quietly on upgrade. */}
+      {/* A plain link — LogOutButton is not a public export and would break on upgrade. */}
       <Link
         className="tz-account__logout"
         href="/admin/logout"

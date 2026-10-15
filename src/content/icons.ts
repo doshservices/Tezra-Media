@@ -1,10 +1,4 @@
-/**
- * Icon mapping.
- *
- * Every core area, value and vertical named in the brief gets a matching icon so
- * the grids read as designed rather than as plain lists. Icons are from
- * lucide-react, which Draft 1 already used.
- */
+/** Icon mapping, so the grids read as designed rather than as plain lists. */
 
 import {
   Award,

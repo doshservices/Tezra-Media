@@ -20,14 +20,7 @@ import {
   SectionLabel,
 } from "./shared";
 
-/**
- * Clients & Partners (brief 12).
- *
- * The brief permits only organisations, logos and relationships TEZRA has
- * confirmed and has written permission to display, and brief 20 forbids implying
- * a client or partnership that has not been confirmed. The logo wall is
- * therefore built but empty — stock logos would be a fabricated claim.
- */
+/** Clients & Partners. The logo wall is built but empty until TEZRA confirm permission. */
 export function ClientsPartnersPage({ clients }: { clients: ClientLogo[] }) {
 
   const credibility = [

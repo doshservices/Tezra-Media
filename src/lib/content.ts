@@ -17,24 +17,7 @@ import type {
 
 export type * from "./types";
 
-/**
- * Reading content out of the CMS.
- *
- * Everything the public site shows comes through here, so three rules live in
- * one place rather than being remembered at each call site.
- *
- * 1. Published only. Payload's local API runs with overrideAccess on by default,
- *    which would happily hand drafts to the public site. Every query below
- *    filters on _status explicitly rather than relying on a user being absent.
- *
- * 2. A database problem must not take the site down. TEZRA has supplied no
- *    content yet, so every page already renders a considered empty state; if a
- *    query fails, returning nothing shows that same state instead of a 500.
- *    The error is logged so it is not silent.
- *
- * 3. Payload's shapes stay here. The page components keep the plain types they
- *    already had, so the CMS can be reshaped without touching the front end.
- */
+// Every CMS read. Published-only, failures fall back to empty states, Payload's shapes stop here.
 
 type Media =
   | {
@@ -60,24 +43,13 @@ const mediaAlt = (value: Media): string | undefined => {
   return undefined;
 };
 
-/**
- * The focal point, as a CSS object-position.
- *
- * Media has focalPoint turned on, so an editor can already drag the point that
- * must stay in frame — and until now nothing read it, which is why a portrait
- * cropped to a landscape card lost the top of someone's head. Payload stores
- * the point as percentages and defaults it to the middle, so an image nobody
- * has adjusted behaves exactly as it did before.
- */
+/** Focal point as a CSS object-position, so the crop can be set in the CMS. */
 const mediaFocus = (value: Media): string | undefined => {
   if (!value || typeof value !== "object") return undefined;
   const x = typeof value.focalX === "number" ? value.focalX : undefined;
   const y = typeof value.focalY === "number" ? value.focalY : undefined;
   if (x === undefined && y === undefined) return undefined;
-  // Dead centre is what Payload stores until somebody drags the point, so it
-  // means "not set" rather than "centre me". Returning nothing lets the card
-  // apply a default suited to what it is showing — faces sit high in a
-  // portrait — and a point that has actually been moved still wins.
+  // Payload stores 50/50 until somebody drags the point, so dead centre means "not set".
   if (x === 50 && y === 50) return undefined;
   return `${x ?? 50}% ${y ?? 50}%`;
 };
@@ -102,13 +74,7 @@ const imageRows = (value: unknown): { url: string; alt?: string }[] =>
 
 const PUBLISHED = { _status: { equals: "published" } } as const;
 
-/**
- * Next hands a route segment exactly as it appeared in the address bar, still
- * percent-encoded. A slug is stored decoded, so "/news/new%2Dbeach" has to be
- * turned back into "new-beach" before it will match anything. decodeURIComponent
- * throws on a malformed sequence, which a crawler or a mangled link can easily
- * produce, so a bad one falls through to the raw value and then to a 404.
- */
+/** Next gives the route segment still percent-encoded; slugs are stored decoded. */
 const decodeSlug = (slug: string): string => {
   try {
     return decodeURIComponent(slug);
@@ -117,11 +83,7 @@ const decodeSlug = (slug: string): string => {
   }
 };
 
-/**
- * Payload's generated document types have no index signature, so they cannot be
- * read field-by-field without this. Going through `unknown` is the escape hatch
- * TypeScript asks for; every field is guarded individually where it is read.
- */
+/** Payload's generated types have no index signature. Every field is guarded where read. */
 const asRecord = (doc: unknown) => doc as unknown as Record<string, unknown>;
 
 /** Runs a query, logging and swallowing a database failure. */
@@ -150,15 +112,7 @@ export const plainText = (state: unknown): string => {
   return parts.join(" ").replace(/\s+/g, " ").trim();
 };
 
-/**
- * "7 October 2026".
- *
- * Formatted here, on the server, rather than in the card that shows it. The
- * listing is a client component, and a date formatted in the browser depends on
- * the reader's locale and time zone, so the server and the client would render
- * different text and React would report a hydration mismatch. Fixing the locale
- * and the zone makes the output the same in both places.
- */
+/** "7 October 2026", formatted on the server so client and server agree. */
 export const formatDate = (iso: string): string => {
   if (!iso) return "";
   const date = new Date(iso);
@@ -178,10 +132,7 @@ export const readingTime = (state: unknown): string => {
   return `${Math.max(1, Math.round(words / 200))} min read`;
 };
 
-// ---------------------------------------------------------------------------
-// News
-// ---------------------------------------------------------------------------
-
+// ---- News ----
 type NewsDoc = Record<string, unknown>;
 
 const toArticle = (doc: NewsDoc): Article => ({
@@ -190,9 +141,7 @@ const toArticle = (doc: NewsDoc): Article => ({
   excerpt: typeof doc.summary === "string" ? doc.summary : "",
   category: typeof doc.category === "string" ? doc.category : "",
   format: typeof doc.format === "string" ? doc.format : "",
-  // The byline a reader sees. A typed byline wins, because that is the field
-  // for a guest contributor or a shared credit; otherwise it is the name on the
-  // account of whoever wrote it.
+  // A typed byline wins; otherwise it is the name on the account of whoever wrote it.
   author: (() => {
     if (typeof doc.byline === "string" && doc.byline.trim()) return doc.byline.trim();
     if (doc.author && typeof doc.author === "object" && "name" in doc.author) {
@@ -217,10 +166,7 @@ export const getArticles = async (
     async () => {
       const payload = await payloadClient();
 
-      // Narrowing happens in the query, not afterwards in the caller. Filtering
-      // a page of recent articles by category only finds a match when one
-      // happens to be recent, so an older story would show no related reading
-      // even with a dozen pieces in its section.
+      // Filter by category in the query, or an older story shows nothing beside it.
       const filters: Where[] = [PUBLISHED];
       if (options.featured) filters.push({ featured: { equals: true } });
       if (options.category) filters.push({ category: { equals: options.category } });
@@ -260,10 +206,7 @@ export const getArticle = async (slug: string) =>
     null,
   );
 
-// ---------------------------------------------------------------------------
-// Our Work
-// ---------------------------------------------------------------------------
-
+// ---- Our Work ----
 const toWorkItem = (doc: Record<string, unknown>): WorkItem => ({
   id: String(doc.id),
   title: typeof doc.title === "string" ? doc.title : "Untitled",
@@ -321,10 +264,7 @@ export const getProject = async (slug: string) =>
     null,
   );
 
-// ---------------------------------------------------------------------------
-// Arts
-// ---------------------------------------------------------------------------
-
+// ---- Arts ----
 const AVAILABILITY_LABELS: Record<string, string> = {
   enquire: "Available",
   sold: "Sold",
@@ -332,11 +272,7 @@ const AVAILABILITY_LABELS: Record<string, string> = {
   "on-loan": "On loan",
 };
 
-/**
- * Price, only when TEZRA has ticked "Show price publicly". Everything else is
- * "Price on request" — Draft 2 is enquiry-only, so a figure on the page is a
- * deliberate choice rather than a default.
- */
+/** Price only when "Show price publicly" is ticked; otherwise "Price on request". */
 const priceLabel = (doc: Record<string, unknown>): string => {
   if (doc.showPrice !== true || typeof doc.price !== "number") return "Price on request";
   const currency = typeof doc.currency === "string" ? doc.currency : "NGN";
@@ -413,10 +349,7 @@ export const getArtwork = async (slug: string) =>
     null,
   );
 
-// ---------------------------------------------------------------------------
-// Leadership and clients
-// ---------------------------------------------------------------------------
-
+// ---- Leadership and clients ----
 export const getLeadership = async () =>
   safely(
     "getLeadership",
@@ -446,11 +379,7 @@ export const getLeadership = async () =>
     [] as Leader[],
   );
 
-/**
- * Only logos TEZRA has confirmed permission to display. The CMS already refuses
- * to publish one without that tick; this is the second lock, so a record that
- * somehow reached published without it still never reaches a visitor.
- */
+/** Second lock on logo permission, in case one reached published without the tick. */
 export const getClients = async () =>
   safely(
     "getClients",
@@ -477,21 +406,14 @@ export const getClients = async () =>
     [] as ClientLogo[],
   );
 
-// ---------------------------------------------------------------------------
-// Site settings
-// ---------------------------------------------------------------------------
-
+// ---- Site settings ----
 const EMPTY_SETTINGS: Settings = {
   socialAccounts: [],
   hasPrivacyPolicy: false,
   hasTermsOfUse: false,
 };
 
-/**
- * Whatever TEZRA has typed into Site settings. Anything left blank falls back to
- * content/tezra.ts at the call site, so the site renders correctly before anyone
- * has opened the admin panel.
- */
+/** Site settings as TEZRA typed them; blanks fall back to content/tezra.ts. */
 export const getSettings = async () =>
   safely(
     "getSettings",

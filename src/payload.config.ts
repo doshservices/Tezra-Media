@@ -17,21 +17,7 @@ import { SiteSettings } from "@/payload/globals/SiteSettings";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
-/**
- * Payload CMS configuration — the content manager TEZRA asked for.
- *
- * Postgres rather than Mongo or SQLite: it is the adapter that survives a move
- * to any host, including serverless, and the hosting decision is still open.
- *
- * Two roles, as specified (feedback 1.8). Administrators publish; editors write
- * and save drafts. That is enforced in collections/access.ts, in the publish
- * field's access rule and in the drafts setting on every content collection —
- * not just hidden in the admin UI.
- *
- * Nothing is seeded. Articles, projects, artworks, clients and leadership are
- * all still to be provided by TEZRA, and inventing any of them is explicitly
- * ruled out (feedback 4). The collections are ready to receive them.
- */
+/** Payload CMS. Postgres, two roles, nothing seeded. */
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -39,24 +25,19 @@ export default buildConfig({
       baseDir: dirname,
     },
     meta: {
-      // No leading space — Payload already puts one between the page name and
-      // the suffix, and a second one shows in the browser tab.
+      // No leading space — Payload already puts one before the suffix.
       titleSuffix: `— ${brand.name} CMS`,
-      // Without this the panel keeps Payload's own favicon: the (frontend)
-      // route group's icon never applies under /admin.
+      // Without this the panel keeps Payload's favicon; the (frontend) icon never applies.
       icons: [
         { rel: "icon", type: "image/png", url: "/brand/tezra-mark-192.png" },
         { rel: "apple-touch-icon", type: "image/png", url: "/brand/tezra-mark-512.png" },
       ],
     },
-    // Payload's default header avatar is a generic silhouette. This renders the
-    // same initials as the sidebar block so the two agree.
+    // Payload's default header avatar is a silhouette; this matches the sidebar block.
     avatar: { Component: "/components/payload/AccountAvatar.tsx#AccountAvatar" },
     components: {
       graphics: {
-        // Path strings rather than imports — Payload resolves them through the
-        // generated import map, so re-run `npm run payload:importmap` whenever
-        // these change.
+        // Path strings — re-run `npm run payload:importmap` whenever these change.
         Logo: "/components/payload/Logo.tsx#Logo",
         Icon: "/components/payload/Icon.tsx#Icon",
       },
@@ -81,7 +62,6 @@ export default buildConfig({
     pool: { connectionString: process.env.DATABASE_URI ?? "" },
   }),
   sharp,
-  // The uploads directory is served by Next from /public, so nothing extra is
-  // needed to deliver the images TEZRA adds through the admin panel.
+  // Next serves /public, so nothing extra is needed to deliver uploaded images.
   upload: { limits: { fileSize: 15_000_000 } },
 })

@@ -8,11 +8,7 @@ export const metadata: Metadata = {
     "The people behind TEZRA — founder, managing director and the leadership of the group.",
 };
 
-/**
- * Re-read at most once a minute, so publishing in the content manager shows on
- * the site without a redeploy. Content changes rarely; a visitor should not pay
- * a database round trip for it.
- */
+/** Re-read once a minute, so publishing shows on the site without a redeploy. */
 export const revalidate = 60;
 
 export default async function Page() {

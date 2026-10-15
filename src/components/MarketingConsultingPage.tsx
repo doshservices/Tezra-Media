@@ -23,14 +23,7 @@ import {
   SectionLabel,
 } from "./shared";
 
-/**
- * Tezra Marketing and Consulting (brief 10).
- *
- * In Draft 1 this was a tab inside a Services page called "Marketing &
- * Consultation". The brief promotes it to a full vertical and asks that it read
- * as strategic intelligence and premium brand development rather than a generic
- * list of marketing services.
- */
+/** Tezra Marketing and Consulting. Promoted from a Services tab to a full vertical. */
 export function MarketingConsultingPage() {
   const vertical = getVertical("marketing-consulting")!;
 

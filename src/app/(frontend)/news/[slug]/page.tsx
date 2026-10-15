@@ -6,10 +6,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { getArticle, getArticles } from "@/lib/content";
 import { contactLink } from "@/content/tezra";
 import { RichText } from "@/components/RichText";
-// Tokens come straight from tokens.ts. shared.tsx is a client component,
-// so a server component importing a value from it gets a reference rather
-// than the string, and any template literal built from one — `1px solid
-// ${BORDER}` — stringifies the reference instead of the colour.
+// Tokens from tokens.ts — shared.tsx is a client component, so its values arrive as references.
 import {
   BORDER,
   FONT_BODY,
@@ -19,22 +16,7 @@ import {
 } from "@/components/tokens";
 import { Photo, PrimaryButton, Section, SectionHeading } from "@/components/shared";
 
-/**
- * A single Tezra News article.
- *
- * Laid out the way a news site lays out a story rather than the way the rest of
- * this site lays out a page: no masthead, the piece itself in the middle, and
- * the rest of the newsroom either side of it. A reader who has come in from a
- * search result lands on one article, and the columns beside it are what gives
- * them somewhere to go next.
- *
- * The two rails are not decoration — they only appear when there is something
- * to put in them, so a newsroom with four articles in it does not show three
- * empty columns.
- *
- * Published articles are prerendered at build and anything added later renders
- * on first request, so TEZRA never waits for a deploy to see a new piece live.
- */
+/** A single Tezra News article. Rails only appear when there is something to put in them. */
 
 export const revalidate = 60;
 
@@ -70,22 +52,17 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const { slug } = await params;
   const article = await getArticle(slug);
 
-  // A slug that does not resolve is a 404, not an empty page. That matters for
-  // an article that was unpublished after being shared.
+  // An unresolved slug is a 404, not an empty page — it may have been unpublished after sharing.
   if (!article) notFound();
 
-  // Same subject to the right, where the pictures are; everything else to the
-  // left as a plain list. The category is asked for in the query rather than
-  // filtered out of a page of recent articles, or an older story would show
-  // nothing beside it however much has been written in its section.
+  // Same section to the right, everything else to the left.
   const [sameCategory, recent] = await Promise.all([
     getArticles({ category: article.category, limit: 5 }),
     getArticles({ limit: 10 }),
   ]);
 
   const related = sameCategory.filter((other) => other.slug !== article.slug).slice(0, 4);
-  // Split rather than duplicated, so the same headline never appears in both
-  // columns.
+  // Split, so the same headline never appears in both columns.
   const latest = recent
     .filter((other) => other.slug !== article.slug)
     .filter((other) => !related.some((item) => item.id === other.id))
@@ -93,9 +70,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
   const stamp = [article.publishedLabel, article.readingTime].filter(Boolean).join("  ·  ");
 
-  // Which columns the grid actually needs. A newsroom with one article in it
-  // should show that article centred, not stranded in the middle track with an
-  // empty 260px gutter either side of it.
+  // One article should sit centred, not stranded between two empty gutters.
   const rails =
     latest.length > 0 && related.length > 0
       ? "both"
@@ -183,17 +158,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           )}
 
           <article className="news-detail__main">
-            {/*
-              Picture first, then the section, then the headline — the order a
-              news site runs them in, and the order in the reference TEZRA sent.
-            */}
-            {/*
-              No credit line under the lead picture and no category label above
-              the headline: TEZRA asked for both off this page. The credit is
-              still recorded in Media and still prints under a picture placed
-              inside the body, and the category still labels the cards in the
-              rail and on the News listing.
-            */}
+            {/* Picture, section, headline — the order in the reference TEZRA sent. */}
+            {/* TEZRA asked for the credit and category off this page; both still show elsewhere. */}
             {article.image && (
               <div style={{ marginBottom: "20px" }}>
                 <Photo
@@ -233,14 +199,12 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               </p>
             )}
 
-            {/* A rule under the standfirst, with nothing on it — the byline and
-                the date both sit at the foot now. */}
+            {/* Byline and date both sit at the foot now, so this rule carries nothing. */}
             <div style={{ marginBottom: "32px", borderBottom: `1px solid ${BORDER}` }} />
 
             <RichText data={article.body} />
 
-            {/* The byline closes the piece rather than opening it, with the date
-                alongside it on the right. */}
+            {/* Byline closes the piece, date alongside it. */}
             {(article.author || stamp) && (
               <div
                 style={{
@@ -352,16 +316,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       </Section>
 
       <style>{`
-        /*
-          Three columns on a wide screen: the list, the story, the pictures.
-          The middle track is minmax(0, 1fr) rather than 1fr because a 1fr track
-          refuses to shrink below its content, and one long unbroken word in a
-          headline would push the rails off the screen.
-
-          The template follows what there is to show. Until TEZRA has published
-          enough for the rails to hold anything, the article is simply centred
-          at a reading width, which is also what every narrow screen gets.
-        */
+        /* minmax(0, 1fr): a 1fr track will not shrink below its content and would push the rails off. */
         .news-detail {
           display: grid;
           gap: 0 28px;
@@ -370,12 +325,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
         .news-detail[data-rails="both"] { grid-template-columns: 260px minmax(0, 1fr) 300px; }
 
-        /*
-          With only one rail, the article is capped rather than given every
-          pixel the rail is not using: a column that wide runs to well over a
-          hundred characters a line. The pair is centred as a block so the space
-          falls either side of the spread instead of all on one edge.
-        */
+        /* Capped and centred — the full remaining width runs past a hundred characters a line. */
         .news-detail[data-rails="left"] {
           grid-template-columns: 260px minmax(0, 840px);
           justify-content: center;
@@ -394,12 +344,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         /* The left-hand list stays put while the story scrolls past it. */
         .news-rail--left { position: sticky; top: 96px; }
 
-        /*
-          The rules between the columns hang off the middle column, not off the
-          rails. A rail is only as tall as the few headlines in it, so a border
-          on the rail stops a third of the way down the page and reads as an
-          unfinished line; the article is the full height of the spread.
-        */
+        /* Rules hang off the article, which is full height; a rail stops a third of the way down. */
         .news-detail[data-rails="both"] .news-detail__main {
           padding: 0 36px;
           border-left: 1px solid ${BORDER};
@@ -416,12 +361,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           border-right: 1px solid ${BORDER};
         }
 
-        /*
-          The story is still the point when the rails will not fit beside it, so
-          they drop below it rather than disappearing. Done with order rather
-          than by reordering the markup: the source order is the one a screen
-          reader and a crawler should get, and that is the article first.
-        */
+        /* order, not source order — a screen reader and a crawler should still get the article first. */
         @media (max-width: 1240px) {
           .news-detail[data-rails="both"] { grid-template-columns: minmax(0, 1fr) 300px; }
           .news-detail[data-rails="left"] {
@@ -471,13 +411,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   );
 }
 
-/**
- * The small capitalised heading above each rail.
- *
- * Takes a string rather than children: the right-hand one is built from the
- * category, and uppercasing a ReactNode would run it through toString and join
- * the pieces with a comma.
- */
+/** Rail heading. Takes a string, not children, so uppercasing cannot comma-join the pieces. */
 function RailHeading({ text }: { text: string }) {
   return (
     <h2

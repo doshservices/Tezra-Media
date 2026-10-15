@@ -1,11 +1,6 @@
 import React from "react";
 
-/**
- * One line under the lockup on the sign-in screen.
- *
- * Someone arriving at /admin from a link in an email should be able to tell what
- * they are signing in to before they type a password.
- */
+/** One line on the sign-in screen, so you can tell what you are signing in to. */
 export const BeforeLogin: React.FC = () => (
   <p className="tz-login-note">Content manager for the TEZRA website</p>
 );

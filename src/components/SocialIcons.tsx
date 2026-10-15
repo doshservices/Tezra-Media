@@ -1,14 +1,6 @@
 import type { SocialPlatform } from "@/content/tezra";
 
-/**
- * Social marks.
- *
- * lucide-react no longer ships brand icons, and rather than add a second icon
- * dependency for four glyphs these are drawn here as plain geometry — a rounded
- * square and a circle for Instagram, letterforms for the rest. They inherit
- * currentColor, so one component works on both the dark footer and the navy
- * contact panel.
- */
+/** Social marks, drawn here rather than pulling in a second icon dependency. */
 
 type Props = { size?: number };
 
@@ -31,13 +23,7 @@ function X({ size = 18 }: Props) {
   );
 }
 
-/**
- * LinkedIn, as the actual mark rather than an approximation of it.
- *
- * The others on this page are drawn as plain geometry, but a social link is
- * only useful if it is recognised at a glance, and a stroked rectangle with an
- * "i" and an "n" suggested in it is not recognised. This is the real glyph.
- */
+/** The real LinkedIn glyph — a social link only works if it is recognised at a glance. */
 function LinkedIn({ size = 18 }: Props) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -94,11 +80,7 @@ const NAMES: Record<SocialPlatform, string> = {
 
 const isKnown = (value: string): value is SocialPlatform => value in marks;
 
-/**
- * The platform comes from the content manager as free-form text, so an entry
- * TEZRA adds for a service with no mark here still renders — a link with a
- * generic glyph, rather than a crash or a blank space.
- */
+/** An unknown platform still renders, with a generic glyph rather than a crash. */
 export function SocialMark({ platform, size = 18 }: { platform: string; size?: number }) {
   if (!isKnown(platform)) return <Globe size={size} />;
   const Mark = marks[platform];

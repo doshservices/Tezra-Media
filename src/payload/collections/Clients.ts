@@ -3,14 +3,7 @@ import type { CollectionConfig } from "payload";
 import { canEdit, isAdmin, isSignedIn, publishedOrSignedIn } from "../access";
 import { restrictPublishToAdmin, slugField } from "../fields";
 
-/**
- * Clients and partners.
- *
- * TEZRA must supply approved logos *and* permission to display them
- * (feedback 2). Permission is therefore a required checkbox and publishing is
- * blocked without it — displaying a logo without permission is a legal problem,
- * not a content one.
- */
+/** Clients and partners. Permission is required, and publishing is blocked without it. */
 export const Clients: CollectionConfig = {
   slug: "clients",
   labels: { singular: "Client or partner", plural: "Clients and partners" },

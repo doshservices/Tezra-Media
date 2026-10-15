@@ -32,19 +32,7 @@ import {
   SectionLabel,
 } from "./shared";
 
-/**
- * Tezra News (brief 8).
- *
- * Draft 1 built News around four business sectors — Financial Services, Power &
- * Energy, Treasury and Renewable Energy. The brief replaces that with a general
- * global news platform, so the old sectors and every article written against
- * them have been removed.
- *
- * Articles come from the content manager. The filtering runs client-side over
- * the published set, which is the right trade while TEZRA News is a reading list
- * rather than an archive — no round trip per filter click. Brief 8 forbids
- * article counts and publication statistics, so none are shown.
- */
+/** Tezra News. A general news platform, replacing Draft 1's four business sectors. */
 
 export function NewsPage({ articles }: { articles: Article[] }) {
   const vertical = getVertical("news")!;
@@ -144,12 +132,7 @@ export function NewsPage({ articles }: { articles: Article[] }) {
                   {article.excerpt}
                 </p>
                 <div style={{ fontFamily: FONT_BODY, fontSize: "12px", color: "#888899", borderTop: `1px solid ${BORDER}`, paddingTop: "12px" }}>
-                  {/*
-                    Joined rather than interpolated with separators between: an
-                    article with no byline yet, or one too short to have a
-                    reading time, would otherwise show a stray "·" with nothing
-                    on one side of it.
-                  */}
+                  {/* Joined, so a missing byline or reading time leaves no stray separator. */}
                   {[article.author, article.publishedLabel, article.readingTime]
                     .filter(Boolean)
                     .join("  ·  ")}

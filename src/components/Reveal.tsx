@@ -2,22 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
-/**
- * Scroll-reveal primitives.
- *
- * Deliberately CSS-driven rather than a motion library: the site is static
- * editorial content, so an IntersectionObserver toggling one class is enough and
- * costs no dependency, no bundle weight and no hydration complexity.
- *
- * The actual transitions live in styles/globals.css under .reveal / .reveal-group
- * so grid children animate without being wrapped in extra elements, which would
- * break the grid.
- *
- * Accessibility and robustness:
- *   - prefers-reduced-motion skips the animation entirely and shows content.
- *   - A <noscript> rule in the layout forces everything visible without JS, so
- *     the page is never blank for a crawler or a reader with JS disabled.
- */
+/** Scroll reveal. One IntersectionObserver and a class; transitions live in globals.css. */
 
 function useInView<T extends HTMLElement>(threshold = 0.12) {
   const ref = useRef<T>(null);
@@ -85,10 +70,7 @@ export function Reveal({
   );
 }
 
-/**
- * Reveals direct children in sequence. Put this class on a grid or flex
- * container and its items stagger in without extra wrapper elements.
- */
+/** Staggers direct children. Put it on a grid or flex container. */
 export function RevealGroup({
   children,
   style,

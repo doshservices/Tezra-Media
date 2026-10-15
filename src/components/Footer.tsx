@@ -6,26 +6,9 @@ import type { Settings } from "@/lib/types";
 import { SocialMark, platformName } from "./SocialIcons";
 import { FONT_BODY, FONT_HEADING } from "./shared";
 
-/**
- * Footer, following the structure in brief 14: Company, Our Platforms, Connect
- * and Legal, with Tezra Limited used for the copyright line.
- *
- * Email and phone are the details TEZRA confirmed (feedback 2 and 5) and are
- * rendered as mailto: and tel: links. The physical address is still outstanding,
- * so that line simply does not appear.
- *
- * Social icons render from socialLinks. TEZRA confirmed four handles but not the
- * platforms they belong to, so the array is still empty and the row is hidden —
- * an icon pointing at a guessed URL is a dead link, which feedback 4 rules out.
- * Filling socialLinks turns the row on with no change here.
- *
- * The Legal column is still absent. Privacy Policy and Terms of Use need real,
- * approved wording (still to be provided); publishing an empty policy page is
- * worse than not linking to one. The column returns with the text.
- */
+/** Footer. Address, socials and Legal each appear only once TEZRA supply them. */
 export function Footer({ settings }: { settings: Settings }) {
-  // Site settings win where TEZRA has filled them in; the confirmed values in
-  // content/tezra.ts stand in before anyone has opened the admin panel.
+  // Site settings win; content/tezra.ts stands in before anyone opens the admin panel.
   const email = settings.email ?? contact.email;
   const phone = settings.phone ?? contact.phone;
   const address = settings.address ?? contact.address;
@@ -57,8 +40,7 @@ export function Footer({ settings }: { settings: Settings }) {
       <div className="pad-section" style={{ maxWidth: "1440px", margin: "0 auto", padding: "64px 40px 0" }}>
         <div
           className="footer-links-grid"
-          // Connect gets the extra width: business.development@tezragroup.com is
-          // long enough to break mid-word in a narrower column.
+          // Connect gets the extra width — the email address breaks mid-word in a narrower column.
           style={{ display: "grid", gridTemplateColumns: "1.8fr 1fr 1.4fr 1.35fr", gap: "40px", marginBottom: "48px" }}
         >
           {/* Master brand */}

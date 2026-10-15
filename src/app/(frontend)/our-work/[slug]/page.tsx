@@ -6,10 +6,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { getProject, getProjects } from "@/lib/content";
 import { getVertical } from "@/content/tezra";
 import { RichText } from "@/components/RichText";
-// Tokens come straight from tokens.ts. shared.tsx is a client component,
-// so a server component importing a value from it gets a reference rather
-// than the string, and any template literal built from one — `1px solid
-// ${BORDER}` — stringifies the reference instead of the colour.
+// Tokens from tokens.ts — shared.tsx is a client component, so its values arrive as references.
 import {
   ARTICLE_WIDTH,
   BODY_TEXT,
@@ -29,16 +26,7 @@ import {
   SectionLabel,
 } from "@/components/shared";
 
-/**
- * A single project in Our Work.
- *
- * The listing already links here, so this existing is what stops every card
- * 404ing the moment TEZRA publishes their first project.
- *
- * A client is named only where one is recorded, and the CMS refuses to publish a
- * project at all until it is marked verified — so nothing unconfirmed reaches
- * this page.
- */
+/** One project. The CMS will not publish one until it is marked verified. */
 
 export const revalidate = 60;
 

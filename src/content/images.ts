@@ -1,18 +1,4 @@
-/**
- * Image library.
- *
- * These are the images Draft 1 used and TEZRA reviewed, kept so Draft 2 holds
- * the look that was approved. Brief 18 permits stock imagery "where necessary,
- * provided it supports the intended positioning and does not create a misleading
- * impression about TEZRA's actual work, people, clients or projects."
- *
- * So the rule applied across the site is:
- *   - Atmosphere, heroes and section backgrounds   → stock is fine, used here.
- *   - "This is our work / our people / our clients" → no stock, ever. Those
- *     slots stay empty until TEZRA supplies real material.
- *
- * Every entry is a single swap away from TEZRA's own photography.
- */
+/** Stock for atmosphere and backgrounds only. Never for TEZRA's own work, people or clients. */
 
 /** Local assets already in public/Assets. */
 export const localImages = {
@@ -38,10 +24,7 @@ export const images = {
   heroLeadership: unsplash("photo-1568992687947-868a62a9f521", 1600),
   heroClients: unsplash("photo-1497366754035-f200968a6e72", 1600),
 
-  /**
-   * Editorial supporting imagery. The arts entries are gallery and exhibition
-   * scenes — never presented as a TEZRA artwork, which is what ContentSlot marks.
-   */
+  /** Editorial imagery. Arts entries are gallery scenes, never shown as a TEZRA artwork. */
   /** Used beside "What Is TEZRA" on the homepage and About page. */
   ecosystem: unsplash("photo-1589156280159-27698a70f29e", 1200),
   newsroom: unsplash("photo-1588011930968-eadac80e6a5a", 1200),

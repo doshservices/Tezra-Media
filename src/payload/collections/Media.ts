@@ -1,16 +1,7 @@
 import type { CollectionConfig } from "payload";
 import { canEdit, isAdmin, isSignedIn } from "../access";
 
-/**
- * Uploaded images.
- *
- * Alt text is required, not optional. Every photograph on this site sits behind
- * an accessibility requirement and a search-engine one, and a required field is
- * the only reliable way to get it filled in.
- *
- * The size list matches how images are actually used on the site, so the CMS
- * produces the same set the front end already requests.
- */
+/** Uploaded images. Alt text is required; the sizes match how the site actually uses them. */
 export const Media: CollectionConfig = {
   slug: "media",
   admin: { group: "Content" },

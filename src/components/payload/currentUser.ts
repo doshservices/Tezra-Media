@@ -2,14 +2,7 @@ import { headers as nextHeaders } from "next/headers";
 import { getPayload } from "payload";
 import config from "@payload-config";
 
-/**
- * Who is signed in, in the shape the sidebar and the header avatar both need.
- * Shared so the two cannot disagree.
- *
- * Unlike most admin panels, the role is shown rather than hidden. Here it is not
- * an internal permission detail — it is the difference between being able to
- * publish and not, so it belongs where the person can see it.
- */
+/** Who is signed in. Shared so the sidebar and header avatar cannot disagree. */
 export type CurrentUser = {
   /** Display name, falling back to the email when none is set. */
   name: string;
@@ -34,8 +27,7 @@ export const getCurrentUser = async (): Promise<CurrentUser | null> => {
   const name = typeof user.name === "string" && user.name ? user.name : user.email;
   const role = typeof user.role === "string" ? user.role : "";
 
-  // Two words give two letters, one gives one. Splitting on @ and . means an
-  // email standing in for a missing name still yields something sensible.
+  // Splitting on @ and . means an email standing in for a missing name still gives initials.
   const initials = name
     .split(/[\s@.]+/)
     .filter(Boolean)

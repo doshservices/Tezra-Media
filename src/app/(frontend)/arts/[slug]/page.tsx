@@ -6,10 +6,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { getArtwork, getArtworks } from "@/lib/content";
 import { contactLink } from "@/content/tezra";
 import { RichText } from "@/components/RichText";
-// Tokens come straight from tokens.ts. shared.tsx is a client component,
-// so a server component importing a value from it gets a reference rather
-// than the string, and any template literal built from one — `1px solid
-// ${BORDER}` — stringifies the reference instead of the colour.
+// Tokens from tokens.ts — shared.tsx is a client component, so its values arrive as references.
 import {
   BODY_TEXT,
   BORDER,
@@ -28,17 +25,7 @@ import {
   SectionLabel,
 } from "@/components/shared";
 
-/**
- * A single work in the Tezra Arts catalogue.
- *
- * The page exists so one work can be sent to a buyer as a direct link, which is
- * what the brief asked for. Both calls to action carry the work's title into the
- * contact form, so an enquiry arrives knowing which piece it is about.
- *
- * Enquiry only — Draft 2 takes no payments, which is what TEZRA confirmed. A
- * price appears only where they have ticked "Show price publicly"; everything
- * else reads "Price on request".
- */
+/** One artwork, so a single piece can be sent to a buyer as a link. Enquiry only. */
 
 export const revalidate = 60;
 

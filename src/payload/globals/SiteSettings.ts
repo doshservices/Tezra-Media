@@ -1,20 +1,7 @@
 import type { GlobalConfig } from "payload";
 import { isAdmin } from "../access";
 
-/**
- * Site settings.
- *
- * This exists so the items TEZRA still owes us stop being code edits. The
- * physical address, social platforms, leadership of the group and legal wording
- * are all outstanding; once they arrive someone types them in here rather than
- * waiting on a developer and a deployment.
- *
- * Settings are administrator-only. They affect every page, which is not an
- * editor's remit under the roles TEZRA specified (feedback 1.8).
- *
- * Confirmed values sit in content/tezra.ts as the fallback, so the site renders
- * correctly before anyone has opened the admin panel.
- */
+/** Site settings, so the outstanding TEZRA details stop being code edits. Administrators only. */
 export const SiteSettings: GlobalConfig = {
   slug: "settings",
   label: "Site settings",

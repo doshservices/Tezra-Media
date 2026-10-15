@@ -4,16 +4,7 @@ import { bodyEditor } from "../editor";
 import { canEdit, isAdmin, isSignedIn, publishedOrSignedIn } from "../access";
 import { restrictPublishToAdmin, seoFields, slugField } from "../fields";
 
-/**
- * Tezra News articles.
- *
- * Categories and formats are the exact lists TEZRA supplied, held in
- * content/tezra.ts and read from there so the CMS and the front-end filters can
- * never drift apart.
- *
- * Nothing is seeded. The initial approved articles are still to be provided, and
- * inventing articles is explicitly ruled out (feedback 4).
- */
+/** News articles. Categories and formats read from content/tezra.ts so they cannot drift. */
 export const News: CollectionConfig = {
   slug: "news",
   labels: { singular: "News article", plural: "News articles" },

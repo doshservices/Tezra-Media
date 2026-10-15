@@ -1,10 +1,7 @@
 import { HomePage } from "@/components/HomePage";
 import { getArticles, getArtworks, getClients, getProjects } from "@/lib/content";
 
-/**
- * The homepage shows what TEZRA has ticked as Featured, so they control what
- * leads rather than it being whatever happens to be newest.
- */
+/** The homepage leads on what TEZRA tick as Featured, not on whatever is newest. */
 export const revalidate = 60;
 
 export default async function Page() {

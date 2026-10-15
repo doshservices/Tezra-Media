@@ -2,16 +2,7 @@ import type { MetadataRoute } from "next";
 import { isLaunched, routes, siteUrl } from "@/lib/site";
 import { getArticles, getArtworks, getProjects } from "@/lib/content";
 
-/**
- * /sitemap.xml
- *
- * Empty until launch, so nothing invites a crawler in while the site is meant to
- * stay hidden.
- *
- * After launch it lists the fixed pages plus every published article, artwork
- * and project, read from the content manager — so a new article is in the
- * sitemap as soon as it is live, without anyone remembering to add it.
- */
+/** sitemap.xml — empty until launch, then every published article, artwork and project. */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!isLaunched) return [];
 

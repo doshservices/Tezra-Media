@@ -28,18 +28,7 @@ import {
   SectionLabel,
 } from "./shared";
 
-/**
- * Homepage.
- *
- * Follows the recommended flow in brief 4, in order:
- *   Hero → What Is TEZRA → What We Believe → The TEZRA Ecosystem →
- *   Selected Work → Latest from TEZRA → Tezra Arts → Clients & Partners →
- *   Final CTA
- *
- * Photography-forward, as Draft 1 was. Stock carries atmosphere and section
- * imagery, which brief 18 allows; it is never used to stand in for TEZRA's own
- * work, people or clients.
- */
+/** Homepage. Section order from brief 4. Stock carries atmosphere, never TEZRA's own work. */
 type HomePageProps = {
   /** Articles, projects and artworks TEZRA has ticked as Featured. */
   articles: Article[];
@@ -72,11 +61,7 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
             backgroundColor: NAVY,
           }}
         >
-          {/*
-            The hero photograph is the page's largest paint, so it goes through
-            next/image with priority rather than being a CSS background the
-            optimiser cannot resize or re-encode.
-          */}
+          {/* Largest paint on the page, so next/image with priority rather than a CSS background. */}
           <Image
             src={images.heroHome}
             alt=""
@@ -96,12 +81,7 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
           <div className="hero-rise" style={{ position: "relative", zIndex: 1, maxWidth: "1440px", margin: "0 auto", width: "100%" }}>
             <SectionLabel text={brand.name} tone="light" />
 
-            {/*
-              Two lines, always. The explicit break sets them; no maxWidth, so
-              "Connected to the world." is never forced to wrap into a third.
-              The clamp floor keeps it to two lines down to ~360px wide; below
-              that it wraps rather than overflowing the viewport.
-            */}
+            {/* Two lines, always — the explicit break sets them and the clamp floor holds to ~360px. */}
             <h1
               className="home-hero-headline"
               style={{

@@ -5,15 +5,7 @@ import { canEdit, isAdmin, isSignedIn, publishedOrSignedIn } from "../access";
 import { restrictPublishToAdmin, seoFields, slugField } from "../fields";
 import { bodyEditor } from "../editor";
 
-/**
- * Our Work — projects and case studies.
- *
- * The "verified" checkbox is not bureaucracy. TEZRA was explicit that invented
- * projects, case studies and unverified client relationships must not appear
- * (feedback 4), and that results and statistics must be confirmed as accurate.
- * Publishing is blocked until someone ticks it, so the rule is enforced by the
- * CMS rather than remembered.
- */
+/** Our Work. Publishing is blocked until verified is ticked, so the rule is enforced not remembered. */
 export const Projects: CollectionConfig = {
   slug: "projects",
   labels: { singular: "Project", plural: "Projects" },

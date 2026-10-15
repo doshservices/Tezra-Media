@@ -1,16 +1,9 @@
 import { APIError } from "payload";
 import type { CollectionBeforeChangeHook, Field } from "payload";
 
-/**
- * Field groups reused across collections.
- */
+/** Field groups reused across collections. */
 
-/**
- * Turns any text into something safe to put in a URL.
- *
- * Lower case, words joined by single hyphens, nothing that a browser would have
- * to percent-encode. "Lagos New Beach " becomes "lagos-new-beach".
- */
+/** Turns any text into a URL-safe slug. "Lagos New Beach " becomes "lagos-new-beach". */
 export const slugify = (input: string): string =>
   input
     .normalize("NFKD")
@@ -37,10 +30,7 @@ export const slugField = (from = "title"): Field => ({
   hooks: {
     beforeValidate: [
       ({ value, data }) => {
-        // Normalise whatever is in the box, not only an empty one. A slug typed
-        // as "New Beach" would otherwise sit in the database with a space in
-        // it, and every link to the article would arrive percent-encoded and
-        // match nothing.
+        // Normalise whatever is typed, or a slug with a space in it matches nothing.
         if (typeof value === "string" && value.trim()) return slugify(value);
         const source = (data as Record<string, unknown> | undefined)?.[from];
         if (typeof source !== "string") return value;
@@ -50,17 +40,7 @@ export const slugField = (from = "title"): Field => ({
   },
 });
 
-/**
- * Publishing is administrator-only (feedback 1.8).
- *
- * Payload creates the draft/published field itself when versions.drafts is on,
- * so this is a hook rather than a field: it refuses the change server-side,
- * which holds for the REST and GraphQL APIs too, not only the admin screen.
- *
- * Paired with canEdit in access.ts, which stops an editor touching a document
- * that is already published — otherwise "cannot publish" would be trivially
- * avoidable by editing something already live.
- */
+/** Publishing is administrator-only, refused server-side so REST and GraphQL are covered too. */
 export const restrictPublishToAdmin: CollectionBeforeChangeHook = ({
   data,
   req,
@@ -73,8 +53,7 @@ export const restrictPublishToAdmin: CollectionBeforeChangeHook = ({
   const nowPublished = data?._status === "published";
 
   if (nowPublished && !wasPublished) {
-    // APIError rather than Error: a plain Error surfaces as "Something went
-    // wrong", which tells the editor nothing about why the save was refused.
+    // APIError, not Error — a plain Error surfaces as "Something went wrong".
     throw new APIError(
       "Only an administrator can publish. Save this as a draft and ask an administrator to publish it.",
       403,

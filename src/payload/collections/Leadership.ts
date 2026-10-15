@@ -2,13 +2,7 @@ import type { CollectionConfig } from "payload";
 import { canEdit, isAdmin, isSignedIn, publishedOrSignedIn } from "../access";
 import { restrictPublishToAdmin } from "../fields";
 
-/**
- * Leadership team.
- *
- * Reached through About rather than from the main navigation (feedback 1.2).
- * Names, positions, biographies and photographs are all still to be provided,
- * so nothing is seeded — invented people are explicitly ruled out (feedback 4).
- */
+/** Leadership, reached through About. Nothing seeded — invented people are ruled out. */
 export const Leadership: CollectionConfig = {
   slug: "leadership",
   labels: { singular: "Leader", plural: "Leadership" },

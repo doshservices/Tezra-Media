@@ -25,21 +25,7 @@ import {
 } from "./shared";
 import { SocialMark, platformName } from "./SocialIcons";
 
-/**
- * Work With TEZRA / Contact (brief 13).
- *
- * Carries the visitor's context into the form: a button elsewhere on the site
- * links to /contact?enquiry=art-acquisition (optionally with &subject=), and the
- * matching category arrives already selected.
- *
- * TEZRA confirmed the destination inbox (feedback 1.7), so the form is wired to
- * deliver for real. Sending goes through EmailJS from the browser, which needs
- * no server route and no secret on our side.
- *
- * Until the three EmailJS keys are set, submitting says plainly that it could
- * not send and offers the business development address — rather than showing a
- * success message for a message that went nowhere.
- */
+/** Contact. ?enquiry= and ?subject= preselect the category. Sends via EmailJS from the browser. */
 export function ContactPage() {
   const [form, setForm] = useState({
     name: "",
@@ -51,13 +37,7 @@ export function ContactPage() {
   });
   const [enquiry, setEnquiry] = useState<string>("general");
 
-  /*
-    Read ?enquiry= and ?subject= after mount rather than with useSearchParams.
-    useSearchParams opts the whole route out of prerendering, which left this
-    page with no content in the static HTML at all — nothing for a crawler and a
-    blank first paint. The preselected category is an enhancement, not content,
-    so it is applied on mount and the page itself renders on the server.
-  */
+  /* After mount, not useSearchParams — that opts the whole route out of prerendering. */
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
