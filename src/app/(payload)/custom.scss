@@ -211,7 +211,7 @@ html[data-theme='dark'] .nav__link:has(.nav__link-indicator) {
 .tz-nav-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 7px;
   height: 68px;
   flex: 0 0 auto;
   text-decoration: none;
@@ -238,30 +238,38 @@ html[data-theme='dark'] .tz-nav-header {
   border-block-end-color: var(--theme-elevation-150);
 }
 
-.tz-nav-mark {
+// The mark swaps to its reversed artwork on the dark theme, where navy on near-black disappears.
+.tz-mark {
   display: block;
   width: auto;
-  height: 30px;
 }
 
-.tz-nav-word {
-  display: block;
-  width: auto;
-  height: 19px;
-}
-
-.tz-nav-word--dark {
+.tz-mark--dark {
   display: none;
 }
 
 html[data-theme='dark'] {
-  .tz-nav-word--light {
+  .tz-mark--light {
     display: none;
   }
 
-  .tz-nav-word--dark {
+  .tz-mark--dark {
     display: block;
   }
+}
+
+.tz-nav-header .tz-mark {
+  height: 30px;
+}
+
+// Set alongside the mark until TEZRA supply the wordmark artwork uncropped.
+.tz-nav-word {
+  font-family: 'Outfit', sans-serif;
+  font-size: 29px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1;
+  color: var(--theme-elevation-900);
 }
 
 // The toggler wrapper is a sibling of .template-default, so scope through the shared parent.
@@ -423,33 +431,20 @@ html[data-theme='dark'] .tz-account__logout:hover {
 .tz-logo {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
+  gap: 11px;
 }
 
-.tz-logo__mark {
-  display: block;
-  width: auto;
+.tz-logo .tz-mark {
   height: 46px;
 }
 
 .tz-logo__word {
-  display: block;
-  width: auto;
-  height: 29px;
-}
-
-.tz-logo__word--dark {
-  display: none;
-}
-
-html[data-theme='dark'] {
-  .tz-logo__word--light {
-    display: none;
-  }
-
-  .tz-logo__word--dark {
-    display: block;
-  }
+  font-family: 'Outfit', sans-serif;
+  font-size: 45px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1;
+  color: var(--theme-elevation-900);
 }
 
 // Sized by its container — a hardcoded width loses an edge in the breadcrumb's clipped box.

@@ -5,7 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { brand, navLinks, primaryCta } from "@/content/tezra";
-import { BORDER, FONT_BODY, FONT_HEADING, NAVY } from "./shared";
+import { BrandLockup } from "./BrandLockup";
+import { BORDER, FONT_BODY, NAVY } from "./shared";
 
 /** Primary navigation. Real anchors, so crawlers can follow them. Drawer below 1100px. */
 export function Navigation() {
@@ -42,32 +43,13 @@ export function Navigation() {
       >
         <div className="pad-section" style={{ maxWidth: "1440px", margin: "0 auto", padding: "0 40px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "82px", gap: "24px" }}>
-            {/* Wordmark — the master brand, not a vertical (brief 1) */}
+            {/* The group lockup — the master brand, not a vertical (brief 1) */}
             <Link
               href="/"
               aria-label={`${brand.name} home`}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-                gap: "4px",
-                textDecoration: "none",
-                flexShrink: 0,
-              }}
+              style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}
             >
-              <span
-                style={{
-                  fontFamily: FONT_HEADING,
-                  fontSize: "24px",
-                  fontWeight: 800,
-                  color: NAVY,
-                  letterSpacing: "0.08em",
-                  lineHeight: 1,
-                }}
-              >
-                {brand.name}
-              </span>
-              <span style={{ display: "block", width: "100%", height: "1px", backgroundColor: "rgba(1,0,102,0.35)" }} />
+              <BrandLockup markSize={30} textSize={29} />
             </Link>
 
             {/* Desktop navigation */}

@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { BrandLockup } from "./BrandLockup";
 import { brand, contact, footerColumns } from "@/content/tezra";
 import type { Settings } from "@/lib/types";
 import { SocialMark, platformName } from "./SocialIcons";
-import { FONT_BODY, FONT_HEADING } from "./shared";
+import { FONT_BODY } from "./shared";
 
 /** Footer. Address, socials and Legal each appear only once TEZRA supply them. */
 export function Footer({ settings }: { settings: Settings }) {
@@ -45,10 +46,9 @@ export function Footer({ settings }: { settings: Settings }) {
         >
           {/* Master brand */}
           <div>
-            <div style={{ fontFamily: FONT_HEADING, fontSize: "26px", fontWeight: 800, letterSpacing: "0.08em", color: "#FFFFFF", marginBottom: "6px" }}>
-              {brand.name}
+            <div style={{ marginBottom: "18px" }}>
+              <BrandLockup tone="light" markSize={34} textSize={32} />
             </div>
-            <div style={{ height: "1px", backgroundColor: "rgba(255,255,255,0.25)", width: "120px", marginBottom: "20px" }} />
             <p style={{ fontFamily: FONT_BODY, fontSize: "14px", lineHeight: 1.7, color: "rgba(255,255,255,0.45)", maxWidth: "300px" }}>
               {brand.descriptor} Operating across media, news, arts and consulting.
             </p>
