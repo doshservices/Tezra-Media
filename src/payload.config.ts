@@ -29,9 +29,13 @@ export default buildConfig({
       titleSuffix: `— ${brand.name} CMS`,
       // Without this the panel keeps Payload's favicon; the (frontend) icon never applies.
       icons: [
-        { rel: "icon", type: "image/png", url: "/brand/tezra-mark-192.png" },
-        { rel: "apple-touch-icon", type: "image/png", url: "/brand/tezra-mark-512.png" },
+        { rel: "icon", type: "image/png", sizes: "32x32", url: "/brand/tezra-mark-32.png" },
+        { rel: "icon", type: "image/png", sizes: "192x192", url: "/brand/tezra-mark-192.png" },
+        { rel: "apple-touch-icon", type: "image/png", sizes: "180x180", url: "/brand/tezra-mark-180.png" },
       ],
+      openGraph: {
+        images: [{ url: "/brand/tezra-og.png", width: 1200, height: 630 }],
+      },
     },
     // Payload's default header avatar is a silhouette; this matches the sidebar block.
     avatar: { Component: "/components/payload/AccountAvatar.tsx#AccountAvatar" },
