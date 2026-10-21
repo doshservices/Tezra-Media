@@ -2,6 +2,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { buildConfig } from "payload";
 import { postgresAdapter } from "@payloadcms/db-postgres";
+import { s3Storage } from "@payloadcms/storage-s3";
 import sharp from "sharp";
 
 import { brand } from "@/content/tezra";
@@ -16,6 +17,24 @@ import { Leadership } from "@/payload/collections/Leadership";
 import { SiteSettings } from "@/payload/globals/SiteSettings";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Set S3_BUCKET in the host and uploads go to the bucket; leave it unset and they stay on disk,
+// which is what local development wants. A container's filesystem does not survive a redeploy.
+const bucket = process.env.S3_BUCKET;
+const bucketStorage = s3Storage({
+  collections: { media: true },
+  bucket: bucket ?? "",
+  config: {
+    endpoint: process.env.S3_ENDPOINT,
+    region: process.env.S3_REGION ?? "auto",
+    credentials: {
+      accessKeyId: process.env.S3_ACCESS_KEY_ID ?? "",
+      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY ?? "",
+    },
+    // Railway's buckets are virtual-hosted; R2 and older buckets want path-style instead.
+    forcePathStyle: process.env.S3_FORCE_PATH_STYLE === "true",
+  },
+});
 
 /** Payload CMS. Postgres, two roles, nothing seeded. */
 export default buildConfig({
@@ -56,6 +75,7 @@ export default buildConfig({
     },
   },
   collections: [News, Projects, Artworks, Clients, Leadership, Media, Users],
+  plugins: bucket ? [bucketStorage] : [],
   globals: [SiteSettings],
   editor: bodyEditor,
   secret: process.env.PAYLOAD_SECRET ?? "",

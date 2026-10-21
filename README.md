@@ -138,6 +138,31 @@ Several of these are enforced by the CMS rather than left to memory: a project
 cannot be published until it is marked verified, and a client logo cannot be
 published until permission to display it is confirmed.
 
+## Deploying to Railway
+
+Railway runs the app as a long-lived container, which is what Payload's admin
+panel wants. Three things differ from running it locally.
+
+**Uploads go to a bucket.** The container's filesystem is wiped on every
+redeploy, so `public/uploads` would lose TEZRA's media. Set `S3_BUCKET`,
+`S3_ENDPOINT`, `S3_REGION`, `S3_ACCESS_KEY_ID` and `S3_SECRET_ACCESS_KEY` and
+Payload writes to object storage instead. Leave them unset and it stays on disk,
+which is what local development wants. The bucket stays private either way:
+Payload streams files through `/api/media/file/`, so nothing on the frontend
+changes and no CDN or CORS setup is needed.
+
+**Migrations run before the new container takes traffic.** Set the service's
+pre-deploy command to `npm run payload:migrate`. Without it the database has no
+tables and the admin panel 500s on first load. A failed migration stops the
+deploy rather than taking the site down.
+
+**`NEXT_PUBLIC_SITE_URL` has to be the real origin.** Canonical URLs,
+`og:image`, `robots.txt` and the sitemap are all built from it, so a social
+preview will point at localhost until it is set.
+
+The database is reachable from anywhere, so a managed Postgres outside Railway
+works unchanged — only `DATABASE_URI` differs.
+
 ## Local development accounts
 
 Local only, against the Docker database, and useless anywhere else:
