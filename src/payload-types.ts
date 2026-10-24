@@ -230,6 +230,7 @@ export interface Media {
    * Tick only for TEZRA's own photography. Stock imagery is allowed for atmosphere, but must never be presented as TEZRA's own work, people, clients or artworks.
    */
   isTezraOwn?: boolean | null;
+  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -744,6 +745,7 @@ export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   credit?: T;
   isTezraOwn?: T;
+  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
