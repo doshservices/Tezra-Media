@@ -30,17 +30,21 @@ The first time you open `/admin` it asks you to create an account. Make it an
 | --- | --- |
 | `DATABASE_URI` | CMS database. The local container by default. |
 | `PAYLOAD_SECRET` | Signs CMS logins. Generate with `openssl rand -hex 32`. Different per environment. |
-| `NEXT_PUBLIC_SITE_LAUNCHED` | `true` in production, `false` locally. See below. |
+| `NEXT_PUBLIC_SITE_LAUNCHED` | **Leave `false` until the custom domain is live.** See below. |
 
 ### Search-engine visibility
 
 Visibility is decided in three places — the `robots` meta tag, `/robots.txt` and
 `/sitemap.xml` — all reading `NEXT_PUBLIC_SITE_LAUNCHED`, so it cannot be half
-switched on. Production has it set to `true`. Leave it `false` everywhere else,
-so staging and local copies never compete with the live site in search results.
+switched on. It is `false` everywhere, including production.
+
+Turn it on once TEZRA's custom domain is serving the site, not before. Indexing
+the `up.railway.app` subdomain first leaves a duplicate in Google that competes
+with the real domain and is slow to remove.
 
 It is read at build time, not run time, so changing it needs a rebuild rather
-than a restart.
+than a restart. Set `NEXT_PUBLIC_SITE_URL` to the custom domain in the same
+pass, since canonical URLs and the sitemap are built from it.
 
 ### Contact form
 
