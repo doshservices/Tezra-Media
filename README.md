@@ -30,15 +30,17 @@ The first time you open `/admin` it asks you to create an account. Make it an
 | --- | --- |
 | `DATABASE_URI` | CMS database. The local container by default. |
 | `PAYLOAD_SECRET` | Signs CMS logins. Generate with `openssl rand -hex 32`. Different per environment. |
-| `NEXT_PUBLIC_SITE_LAUNCHED` | **Leave `false`.** See below. |
+| `NEXT_PUBLIC_SITE_LAUNCHED` | `true` in production, `false` locally. See below. |
 
-### The site is hidden from search engines
+### Search-engine visibility
 
-TEZRA requires the site to stay out of search results until they approve launch
-in writing. That is enforced in three places — the `robots` meta tag,
-`/robots.txt` and `/sitemap.xml` — all reading one flag, so it cannot be half
-switched on. Launching is setting `NEXT_PUBLIC_SITE_LAUNCHED=true` and
-redeploying. Do not set it before that approval.
+Visibility is decided in three places — the `robots` meta tag, `/robots.txt` and
+`/sitemap.xml` — all reading `NEXT_PUBLIC_SITE_LAUNCHED`, so it cannot be half
+switched on. Production has it set to `true`. Leave it `false` everywhere else,
+so staging and local copies never compete with the live site in search results.
+
+It is read at build time, not run time, so changing it needs a rebuild rather
+than a restart.
 
 ### Contact form
 
