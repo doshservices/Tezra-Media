@@ -4,7 +4,14 @@ import { canEdit, isAdmin, isSignedIn } from "../access";
 /** Uploaded images. Alt text is required; the sizes match how the site actually uses them. */
 export const Media: CollectionConfig = {
   slug: "media",
-  admin: { group: "Content" },
+  admin: {
+    group: "Content",
+    components: {
+      edit: {
+        beforeDocumentControls: ["/components/payload/UploadProgress.tsx#UploadProgress"],
+      },
+    },
+  },
   access: {
     read: () => true,
     create: isSignedIn,

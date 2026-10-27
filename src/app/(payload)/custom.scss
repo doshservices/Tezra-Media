@@ -875,3 +875,51 @@ html[data-theme='dark'] .tz-login-note {
 html[data-theme='dark'] .tz-dash__band {
   border: 1px solid var(--theme-elevation-150);
 }
+
+// ---- Upload progress ---- Payload saves through fetch, which reports no upload progress, so
+// a large video otherwise uploads with no sign it is working.
+.tz-upload-progress {
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.tz-upload-progress__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: var(--tz-body-text);
+}
+
+.tz-upload-progress__count {
+  font-variant-numeric: tabular-nums;
+}
+
+.tz-upload-progress__track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--theme-elevation-100);
+  overflow: hidden;
+}
+
+.tz-upload-progress__bar {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--tz-navy);
+  transition: width 120ms linear;
+}
+
+// The bytes are all sent but the server is still writing to the bucket, so stop reporting a
+// number that no longer moves and show it is still working.
+.tz-upload-progress__bar[data-indeterminate='true'] {
+  animation: tz-upload-pulse 1.1s ease-in-out infinite;
+}
+
+@keyframes tz-upload-pulse {
+  50% { opacity: 0.45; }
+}
+
+html[data-theme='dark'] .tz-upload-progress__row {
+  color: var(--theme-elevation-600);
+}
