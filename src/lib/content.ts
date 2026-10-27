@@ -19,6 +19,9 @@ export type * from "./types";
 
 // Every CMS read. Published-only, failures fall back to empty states, Payload's shapes stop here.
 
+/** The sizes declared in the Media collection. */
+type MediaSize = "thumbnail" | "card" | "feature" | "masthead";
+
 type Media =
   | {
       url?: string | null;
@@ -26,16 +29,19 @@ type Media =
       credit?: string | null;
       focalX?: number | null;
       focalY?: number | null;
+      sizes?: Partial<Record<MediaSize, { url?: string | null } | null>> | null;
     }
   | number
   | string
   | null
   | undefined;
 
-/** Uploads arrive populated at depth 1 and as a bare id otherwise. */
-const mediaUrl = (value: Media): string | undefined => {
-  if (value && typeof value === "object" && typeof value.url === "string") return value.url;
-  return undefined;
+/** Falls back to the original: Payload skips a size larger than the file it was given. */
+const mediaUrl = (value: Media, size?: MediaSize): string | undefined => {
+  if (!value || typeof value !== "object") return undefined;
+  const sized = size ? value.sizes?.[size]?.url : undefined;
+  if (typeof sized === "string" && sized) return sized;
+  return typeof value.url === "string" ? value.url : undefined;
 };
 
 const mediaAlt = (value: Media): string | undefined => {
@@ -63,11 +69,11 @@ const mediaCredit = (value: Media): string | undefined => {
 };
 
 /** Reads an array field of {image: Media} rows, dropping any row without a file. */
-const imageRows = (value: unknown): { url: string; alt?: string }[] =>
+const imageRows = (value: unknown, size?: MediaSize): { url: string; alt?: string }[] =>
   Array.isArray(value)
     ? value.flatMap((row) => {
         const media = (row as Record<string, unknown> | null)?.image as Media;
-        const url = mediaUrl(media);
+        const url = mediaUrl(media, size);
         return url ? [{ url, alt: mediaAlt(media) }] : [];
       })
     : [];
@@ -153,7 +159,7 @@ const toArticle = (doc: NewsDoc): Article => ({
   publishedLabel: formatDate(typeof doc.publishedAt === "string" ? doc.publishedAt : ""),
   readingTime: readingTime(doc.body),
   slug: typeof doc.slug === "string" ? doc.slug : String(doc.id),
-  image: mediaUrl(doc.image as Media),
+  image: mediaUrl(doc.image as Media, "card"),
   imageAlt: mediaAlt(doc.image as Media),
   imageCredit: mediaCredit(doc.image as Media),
 });
@@ -198,6 +204,8 @@ export const getArticle = async (slug: string) =>
       if (!doc) return null;
       return {
         ...toArticle(doc),
+        // The lead image on an article runs wider than a card.
+        image: mediaUrl(doc.image as Media, "feature"),
         body: (doc.body as SerializedEditorState) ?? null,
         metaTitle: typeof doc.metaTitle === "string" ? doc.metaTitle : undefined,
         metaDescription: typeof doc.metaDescription === "string" ? doc.metaDescription : undefined,
@@ -213,7 +221,7 @@ const toWorkItem = (doc: Record<string, unknown>): WorkItem => ({
   category: typeof doc.category === "string" ? doc.category : "",
   summary: typeof doc.summary === "string" ? doc.summary : "",
   slug: typeof doc.slug === "string" ? doc.slug : String(doc.id),
-  image: mediaUrl(doc.image as Media),
+  image: mediaUrl(doc.image as Media, "card"),
   imageAlt: mediaAlt(doc.image as Media),
 });
 
@@ -247,9 +255,10 @@ export const getProject = async (slug: string) =>
       });
       const doc = docs[0] ? asRecord(docs[0]) : undefined;
       if (!doc) return null;
-      const gallery = imageRows(doc.gallery);
+      const gallery = imageRows(doc.gallery, "feature");
       return {
         ...toWorkItem(doc),
+        image: mediaUrl(doc.image as Media, "feature"),
         body: (doc.body as SerializedEditorState) ?? null,
         vertical: typeof doc.vertical === "string" ? doc.vertical : undefined,
         clientName:
@@ -287,10 +296,11 @@ const priceLabel = (doc: Record<string, unknown>): string => {
   }
 };
 
-const artworkImages = (doc: Record<string, unknown>) => imageRows(doc.images);
+const artworkImages = (doc: Record<string, unknown>, size?: MediaSize) =>
+  imageRows(doc.images, size);
 
-const toArtwork = (doc: Record<string, unknown>): Artwork => {
-  const images = artworkImages(doc);
+const toArtwork = (doc: Record<string, unknown>, size: MediaSize = "card"): Artwork => {
+  const images = artworkImages(doc, size);
   return {
     id: String(doc.id),
     title: typeof doc.title === "string" ? doc.title : "Untitled",
@@ -336,12 +346,12 @@ export const getArtwork = async (slug: string) =>
       const doc = docs[0] ? asRecord(docs[0]) : undefined;
       if (!doc) return null;
       return {
-        ...toArtwork(doc),
+        ...toArtwork(doc, "feature"),
         medium: typeof doc.medium === "string" ? doc.medium : undefined,
         dimensions: typeof doc.dimensions === "string" ? doc.dimensions : undefined,
         artistBio: typeof doc.artistBio === "string" ? doc.artistBio : undefined,
         description: (doc.description as SerializedEditorState) ?? null,
-        images: artworkImages(doc),
+        images: artworkImages(doc, "feature"),
         metaTitle: typeof doc.metaTitle === "string" ? doc.metaTitle : undefined,
         metaDescription: typeof doc.metaDescription === "string" ? doc.metaDescription : undefined,
       } satisfies ArtworkDetail;
@@ -370,7 +380,7 @@ export const getLeadership = async () =>
           position: typeof record.position === "string" ? record.position : "",
           bio: typeof record.bio === "string" ? record.bio : undefined,
           linkedin: typeof record.linkedin === "string" ? record.linkedin : undefined,
-          photo: mediaUrl(record.photo as Media),
+          photo: mediaUrl(record.photo as Media, "card"),
           photoAlt: mediaAlt(record.photo as Media),
           photoFocus: mediaFocus(record.photo as Media),
         } satisfies Leader;
@@ -399,7 +409,7 @@ export const getClients = async () =>
           name: typeof record.name === "string" ? record.name : "",
           relationship: typeof record.relationship === "string" ? record.relationship : "",
           website: typeof record.website === "string" ? record.website : undefined,
-          logo: mediaUrl(record.logo as Media),
+          logo: mediaUrl(record.logo as Media, "card"),
         } satisfies ClientLogo;
       });
     },
