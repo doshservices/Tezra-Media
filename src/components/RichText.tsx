@@ -5,6 +5,7 @@ import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical
 
 // Tokens from tokens.ts — a client module's values stringify as references in a template literal.
 import {
+  ARTICLE_WIDTH,
   BODY_TEXT,
   BORDER,
   FONT_BODY,
@@ -41,7 +42,27 @@ const converters: JSXConvertersFunction = ({ defaultConverters }) => ({
         : "";
     const credit = (value.credit ?? "").trim();
 
-    // A non-image upload is a document, so offer it as a download.
+    const captionBlock = (caption || credit) && (
+      <figcaption>
+        {caption}
+        {caption && credit && " "}
+        {credit && <span className="tz-credit">{credit}</span>}
+      </figcaption>
+    );
+
+    // preload="metadata" so the poster frame and duration land without pulling the whole file.
+    if (value.mimeType?.startsWith("video")) {
+      return (
+        <figure className="tz-figure">
+          <video controls preload="metadata" playsInline>
+            <source src={value.url} type={value.mimeType} />
+          </video>
+          {captionBlock}
+        </figure>
+      );
+    }
+
+    // Anything else that is not an image is a document, so offer it as a download.
     if (value.mimeType && !value.mimeType.startsWith("image")) {
       return (
         <p>
@@ -61,13 +82,7 @@ const converters: JSXConvertersFunction = ({ defaultConverters }) => ({
           height={value.height ?? 900}
           sizes="(max-width: 880px) 100vw, 840px"
         />
-        {(caption || credit) && (
-          <figcaption>
-            {caption}
-            {caption && credit && " "}
-            {credit && <span className="tz-credit">{credit}</span>}
-          </figcaption>
-        )}
+        {captionBlock}
       </figure>
     );
   },
@@ -83,29 +98,40 @@ export function RichText({ data }: { data: SerializedEditorState | null }) {
         .tz-prose {
           /* No measure here — the container sets the column, and two caps only fight each other. */
           font-family: ${FONT_BODY};
-          font-size: 18px;
-          line-height: 1.7;
-          color: ${BODY_TEXT};
-        }
-        .tz-prose > *:first-child { margin-top: 0; }
-        .tz-prose p { margin: 0 0 1.35em; }
-        /* The opening paragraph reads as a standfirst. */
-        .tz-prose > p:first-child {
           font-size: 20px;
-          line-height: 1.65;
-          color: #000000;
+          line-height: 140%;
+          color: ${BODY_TEXT};
+
+          /* Ceiling for anything visual in the body. Width is the bigger lever;
+             height only matters for portrait uploads and tall clips. */
+          --media-width: ${ARTICLE_WIDTH};
+          --media-height: 560px;
         }
-        .tz-prose h1, .tz-prose h2, .tz-prose h3, .tz-prose h4 {
+
+        /* Top-margin rhythm, so a trailing element never leaves a gap at the end. */
+        .tz-prose > * + * { margin-top: 1.25rem; }
+
+        /* Payload's editor offers six heading levels and Lexical emits them bare, so every
+           level needs a rule or picking H5 silently renders as a paragraph. The scale steps
+           down from the 36px article title, which is why it stops lower than you might expect. */
+        .tz-prose :is(h1, h2, h3, h4, h5, h6) {
           font-family: ${FONT_HEADING};
           font-weight: 700;
-          color: #000000;
           line-height: 1.25;
-          margin: 1.9em 0 0.55em;
+          color: #000000;
         }
-        .tz-prose h1 { font-size: 30px; }
-        .tz-prose h2 { font-size: 25px; }
-        .tz-prose h3 { font-size: 20px; }
-        .tz-prose h4 { font-size: 17px; }
+        .tz-prose h1 { margin-top: 3rem; font-size: 31px; }
+        .tz-prose h2 { margin-top: 2.75rem; font-size: 27px; }
+        .tz-prose h3 { margin-top: 2.25rem; font-size: 23px; }
+        .tz-prose h4 { margin-top: 2rem; font-size: 21px; }
+        /* No room left above the 20px body, so these separate by colour instead of size. */
+        .tz-prose h5, .tz-prose h6 { margin-top: 1.75rem; font-size: 20px; }
+        .tz-prose h6 { color: ${BODY_TEXT}; }
+
+        /* Those margins are unconditional, unlike the rhythm above. */
+        .tz-prose > *:first-child,
+        .tz-prose :is(h1, h2, h3, h4, h5, h6):first-child { margin-top: 0; }
+
         .tz-prose a {
           color: ${NAVY};
           text-decoration: underline;
@@ -116,15 +142,18 @@ export function RichText({ data }: { data: SerializedEditorState | null }) {
         .tz-prose a strong,
         .tz-prose a em,
         .tz-prose a code { color: inherit; }
-        .tz-prose ul, .tz-prose ol { margin: 0 0 1.35em; padding-left: 1.3em; }
-        .tz-prose li { margin-bottom: 0.45em; }
+
+        .tz-prose ul { list-style: disc; padding-left: 1.5rem; }
+        .tz-prose ol { list-style: decimal; padding-left: 1.5rem; }
+        .tz-prose li + li { margin-top: 0.5rem; }
         .tz-prose li::marker { color: ${MUTED_TEXT}; }
+
         .tz-prose blockquote {
-          margin: 1.8em 0;
+          margin-top: 1.8em;
           padding-left: 22px;
           border-left: 2px solid ${NAVY};
           font-family: ${FONT_HEADING};
-          font-size: 21px;
+          font-size: 23px;
           font-weight: 500;
           line-height: 1.5;
           color: #000000;
@@ -132,28 +161,38 @@ export function RichText({ data }: { data: SerializedEditorState | null }) {
         .tz-prose hr {
           border: none;
           border-top: 1px solid ${BORDER};
-          margin: 2.4em 0;
+          margin-top: 2.4em;
         }
         .tz-prose strong { color: #000000; font-weight: 600; }
 
-        /* Shrink-wrapped so the caption lines up with the image's own left edge. */
-        .tz-figure {
-          width: fit-content;
-          max-width: 100%;
-          margin: 2.4em auto;
-        }
-        /* Both auto so the browser keeps the file's aspect ratio. */
-        /* 480px: a 16:9 still fills this column, a portrait gets capped and centred. */
-        .tz-figure img {
+        .tz-figure { margin-top: 2rem; }
+
+        /* Two caps, not one: the column is the viewport minus padding on a wide monitor, so
+           max-width:100% alone is not a limit. width/height auto keep the file's own ratio —
+           clamp only the height and a portrait upload comes out visibly squashed. */
+        .tz-figure :is(img, video) {
           display: block;
+          max-width: min(100%, var(--media-width));
+          max-height: var(--media-height);
           width: auto;
-          max-width: 100%;
           height: auto;
-          max-height: 480px;
+          margin-inline: auto;
           background-color: ${GREY_BG};
         }
+
+        /* A clip has no intrinsic size until its metadata lands, so width:auto would paint it
+           at the 300x150 element default and then jump. Claiming the column up front leaves
+           only the height to settle, and object-fit stops that becoming a stretch. */
+        .tz-figure video {
+          width: 100%;
+          object-fit: contain;
+        }
+
+        /* Centred: a caption left against the column edge reads as detached from media
+           the caps have shrunk and centred. */
         .tz-figure figcaption {
-          margin-top: 10px;
+          margin-top: 0.75rem;
+          text-align: center;
           font-family: ${FONT_BODY};
           font-size: 14px;
           line-height: 1.55;
@@ -164,10 +203,15 @@ export function RichText({ data }: { data: SerializedEditorState | null }) {
           font-size: 13px;
           white-space: nowrap;
         }
+
         @media (max-width: 820px) {
-          .tz-prose { font-size: 17px; }
-          .tz-prose > p:first-child { font-size: 18px; }
-          .tz-prose blockquote { font-size: 19px; }
+          .tz-prose { font-size: 18px; }
+          .tz-prose h1 { font-size: 27px; }
+          .tz-prose h2 { font-size: 24px; }
+          .tz-prose h3 { font-size: 21px; }
+          .tz-prose h4 { font-size: 19px; }
+          .tz-prose h5, .tz-prose h6 { font-size: 18px; }
+          .tz-prose blockquote { font-size: 20px; }
         }
       `}</style>
     </div>

@@ -87,5 +87,6 @@ export default buildConfig({
   }),
   sharp,
   // Next serves /public, so nothing extra is needed to deliver uploaded images.
-  upload: { limits: { fileSize: 15_000_000 } },
+  // 200MB covers video; useTempFiles spools to disk so a clip never sits in the container's RAM.
+  upload: { limits: { fileSize: 200_000_000 }, useTempFiles: true },
 })

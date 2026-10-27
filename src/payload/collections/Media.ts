@@ -13,7 +13,7 @@ export const Media: CollectionConfig = {
   },
   upload: {
     staticDir: "public/uploads",
-    mimeTypes: ["image/*"],
+    mimeTypes: ["image/*", "video/*"],
     imageSizes: [
       { name: "thumbnail", width: 400, height: 300, position: "centre" },
       { name: "card", width: 900 },
@@ -30,7 +30,8 @@ export const Media: CollectionConfig = {
       required: true,
       admin: {
         description:
-          "Describe what is in the picture, for screen readers and search engines. Not a caption.",
+          "Describe what is in the picture, or what happens in the clip, for screen readers " +
+          "and search engines. Not a caption.",
       },
     },
     {
