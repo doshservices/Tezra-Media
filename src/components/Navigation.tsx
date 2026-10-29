@@ -142,7 +142,7 @@ export function Navigation() {
             right: 0,
             bottom: 0,
             width: "min(320px, 85vw)",
-            backgroundColor: NAVY,
+            backgroundColor: "#030053",
             transform: mobileOpen ? "translateX(0)" : "translateX(100%)",
             transition: "transform 0.35s ease",
             display: "flex",

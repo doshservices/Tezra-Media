@@ -219,7 +219,7 @@ export interface News {
 export interface Media {
   id: number;
   /**
-   * Describe what is in the picture, for screen readers and search engines. Not a caption.
+   * Describe what is in the picture, or what happens in the clip, for screen readers and search engines. Not a caption.
    */
   alt: string;
   /**
@@ -230,7 +230,6 @@ export interface Media {
    * Tick only for TEZRA's own photography. Stock imagery is allowed for atmosphere, but must never be presented as TEZRA's own work, people, clients or artworks.
    */
   isTezraOwn?: boolean | null;
-  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -745,7 +744,6 @@ export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   credit?: T;
   isTezraOwn?: T;
-  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
