@@ -507,6 +507,13 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
           .home-split { grid-template-columns: 1fr !important; gap: 36px !important; }
         }
         @media (max-width: 620px) {
+          /* Stacked and full width, so neither reads as the lesser option. */
+          .hero-buttons { flex-direction: column !important; align-items: stretch !important; }
+          .hero-buttons > a,
+          .hero-buttons > button {
+            width: 100% !important;
+            justify-content: center !important;
+          }
           .values-grid { grid-template-columns: repeat(2, 1fr) !important; }
           .ecosystem-grid { grid-template-columns: 1fr !important; }
           .latest-grid { grid-template-columns: 1fr !important; }
