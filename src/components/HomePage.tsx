@@ -18,7 +18,6 @@ import {
   LogoMarquee,
   NAVY,
   Photo,
-  PendingNote,
   PrimaryButton,
   Prose,
   ContentSlot,
@@ -222,7 +221,7 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
             <SectionLabel text="The TEZRA Ecosystem" />
             <SectionHeading>Four Verticals.<br />One TEZRA.</SectionHeading>
           </div>
-          <Prose>{mission}</Prose>
+          {/* <Prose>{mission}</Prose> */}
         </div>
 
         <div className="ecosystem-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "24px" }}>
@@ -320,12 +319,7 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
                   </li>
                 ))}
               </ul>
-            ) : (
-              <PendingNote>
-                Project cards go here. TEZRA supplies the verified portfolio material — the brief
-                rules out invented case studies and unverified client relationships.
-              </PendingNote>
-            )}
+            ) : null}
           </div>
         </div>
       </Section>
@@ -394,12 +388,6 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
           </div>
         </div>
 
-        {articles.length === 0 && (
-          <PendingNote>
-            These panels introduce each platform. Once TEZRA publishes articles and ticks them
-            as Featured, the newest stories replace them automatically.
-          </PendingNote>
-        )}
       </Section>
 
       {/* 7 — Tezra Arts */}
@@ -453,12 +441,6 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
           <SectionHeading>Trusted By</SectionHeading>
         </div>
         <LogoMarquee logos={clients} fadeColor={GREY_BG} />
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <PendingNote>
-            A client or partner appears here only once TEZRA confirms the relationship and has
-            permission to display the logo.
-          </PendingNote>
-        </div>
       </Section>
 
       {/* 9 — Final CTA */}

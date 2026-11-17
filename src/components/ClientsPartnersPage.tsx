@@ -12,7 +12,6 @@ import {
   LogoMarquee,
   NAVY,
   PageHero,
-  PendingNote,
   PrimaryButton,
   Prose,
   Section,
@@ -50,12 +49,6 @@ export function ClientsPartnersPage({ clients }: { clients: ClientLogo[] }) {
 
         <LogoMarquee logos={clients} count={10} fadeColor="#FFFFFF" />
 
-        {clients.length === 0 && (
-          <PendingNote>
-            A client or partner appears here only once TEZRA confirms the relationship and has
-            permission to display the logo. Nothing is shown before that.
-          </PendingNote>
-        )}
       </Section>
 
       <Section background={GREY_BG}>

@@ -573,26 +573,6 @@ export function ImageCard({
   );
 }
 
-/** Small note marking content TEZRA still owes us. Deliberately quiet. */
-export function PendingNote({ children }: { children: ReactNode }) {
-  return (
-    <p
-      style={{
-        fontFamily: FONT_BODY,
-        fontSize: "13px",
-        lineHeight: 1.65,
-        color: MUTED_TEXT,
-        borderLeft: `2px solid ${BORDER}`,
-        paddingLeft: "14px",
-        marginTop: "28px",
-        maxWidth: "640px",
-      }}
-    >
-      {children}
-    </p>
-  );
-}
-
 /** Scrolling logo wall. Cells stay empty until TEZRA confirm permission to display. */
 export function LogoMarquee({
   logos,

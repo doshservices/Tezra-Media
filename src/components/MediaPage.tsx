@@ -14,7 +14,6 @@ import {
   NAVY,
   PageHero,
   Photo,
-  PendingNote,
   PrimaryButton,
   Prose,
   Section,
@@ -144,13 +143,7 @@ export function MediaPage() {
               </div>
             );
           })}
-        </div>
-        <PendingNote>
-          Each format has its own section, ready for TEZRA's own productions. Only actual
-          TEZRA work and verified material is published here, so the panels above show the
-          categories rather than standing in for finished films.
-        </PendingNote>
-      </Section>
+        </div>      </Section>
 
       <section
         className="pad-section"

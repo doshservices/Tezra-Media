@@ -24,7 +24,6 @@ import {
   NAVY,
   PageHero,
   Photo,
-  PendingNote,
   PrimaryButton,
   Prose,
   Section,
@@ -161,13 +160,7 @@ export function NewsPage({ articles }: { articles: Article[] }) {
                   </div>
                 );
               })}
-            </div>
-            <PendingNote>
-              Tezra News is built and ready to publish. Articles, authors, categories, reading
-              time and related stories are managed from the content manager, and new stories
-              appear here and on the homepage automatically. TEZRA supplies the opening set.
-            </PendingNote>
-          </>
+            </div>          </>
         )}
       </Section>
 

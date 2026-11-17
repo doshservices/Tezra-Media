@@ -17,7 +17,6 @@ import {
   NAVY,
   PageHero,
   Photo,
-  PendingNote,
   PrimaryButton,
   Prose,
   Section,
@@ -121,13 +120,7 @@ export function OurWorkPage({ workItems }: { workItems: WorkItem[] }) {
                   </div>
                 );
               })}
-            </div>
-            <PendingNote>
-              The brief rules out placeholder case studies, invented results and unverified
-              client relationships. The structure and filtering are built; projects appear here
-              as TEZRA supplies approved portfolio material.
-            </PendingNote>
-          </>
+            </div>          </>
         )}
       </Section>
 

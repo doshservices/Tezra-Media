@@ -15,7 +15,6 @@ import {
   NAVY,
   PageHero,
   Photo,
-  PendingNote,
   PrimaryButton,
   Prose,
   SecondaryButton,
@@ -196,12 +195,7 @@ export function AboutPage() {
           <div>
             <SectionLabel text="Long-Term Ambition" />
             <SectionHeading style={{ marginBottom: "20px" }}>Where TEZRA Is Heading</SectionHeading>
-            <Prose>{vision}</Prose>
-            <PendingNote>
-              TEZRA supplies the full long-term ambition copy. The brief is explicit that
-              ambitions are presented as future development, not as existing operations.
-            </PendingNote>
-          </div>
+            <Prose>{vision}</Prose>          </div>
         </div>
       </Section>
 

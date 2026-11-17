@@ -21,7 +21,6 @@ import {
   NAVY,
   PageHero,
   Photo,
-  PendingNote,
   PrimaryButton,
   Prose,
   SecondaryButton,
@@ -120,12 +119,6 @@ export function ArtsPage({ artworks }: { artworks: Artwork[] }) {
                 </div>
               ))}
             </div>
-
-            <PendingNote>
-              Artwork images, titles, artists, availability and pricing come from TEZRA. Each piece
-              then gets its own page with artwork and artist information and an enquiry route, so a
-              single work can be sent to a buyer as a direct link.
-            </PendingNote>
           </>
         )}
       </Section>

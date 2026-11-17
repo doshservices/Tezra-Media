@@ -14,7 +14,6 @@ import {
   NAVY,
   PageHero,
   Photo,
-  PendingNote,
   PrimaryButton,
   Prose,
   SecondaryButton,
@@ -89,11 +88,6 @@ export function MarketingConsultingPage() {
             </div>
           ))}
         </div>
-
-        <PendingNote>
-          The brief rules out invented case studies, results and client relationships. These
-          cards fill in as TEZRA supplies approved project material.
-        </PendingNote>
       </Section>
 
       <section

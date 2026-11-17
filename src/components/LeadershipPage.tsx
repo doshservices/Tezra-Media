@@ -13,7 +13,6 @@ import {
   FONT_HEADING,
   NAVY,
   PageHero,
-  PendingNote,
   Photo,
   PrimaryButton,
   Prose,
@@ -116,13 +115,7 @@ export function LeadershipPage({ leaders }: { leaders: Leader[] }) {
                   </div>
                 </div>
               ))}
-            </div>
-            <PendingNote>
-              For each person: name, position, professional biography, photograph, and a LinkedIn
-              or social profile where appropriate. The brief rules out creating or inferring any of
-              it, so these cards stay empty until TEZRA confirms the details.
-            </PendingNote>
-          </>
+            </div>          </>
         )}
       </Section>
 
