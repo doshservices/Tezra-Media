@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
-import { brand, mission, overview, purpose, values, verticals } from "@/content/tezra";
+import { brand, overview, purpose, values, verticals } from "@/content/tezra";
 import { images, verticalImages } from "@/content/images";
 import type { Article, Artwork, ClientLogo, WorkItem } from "@/lib/types";
 import { valueIcons, verticalIcons } from "@/content/icons";
@@ -221,7 +221,6 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
             <SectionLabel text="The TEZRA Ecosystem" />
             <SectionHeading>Four Verticals.<br />One TEZRA.</SectionHeading>
           </div>
-          {/* <Prose>{mission}</Prose> */}
         </div>
 
         <div className="ecosystem-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "24px" }}>
@@ -453,7 +452,7 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
           backgroundColor: NAVY,
         }}
       >
-        <Backdrop src={images.strategy} />
+        <Backdrop src={images.artFair} />
         <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(1,0,50,0.92)" }} />
         <div style={{ position: "relative", zIndex: 1, textAlign: "center", maxWidth: "740px", margin: "0 auto" }}>
           <SectionHeading tone="light" style={{ fontSize: "clamp(30px, 4vw, 48px)", marginBottom: "18px" }}>

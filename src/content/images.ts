@@ -30,7 +30,8 @@ export const images = {
   newsroom: unsplash("photo-1588011930968-eadac80e6a5a", 1200),
   production: unsplash("photo-1625690303837-654c9666d2d0", 1200),
   interview: unsplash("photo-1612043071344-94c20c4c837e", 1200),
-  strategy: unsplash("photo-1565876427310-0695a4ff03b7", 1200),
+  artFair: unsplash("photo-1565876427310-0695a4ff03b7", 1200),
+  office: unsplash("photo-1497366754035-f200968a6e72", 1200),
   culture: unsplash("photo-1569783721854-33a99b4c0bae", 1200),
   gallery: unsplash("photo-1605429523419-d828acb941d9", 1200),
   artwork: unsplash("photo-1577720643272-265f09367456", 1200),
@@ -40,6 +41,6 @@ export const images = {
 export const verticalImages: Record<string, string> = {
   media: images.production,
   news: images.newsroom,
-  arts: images.gallery,
-  "marketing-consulting": images.strategy,
+  arts: images.artFair,
+  "marketing-consulting": images.office,
 };

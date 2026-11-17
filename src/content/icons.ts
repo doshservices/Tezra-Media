@@ -15,7 +15,6 @@ import {
   Compass,
   Crown,
   Film,
-  Flame,
   Frame,
   Gavel,
   Gem,
@@ -32,7 +31,6 @@ import {
   PenTool,
   Radio,
   Rocket,
-  Scale,
   Search,
   Shapes,
   ShieldCheck,
@@ -59,11 +57,10 @@ export const verticalIcons: Record<string, LucideIcon> = {
 export const valueIcons: Record<string, LucideIcon> = {
   Excellence: Award,
   Integrity: ShieldCheck,
-  Boldness: Flame,
   "Creative Intelligence": Brain,
   Impact: TrendingUp,
-  "Cultural & Global Perspective": Globe,
-  Accountability: Scale,
+  "Cultural and Global Perspective": Globe,
+  "Value Proposition": Gem,
 };
 
 /** Core areas across all four verticals, plus media formats and work categories. */

@@ -105,8 +105,8 @@ export function AboutPage() {
       {/* Core Values */}
       <Section background={GREY_BG}>
         <SectionLabel text="Core Values" />
-        <SectionHeading style={{ marginBottom: "40px" }}>What We Stand For</SectionHeading>
-        <div className="values-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1px", backgroundColor: BORDER }}>
+        <SectionHeading style={{ marginBottom: "40px" }}>Our Core Values</SectionHeading>
+        <div className="values-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1px", backgroundColor: BORDER }}>
           {values.map((value) => {
             const Icon = valueIcons[value];
             return (
@@ -187,7 +187,7 @@ export function AboutPage() {
       <Section background={GREY_BG}>
         <div className="about-split" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "72px", alignItems: "center" }}>
           <Photo
-            src={images.strategy}
+            src={images.heroMarketing}
             alt="Long-term ambition"
             height="380px"
             sizes="(max-width: 860px) 100vw, 50vw"

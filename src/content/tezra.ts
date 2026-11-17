@@ -35,18 +35,17 @@ export const mission =
 
 /** Vision (brief 2). */
 export const vision =
-  "To build a leading global ecosystem rooted in Africa for media, branding, culture, " +
+  "To build a leading global ecosystem for media, branding, culture, " +
   "storytelling, creative intelligence and influence.";
 
 /** Core Values (brief 2). */
 export const values = [
   "Excellence",
   "Integrity",
-  "Boldness",
   "Creative Intelligence",
   "Impact",
-  "Cultural & Global Perspective",
-  "Accountability",
+  "Cultural and Global Perspective",
+  "Value Proposition",
 ] as const;
 
 export interface Vertical {

@@ -40,16 +40,20 @@ export function MarketingConsultingPage() {
           <div>
             <SectionLabel text="What We Do" />
             <SectionHeading style={{ marginBottom: "22px" }}>Strategy before output.</SectionHeading>
+            <Prose style={{ fontSize: "17px", marginBottom: "18px" }}>
+              {vertical.name} works on the decisions that sit above a campaign and business
+              strategy for profitability: what a brand stands for, where it sits in its market,
+              how media can be used to enhance company performance and how its leadership is
+              seen.
+            </Prose>
             <Prose style={{ fontSize: "17px" }}>
-              {vertical.name} works on the decisions that sit above a campaign: what a brand
-              stands for, where it sits in its market, and how its leadership is seen. The work
-              spans corporate identity, repositioning, campaign management and executive
-              branding, built on strategy rather than activity.
+              The work spans corporate identity, repositioning, campaign management and
+              executive branding, built on strategy for business success rather than activity.
             </Prose>
           </div>
           <Photo
-            src={images.strategy}
-            alt="Brand strategy"
+            src={images.office}
+            alt="A corporate working environment"
             height="440px"
             sizes="(max-width: 860px) 100vw, 50vw"
           />
@@ -110,7 +114,7 @@ export function MarketingConsultingPage() {
             view rather than a pitch.
           </Prose>
           <PrimaryButton onDark href={contactLink("strategic-communications")}>
-            Enquire About Strategy <ArrowRight size={14} />
+            Enquire About Business Media Strategy <ArrowRight size={14} />
           </PrimaryButton>
         </div>
       </section>

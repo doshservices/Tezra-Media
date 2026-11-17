@@ -30,7 +30,7 @@ export function MediaPage() {
     Video: images.interview,
     Interviews: images.heroMedia,
     Features: images.newsroom,
-    Campaigns: images.strategy,
+    Campaigns: images.artFair,
     Documentary: images.culture,
   };
 
