@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { brand, overview, purpose, values, verticals } from "@/content/tezra";
-import { images, verticalImages } from "@/content/images";
+import { images, localImages, verticalImages } from "@/content/images";
 import type { Article, Artwork, ClientLogo, WorkItem } from "@/lib/types";
 import { valueIcons, verticalIcons } from "@/content/icons";
 import {
@@ -172,10 +172,11 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
             </SecondaryButton>
           </div>
           <Photo
-            src={images.ecosystem}
+            src={localImages.ecosystem}
             alt="TEZRA — media, culture and brand"
             height="520px"
             sizes="(max-width: 860px) 100vw, 50vw"
+            objectPosition="center 30%"
           />
         </div>
       </Section>
@@ -197,7 +198,7 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
           </div>
         </div>
 
-        <div className="values-grid" style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "1px", backgroundColor: "rgba(255,255,255,0.14)" }}>
+        <div className="values-grid" style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "1px", backgroundColor: "rgba(255,255,255,0.14)" }}>
           {values.map((value) => {
             const Icon = valueIcons[value];
             return (
@@ -341,7 +342,7 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(1,0,50,0.92) 0%, rgba(1,0,50,0.25) 70%)" }} />
             <div style={{ position: "relative", zIndex: 1, height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "28px" }}>
               <div style={{ fontFamily: FONT_BODY, fontSize: "11px", fontWeight: 600, color: "rgba(255,255,255,0.75)", marginBottom: "10px" }}>
-                {lead ? lead.category.toUpperCase() : "TEZRA NEWS"}
+                {lead?.category[0] ? lead.category[0].toUpperCase() : "TEZRA NEWS"}
               </div>
               <h3 style={{ fontFamily: FONT_HEADING, fontSize: "24px", fontWeight: 700, color: "#FFFFFF", lineHeight: 1.25, marginBottom: "8px" }}>
                 {lead ? (
@@ -398,8 +399,8 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
               Art, Creative Expression &amp; Cultural Experiences
             </SectionHeading>
             <Prose style={{ marginBottom: "28px" }}>
-              Tezra Arts runs as its own creative vertical — artists, artworks, collections,
-              exhibitions and commissions, with advisory and acquisition for private and
+              Tezra Arts runs as its own creative vertical — commissioned artworks,
+              collections, exhibitions and acquisitions, with advisory for private and
               institutional collectors.
             </Prose>
             <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
@@ -479,7 +480,7 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
           100% { transform: translateX(-50%); }
         }
         @media (max-width: 1100px) {
-          .values-grid { grid-template-columns: repeat(4, 1fr) !important; }
+          .values-grid { grid-template-columns: repeat(3, 1fr) !important; }
           .ecosystem-grid { grid-template-columns: repeat(2, 1fr) !important; }
           .latest-grid { grid-template-columns: 1fr 1fr !important; }
           .latest-grid > div:first-child { grid-column: 1 / -1 !important; }

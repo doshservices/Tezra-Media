@@ -45,7 +45,7 @@ export default buildConfig({
     },
     meta: {
       // No leading space — Payload already puts one before the suffix.
-      titleSuffix: `— ${brand.name} CMS`,
+      titleSuffix: `| ${brand.name} CMS`,
       // Without this the panel keeps Payload's favicon; the (frontend) icon never applies.
       icons: [
         { rel: "icon", type: "image/png", sizes: "32x32", url: "/brand/tezra-mark-32.png" },

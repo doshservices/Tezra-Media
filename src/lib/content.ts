@@ -145,7 +145,7 @@ const toArticle = (doc: NewsDoc): Article => ({
   id: String(doc.id),
   title: typeof doc.title === "string" ? doc.title : "Untitled",
   excerpt: typeof doc.summary === "string" ? doc.summary : "",
-  category: typeof doc.category === "string" ? doc.category : "",
+  category: Array.isArray(doc.category) ? doc.category.filter((c): c is string => typeof c === "string") : [],
   format: typeof doc.format === "string" ? doc.format : "",
   // A typed byline wins; otherwise it is the name on the account of whoever wrote it.
   author: (() => {
@@ -175,7 +175,7 @@ export const getArticles = async (
       // Filter by category in the query, or an older story shows nothing beside it.
       const filters: Where[] = [PUBLISHED];
       if (options.featured) filters.push({ featured: { equals: true } });
-      if (options.category) filters.push({ category: { equals: options.category } });
+      if (options.category) filters.push({ category: { in: [options.category] } });
 
       const { docs } = await payload.find({
         collection: "news",
@@ -305,7 +305,7 @@ const toArtwork = (doc: Record<string, unknown>, size: MediaSize = "card"): Artw
     id: String(doc.id),
     title: typeof doc.title === "string" ? doc.title : "Untitled",
     slug: typeof doc.slug === "string" ? doc.slug : String(doc.id),
-    artistName: typeof doc.artistName === "string" ? doc.artistName : "",
+    artistName: typeof doc.artistName === "string" && doc.artistName ? doc.artistName : undefined,
     year: typeof doc.year === "string" ? doc.year : undefined,
     availability:
       AVAILABILITY_LABELS[typeof doc.availability === "string" ? doc.availability : ""] ?? "",

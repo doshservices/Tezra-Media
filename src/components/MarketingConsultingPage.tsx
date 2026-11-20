@@ -2,7 +2,7 @@
 
 import { ArrowRight } from "lucide-react";
 import { contactLink, getVertical } from "@/content/tezra";
-import { images } from "@/content/images";
+import { images, localImages } from "@/content/images";
 import { iconFor } from "@/content/icons";
 import {
   Backdrop,
@@ -52,7 +52,7 @@ export function MarketingConsultingPage() {
             </Prose>
           </div>
           <Photo
-            src={images.office}
+            src={localImages.marketing}
             alt="A corporate working environment"
             height="440px"
             sizes="(max-width: 860px) 100vw, 50vw"

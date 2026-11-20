@@ -42,7 +42,7 @@ export function NewsPage({ articles }: { articles: Article[] }) {
     () =>
       articles.filter(
         (a) =>
-          (category === "All" || a.category === category) &&
+          (category === "All" || a.category.includes(category)) &&
           (format === "All" || a.format === format),
       ),
     [articles, category, format],
@@ -122,7 +122,7 @@ export function NewsPage({ articles }: { articles: Article[] }) {
                   />
                 )}
                 <div style={{ fontFamily: FONT_BODY, fontSize: "11px", fontWeight: 600, color: NAVY, marginBottom: "10px" }}>
-                  {article.category.toUpperCase()}
+                  {article.category[0]?.toUpperCase()}
                 </div>
                 <h3 style={{ fontFamily: FONT_HEADING, fontSize: "20px", fontWeight: 700, color: "#000000", lineHeight: 1.3, marginBottom: "10px" }}>
                   {article.title}

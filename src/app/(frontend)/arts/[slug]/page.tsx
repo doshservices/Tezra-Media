@@ -76,6 +76,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     { label: "Price", value: artwork.priceLabel },
   ].filter((fact) => Boolean(fact.value));
 
+  const credit = [artwork.artistName, artwork.year].filter(Boolean).join(", ");
+
   const isAvailable = artwork.availability === "Available";
 
   return (
@@ -130,10 +132,11 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             >
               {artwork.title}
             </h1>
-            <p style={{ fontFamily: FONT_BODY, fontSize: "17px", color: BODY_TEXT, marginBottom: "32px" }}>
-              {artwork.artistName}
-              {artwork.year ? `, ${artwork.year}` : ""}
-            </p>
+            {credit && (
+              <p style={{ fontFamily: FONT_BODY, fontSize: "17px", color: BODY_TEXT, marginBottom: "32px" }}>
+                {credit}
+              </p>
+            )}
 
             <dl style={{ borderTop: `1px solid ${BORDER}`, marginBottom: "32px" }}>
               {facts.map((fact) => (
@@ -209,9 +212,11 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                   <div style={{ fontFamily: FONT_HEADING, fontSize: "15px", fontWeight: 700, color: "#000000", marginBottom: "4px" }}>
                     {other.title}
                   </div>
-                  <div style={{ fontFamily: FONT_BODY, fontSize: "13px", color: BODY_TEXT }}>
-                    {other.artistName}
-                  </div>
+                  {other.artistName && (
+                    <div style={{ fontFamily: FONT_BODY, fontSize: "13px", color: BODY_TEXT }}>
+                      {other.artistName}
+                    </div>
+                  )}
                 </div>
               </Link>
             ))}

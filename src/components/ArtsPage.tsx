@@ -47,7 +47,7 @@ export function ArtsPage({ artworks }: { artworks: Artwork[] }) {
         <div style={{ textAlign: "center", maxWidth: "780px", margin: "0 auto" }}>
           <div style={{ width: "48px", height: "1px", backgroundColor: NAVY, margin: "0 auto 26px" }} />
           <p style={{ fontFamily: FONT_ACCENT, fontStyle: "italic", fontSize: "clamp(24px, 3.2vw, 36px)", lineHeight: 1.4, color: NAVY }}>
-            Work that holds a room, and the people who make it.
+            Unique artworks created by raw African talents.
           </p>
           <div style={{ width: "48px", height: "1px", backgroundColor: NAVY, margin: "26px auto 0" }} />
         </div>
@@ -70,7 +70,7 @@ export function ArtsPage({ artworks }: { artworks: Artwork[] }) {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "16px", marginBottom: "32px" }}>
           <div>
             <SectionLabel text="The Collection" />
-            <SectionHeading>Artists and Artworks</SectionHeading>
+            <SectionHeading>Commissioned Artworks</SectionHeading>
           </div>
           <SecondaryButton href={contactLink("art-acquisition")}>
             Enquire About Availability <ArrowRight size={14} />
@@ -94,10 +94,11 @@ export function ArtsPage({ artworks }: { artworks: Artwork[] }) {
                   <div style={{ fontFamily: FONT_HEADING, fontSize: "16px", fontWeight: 700, color: "#000000", lineHeight: 1.3, marginBottom: "6px" }}>
                     {work.title}
                   </div>
-                  <div style={{ fontFamily: FONT_BODY, fontSize: "13px", color: BODY_TEXT, marginBottom: "10px" }}>
-                    {work.artistName}
-                    {work.year ? `, ${work.year}` : ""}
-                  </div>
+                  {work.year && (
+                    <div style={{ fontFamily: FONT_BODY, fontSize: "13px", color: BODY_TEXT, marginBottom: "10px" }}>
+                      {work.year}
+                    </div>
+                  )}
                   <div style={{ display: "flex", justifyContent: "space-between", gap: "10px", fontFamily: FONT_BODY, fontSize: "12px", fontWeight: 600, color: NAVY }}>
                     <span>{work.availability}</span>
                     <span style={{ color: MUTED_TEXT, fontWeight: 500 }}>{work.priceLabel}</span>

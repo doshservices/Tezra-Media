@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { brand, mission, overview, purpose, values, verticals, vision } from "@/content/tezra";
-import { images, verticalImages } from "@/content/images";
+import { images, localImages, verticalImages } from "@/content/images";
 import { valueIcons, verticalIcons } from "@/content/icons";
 import {
   Backdrop,
@@ -44,7 +44,7 @@ export function AboutPage() {
             <SectionHeading style={{ marginBottom: "22px" }}>What TEZRA Is</SectionHeading>
             <Prose style={{ fontSize: "17px" }}>{overview}</Prose>
           </div>
-          <Photo src={images.ecosystem} alt="TEZRA" height="500px" sizes="(max-width: 860px) 100vw, 50vw" />
+          <Photo src={localImages.ecosystem} alt="TEZRA" height="500px" sizes="(max-width: 860px) 100vw, 50vw" objectPosition="center 30%" />
         </div>
       </Section>
 
@@ -187,7 +187,7 @@ export function AboutPage() {
       <Section background={GREY_BG}>
         <div className="about-split" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "72px", alignItems: "center" }}>
           <Photo
-            src={images.heroMarketing}
+            src={localImages.ambition}
             alt="Long-term ambition"
             height="380px"
             sizes="(max-width: 860px) 100vw, 50vw"

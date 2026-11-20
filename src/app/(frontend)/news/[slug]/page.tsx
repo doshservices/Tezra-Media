@@ -55,9 +55,10 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   // An unresolved slug is a 404, not an empty page — it may have been unpublished after sharing.
   if (!article) notFound();
 
-  // Same section to the right, everything else to the left.
+  // A story can sit in several sections; the first leads, so the rail follows it.
+  const leadCategory = article.category[0];
   const [sameCategory, recent] = await Promise.all([
-    getArticles({ category: article.category, limit: 5 }),
+    leadCategory ? getArticles({ category: leadCategory, limit: 5 }) : Promise.resolve([]),
     getArticles({ limit: 10 }),
   ]);
 
@@ -148,7 +149,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                           color: MUTED_TEXT,
                         }}
                       >
-                        {[other.category, other.publishedLabel].filter(Boolean).join("  ·  ")}
+                        {[other.category[0], other.publishedLabel].filter(Boolean).join("  ·  ")}
                       </div>
                     </div>
                   </li>
@@ -241,7 +242,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
           {related.length > 0 && (
             <aside className="news-rail news-rail--right">
-              <RailHeading text={`More in ${article.category}`} />
+              <RailHeading text={`More in ${leadCategory}`} />
               {related.map((other, index) => (
                 <Link
                   key={other.id}
@@ -272,7 +273,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                       marginBottom: "8px",
                     }}
                   >
-                    {other.category.toUpperCase()}
+                    {other.category[0]?.toUpperCase()}
                   </div>
                   <h3
                     style={{

@@ -12,8 +12,8 @@ export const metadata: Metadata = {
   // Set NEXT_PUBLIC_SITE_URL before launch so canonical and social URLs resolve.
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${brand.name} — ${brand.descriptor}`,
-    template: `%s — ${brand.name}`,
+    default: `${brand.name} | ${brand.descriptor}`,
+    template: `%s | ${brand.name}`,
   },
   description:
     "TEZRA is a modern media, culture, branding and business solutions group. " +

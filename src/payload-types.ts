@@ -148,7 +148,10 @@ export interface News {
    * One or two sentences. Used on the News listing and in search results.
    */
   summary: string;
-  category:
+  /**
+   * Pick every section this story belongs in. The first one leads the article.
+   */
+  category: (
     | 'Politics'
     | 'World Affairs'
     | 'Business & Economy'
@@ -163,7 +166,8 @@ export interface News {
     | 'Education'
     | 'Environment'
     | 'Society'
-    | 'Leadership';
+    | 'Leadership'
+  )[];
   format: 'Latest News' | 'Analysis' | 'Features' | 'Interviews' | 'Insights';
   /**
    * Lead image. Optional — the listing handles articles without one.
@@ -441,7 +445,7 @@ export interface Artwork {
         id?: string | null;
       }[]
     | null;
-  artistName: string;
+  artistName?: string | null;
   /**
    * Year of the work, or a range.
    */

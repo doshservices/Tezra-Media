@@ -37,10 +37,15 @@ export const News: CollectionConfig = {
       fields: [
         {
           name: "category",
+          label: "Coverage",
           type: "select",
+          hasMany: true,
           required: true,
           options: newsCategories.map((c) => ({ label: c, value: c })),
-          admin: { width: "50%" },
+          admin: {
+            width: "50%",
+            description: "Pick every section this story belongs in. The first one leads the article.",
+          },
         },
         {
           name: "format",

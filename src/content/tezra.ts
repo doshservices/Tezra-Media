@@ -107,7 +107,6 @@ export const verticals: readonly Vertical[] = [
     positioning:
       "Art, creative expression and cultural experiences within the TEZRA ecosystem.",
     coreAreas: [
-      "Artists",
       "Artworks",
       "Collections",
       "Available Works",

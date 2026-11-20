@@ -5,7 +5,7 @@ import { getArtworks } from "@/lib/content";
 export const metadata: Metadata = {
   title: "Tezra Arts",
   description:
-    "Art, creative expression and cultural experiences — artists, artworks, collections, exhibitions and commissions.",
+    "Art, creative expression and cultural experiences — commissioned artworks, collections, exhibitions and acquisitions.",
 };
 
 /** Re-read once a minute, so publishing shows on the site without a redeploy. */

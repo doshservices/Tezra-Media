@@ -5,6 +5,9 @@ export const localImages = {
   media: "/Assets/media.jpg",
   news: "/Assets/news.jpg",
   contact: "/Assets/contact.jpg",
+  ecosystem: "/Assets/connected-ecosystem.jpg",
+  ambition: "/Assets/ambition.png",
+  marketing: "/Assets/marketing and consulting.jpg",
 } as const;
 
 const unsplash = (id: string, width: number) =>
@@ -25,13 +28,10 @@ export const images = {
   heroClients: unsplash("photo-1497366754035-f200968a6e72", 1600),
 
   /** Editorial imagery. Arts entries are gallery scenes, never shown as a TEZRA artwork. */
-  /** Used beside "What Is TEZRA" on the homepage and About page. */
-  ecosystem: unsplash("photo-1589156280159-27698a70f29e", 1200),
   newsroom: unsplash("photo-1588011930968-eadac80e6a5a", 1200),
   production: unsplash("photo-1625690303837-654c9666d2d0", 1200),
   interview: unsplash("photo-1612043071344-94c20c4c837e", 1200),
   artFair: unsplash("photo-1565876427310-0695a4ff03b7", 1200),
-  office: unsplash("photo-1497366754035-f200968a6e72", 1200),
   culture: unsplash("photo-1569783721854-33a99b4c0bae", 1200),
   gallery: unsplash("photo-1605429523419-d828acb941d9", 1200),
   artwork: unsplash("photo-1577720643272-265f09367456", 1200),
@@ -42,5 +42,5 @@ export const verticalImages: Record<string, string> = {
   media: images.production,
   news: images.newsroom,
   arts: images.artFair,
-  "marketing-consulting": images.office,
+  "marketing-consulting": localImages.marketing,
 };

@@ -6,7 +6,8 @@ export type Article = {
   id: string;
   title: string;
   excerpt: string;
-  category: string;
+  /** Every coverage section the story sits in. The first leads the article. */
+  category: string[];
   format: string;
   author: string;
   /** ISO, for <time dateTime> and sorting. */
@@ -50,7 +51,7 @@ export type Artwork = {
   id: string;
   title: string;
   slug: string;
-  artistName: string;
+  artistName?: string;
   year?: string;
   availability: string;
   /** Already formatted, or "Price on request" when the price is not public. */

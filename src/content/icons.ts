@@ -89,7 +89,6 @@ export const areaIcons: Record<string, LucideIcon> = {
   Insights: Lightbulb,
 
   // Tezra Arts (brief 9)
-  Artists: Users,
   Artworks: Frame,
   Collections: Layers,
   "Available Works": Gem,

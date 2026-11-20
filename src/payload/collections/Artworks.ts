@@ -3,7 +3,7 @@ import { canEdit, isAdmin, isSignedIn, publishedOrSignedIn } from "../access";
 import { restrictPublishToAdmin, seoFields, slugField } from "../fields";
 import { bodyEditor } from "../editor";
 
-/** Arts catalogue. Enquiry only; price shows only when ticked. Artist details sit on the work. */
+/** Arts catalogue. Enquiry only; price shows only when ticked. The artist shows only when filled in. */
 export const Artworks: CollectionConfig = {
   slug: "artworks",
   labels: { singular: "Artwork", plural: "Artworks" },
@@ -35,7 +35,7 @@ export const Artworks: CollectionConfig = {
     {
       type: "row",
       fields: [
-        { name: "artistName", label: "Artist", type: "text", required: true, admin: { width: "50%" } },
+        { name: "artistName", label: "Artist", type: "text", admin: { width: "50%" } },
         {
           name: "year",
           type: "text",
