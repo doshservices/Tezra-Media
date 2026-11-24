@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { brand } from "@/content/tezra";
 import { labelFor, recipientFor } from "@/lib/enquiry-routing";
-import { isMailConfigured, smtpConfig, transporter } from "@/lib/mailer";
+import { isMailConfigured, mailFrom, mailer } from "@/lib/mailer";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -109,15 +109,20 @@ export async function POST(request: Request) {
     </div>`;
 
   try {
-    await transporter().sendMail({
-      // From must stay the authenticated mailbox or the host rejects it; the visitor goes in Reply-To.
-      from: { name: `${brand.name} Website`, address: smtpConfig.user },
-      to,
-      replyTo: { name, address: email },
+    // From must stay the verified domain or Resend rejects it; the visitor goes in Reply-To.
+    const { error } = await mailer().emails.send({
+      from: mailFrom,
+      to: [to],
+      replyTo: `${name} <${email}>`,
       subject,
       text,
       html,
     });
+
+    if (error) {
+      console.error("enquiry rejected by Resend", error);
+      return NextResponse.json({ error: "send_failed" }, { status: 502 });
+    }
   } catch (error) {
     console.error("enquiry failed to send", error);
     return NextResponse.json({ error: "send_failed" }, { status: 502 });

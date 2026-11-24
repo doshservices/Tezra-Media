@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle, Mail, MapPin, Phone } from "lucide-react";
+import { AlertCircle, CheckCircle, Clock, Mail, MapPin, Phone } from "lucide-react";
 import {
   brand,
   contact,
@@ -220,7 +220,11 @@ export function ContactPage() {
         <div className="contact-form-panel" style={{ backgroundColor: "#FFFFFF", padding: "72px 60px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
           {state === "sent" || state === "unconfigured" || state === "error" ? (
             <div style={{ textAlign: "center", padding: "40px 0" }}>
-              <CheckCircle size={52} color={state === "sent" ? NAVY : MUTED_TEXT} style={{ marginBottom: "20px" }} />
+              {(() => {
+                // A tick on a failure reads as "sent" at a glance, whatever the words say.
+                const Icon = state === "sent" ? CheckCircle : state === "unconfigured" ? Clock : AlertCircle;
+                return <Icon size={52} color={state === "sent" ? NAVY : MUTED_TEXT} style={{ marginBottom: "20px" }} />;
+              })()}
               <h2 style={{ fontFamily: FONT_HEADING, fontSize: "28px", fontWeight: 700, color: "#000000", marginBottom: "12px" }}>
                 {confirmation.title}
               </h2>
