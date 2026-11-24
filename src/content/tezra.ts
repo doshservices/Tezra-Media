@@ -303,7 +303,7 @@ export const contact = {
   phone: "+234 704 700 2665",
   /** Still to be provided by TEZRA. */
   address: "",
-  /** Where enquiries are delivered. Per-category routing can follow later. */
+  /** Fallback for an unrecognised category; the routing table handles the rest. */
   formRecipient: "business.development@tezragroup.com",
 } as const;
 

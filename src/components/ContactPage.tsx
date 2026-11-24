@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import emailjs from "@emailjs/browser";
 import { CheckCircle, Mail, MapPin, Phone } from "lucide-react";
 import {
   brand,
@@ -13,7 +12,6 @@ import {
   telHref,
 } from "@/content/tezra";
 import { localImages } from "@/content/images";
-import { emailjsConfig, isEmailjsConfigured, type EnquiryTemplateParams } from "@/lib/emailjs";
 import {
   Backdrop,
   BORDER,
@@ -25,7 +23,7 @@ import {
 } from "./shared";
 import { SocialMark, platformName } from "./SocialIcons";
 
-/** Contact. ?enquiry= and ?subject= preselect the category. Sends via EmailJS from the browser. */
+/** Contact. ?enquiry= and ?subject= preselect the category. Posts to /api/enquiry, which routes it. */
 export function ContactPage() {
   const [form, setForm] = useState({
     name: "",
@@ -34,6 +32,8 @@ export function ContactPage() {
     phone: "",
     subject: "",
     message: "",
+    // Honeypot: left empty by people, filled by bots.
+    companyWebsite: "",
   });
   const [enquiry, setEnquiry] = useState<string>("general");
 
@@ -52,34 +52,23 @@ export function ContactPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // No keys yet — say so rather than pretending the message went somewhere.
-    if (!isEmailjsConfigured) {
-      setState("unconfigured");
-      return;
-    }
-
     setState("sending");
 
-    const label =
-      contactCategories.find((category) => category.value === enquiry)?.label ?? enquiry;
-
-    const params: EnquiryTemplateParams = {
-      enquiry_type: label,
-      from_name: form.name,
-      company: form.company,
-      reply_to: form.email,
-      phone: form.phone,
-      subject: form.subject || `Website enquiry: ${label}`,
-      message: form.message,
-      to_email: contact.formRecipient,
-    };
-
     try {
-      await emailjs.send(emailjsConfig.serviceId, emailjsConfig.templateId, params, {
-        publicKey: emailjsConfig.publicKey,
+      const response = await fetch("/api/enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, enquiry }),
       });
-      setState("sent");
+
+      if (response.ok) {
+        setState("sent");
+        return;
+      }
+
+      // Sending is not switched on here — say so rather than blaming the visitor.
+      const { error } = (await response.json().catch(() => ({}))) as { error?: string };
+      setState(error === "unconfigured" ? "unconfigured" : "error");
     } catch (error) {
       console.error("enquiry failed to send", error);
       setState("error");
@@ -319,6 +308,19 @@ export function ContactPage() {
               <div>
                 <label style={labelStyle}>SUBJECT *</label>
                 <input required style={inputStyle("subject")} value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} onFocus={() => setFocused("subject")} onBlur={() => setFocused(null)} placeholder="How can we help?" />
+              </div>
+
+              {/* Honeypot. Hidden from people and from screen readers; bots fill it in. */}
+              <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }}>
+                <label>
+                  Company website
+                  <input
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={form.companyWebsite}
+                    onChange={(e) => setForm({ ...form, companyWebsite: e.target.value })}
+                  />
+                </label>
               </div>
 
               <div>
