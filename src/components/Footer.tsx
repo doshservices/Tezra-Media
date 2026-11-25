@@ -117,7 +117,7 @@ export function Footer({ settings }: { settings: Settings }) {
               Work With Us
             </Link>
             {socialLinks.length > 0 && (
-              <div style={{ display: "flex", gap: "8px", marginTop: "28px", marginLeft: "-7px", flexWrap: "wrap" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "26px" }}>
                 {socialLinks.map((social) => (
                   <a
                     key={`${social.owner}-${social.platform}`}
@@ -125,21 +125,23 @@ export function Footer({ settings }: { settings: Settings }) {
                     target="_blank"
                     rel="noreferrer"
                     aria-label={`${social.owner} on ${platformName(social.platform)} — ${social.handle}`}
-                    title={`${social.owner} · ${social.handle}`}
-                    // Borderless, but the box stays so the tap target is bigger than the glyph.
+                    title={social.owner}
+                    // Three of these are Instagram, so the handle has to carry it, not the glyph.
                     style={{
-                      width: "36px",
-                      height: "36px",
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      color: "rgba(255,255,255,0.6)",
+                      gap: "10px",
+                      fontFamily: FONT_BODY,
+                      fontSize: "14px",
+                      color: "rgba(255,255,255,0.45)",
+                      textDecoration: "none",
                       transition: "color 0.2s",
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.color = "#FFFFFF")}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
                   >
                     <SocialMark platform={social.platform} size={22} />
+                    {social.handle}
                   </a>
                 ))}
               </div>
