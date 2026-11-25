@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { BrandLockup } from "./BrandLockup";
-import { brand, contact, footerColumns } from "@/content/tezra";
+import { brand, contact, footerColumns, socialLinks as defaultSocials } from "@/content/tezra";
 import type { Settings } from "@/lib/types";
 import { SocialMark, platformName } from "./SocialIcons";
 import { FONT_BODY } from "./shared";
@@ -13,7 +13,7 @@ export function Footer({ settings }: { settings: Settings }) {
   const email = settings.email ?? contact.email;
   const phone = settings.phone ?? contact.phone;
   const address = settings.address ?? contact.address;
-  const socialLinks = settings.socialAccounts;
+  const socialLinks = settings.socialAccounts.length > 0 ? settings.socialAccounts : defaultSocials;
   const mailtoHref = email ? `mailto:${email}` : "";
   const telHref = phone ? `tel:${phone.replace(/\s+/g, "")}` : "";
 
@@ -55,41 +55,6 @@ export function Footer({ settings }: { settings: Settings }) {
             <p style={{ fontFamily: FONT_BODY, fontSize: "13px", lineHeight: 1.7, color: "rgba(255,255,255,0.6)", marginTop: "16px", fontStyle: "italic" }}>
               {brand.philosophy}
             </p>
-
-            {socialLinks.length > 0 && (
-              <div style={{ display: "flex", gap: "12px", marginTop: "26px", flexWrap: "wrap" }}>
-                {socialLinks.map((social) => (
-                  <a
-                    key={`${social.owner}-${social.platform}`}
-                    href={social.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`${social.owner} on ${platformName(social.platform)} — ${social.handle}`}
-                    title={`${social.owner} · ${social.handle}`}
-                    style={{
-                      width: "38px",
-                      height: "38px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      border: "1px solid rgba(255,255,255,0.18)",
-                      color: "rgba(255,255,255,0.6)",
-                      transition: "color 0.2s, border-color 0.2s",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = "#FFFFFF";
-                      e.currentTarget.style.borderColor = "rgba(255,255,255,0.55)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = "rgba(255,255,255,0.6)";
-                      e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)";
-                    }}
-                  >
-                    <SocialMark platform={social.platform} />
-                  </a>
-                ))}
-              </div>
-            )}
           </div>
 
           {/* Company and Our Platforms (brief 14) */}
@@ -151,6 +116,34 @@ export function Footer({ settings }: { settings: Settings }) {
             >
               Work With Us
             </Link>
+            {socialLinks.length > 0 && (
+              <div style={{ display: "flex", gap: "8px", marginTop: "28px", marginLeft: "-7px", flexWrap: "wrap" }}>
+                {socialLinks.map((social) => (
+                  <a
+                    key={`${social.owner}-${social.platform}`}
+                    href={social.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`${social.owner} on ${platformName(social.platform)} — ${social.handle}`}
+                    title={`${social.owner} · ${social.handle}`}
+                    // Borderless, but the box stays so the tap target is bigger than the glyph.
+                    style={{
+                      width: "36px",
+                      height: "36px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "rgba(255,255,255,0.6)",
+                      transition: "color 0.2s",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = "#FFFFFF")}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
+                  >
+                    <SocialMark platform={social.platform} size={22} />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

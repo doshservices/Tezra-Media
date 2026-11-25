@@ -188,7 +188,7 @@ export function ContactPage() {
                 <div style={{ fontFamily: FONT_BODY, fontSize: "11px", color: "rgba(255,255,255,0.35)", fontWeight: 600, marginBottom: "14px" }}>
                   FOLLOW TEZRA
                 </div>
-                <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+                <div style={{ display: "flex", gap: "8px", marginLeft: "-7px", flexWrap: "wrap" }}>
                   {socialLinks.map((social) => (
                     <a
                       key={`${social.owner}-${social.platform}`}
@@ -198,16 +198,15 @@ export function ContactPage() {
                       aria-label={`${social.owner} on ${platformName(social.platform)} — ${social.handle}`}
                       title={`${social.owner} · ${social.handle}`}
                       style={{
-                        width: "38px",
-                        height: "38px",
+                        width: "36px",
+                        height: "36px",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        border: "1px solid rgba(255,255,255,0.2)",
                         color: "rgba(255,255,255,0.6)",
                       }}
                     >
-                      <SocialMark platform={social.platform} />
+                      <SocialMark platform={social.platform} size={22} />
                     </a>
                   ))}
                 </div>

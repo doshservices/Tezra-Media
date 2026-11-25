@@ -313,7 +313,7 @@ export const telHref = contact.phone ? `tel:${contact.phone.replace(/\s+/g, "")}
 /** Mailto: href for the confirmed business development inbox. */
 export const mailtoHref = contact.email ? `mailto:${contact.email}` : "";
 
-/** Handles confirmed, platforms not — so nothing is linked. Adding an entry turns the row on. */
+/** An entry here turns the footer and contact icon rows on. Site settings override it. */
 export type SocialPlatform = "instagram" | "x" | "linkedin" | "facebook" | "youtube" | "tiktok";
 
 export type SocialAccount = {
@@ -324,15 +324,39 @@ export type SocialAccount = {
   url: string;
 };
 
-/** The handles TEZRA confirmed, kept so the copy is not lost while platforms are pending. */
-export const confirmedSocialHandles = [
-  { owner: "TEZRA", handle: "@tezragroup" },
-  { owner: "Tezra Media", handle: "@tezra.media" },
-  { owner: "Tezra News", handle: "@tezranews" },
-  { owner: "Tezra Arts", handle: "@tezraarts" },
-] as const;
-
-export const socialLinks: readonly SocialAccount[] = [];
+/** Confirmed by TEZRA on 25 November. Tracking parameters stripped — they are session tokens. */
+export const socialLinks: readonly SocialAccount[] = [
+  {
+    owner: "Tezra Marketing & Consulting",
+    platform: "instagram",
+    handle: "@tezragroup",
+    url: "https://www.instagram.com/tezragroup",
+  },
+  {
+    owner: "Tezra News",
+    platform: "instagram",
+    handle: "@tezranews",
+    url: "https://www.instagram.com/tezranews",
+  },
+  {
+    owner: "Tezra Arts",
+    platform: "instagram",
+    handle: "@tezraarts",
+    url: "https://www.instagram.com/tezraarts",
+  },
+  {
+    owner: "Tezra News and Media",
+    platform: "youtube",
+    handle: "@TezraNewsandMedia",
+    url: "https://www.youtube.com/@TezraNewsandMedia",
+  },
+  {
+    owner: "Tezra News and Media",
+    platform: "x",
+    handle: "@TezraMedia",
+    url: "https://x.com/tezramedia",
+  },
+];
 
 /** Content manager roles. Administrators publish; editors write and save drafts. */
 export const cmsRoles = [
