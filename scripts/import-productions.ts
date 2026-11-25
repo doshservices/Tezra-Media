@@ -7,17 +7,16 @@ import config from "@payload-config";
 type Production = {
   title: string;
   slug: string;
-  format: string;
+  format: string[];
   summary?: string;
   youtubeUrl: string;
 };
 
 const productions: Production[] = [
   {
-    title: "Tezra Media showreel",
-    slug: "tezra-media-showreel",
-    format: "Video",
-    summary: "Event coverage, interviews and campaign media produced by Tezra Media.",
+    title: "Delphino Drunch",
+    slug: "delphino-drunch",
+    format: ["Selected Work", "Video"],
     youtubeUrl: "https://youtu.be/a-7D5GuAQyM",
   },
 ];

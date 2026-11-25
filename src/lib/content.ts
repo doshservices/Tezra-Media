@@ -491,7 +491,7 @@ const toProduction = (doc: Record<string, unknown>): Production => ({
   id: String(doc.id),
   title: typeof doc.title === "string" ? doc.title : "Untitled",
   slug: typeof doc.slug === "string" ? doc.slug : String(doc.id),
-  format: typeof doc.format === "string" ? doc.format : "",
+  format: Array.isArray(doc.format) ? doc.format.filter((f): f is string => typeof f === "string") : [],
   summary: typeof doc.summary === "string" && doc.summary ? doc.summary : undefined,
   duration: typeof doc.duration === "string" && doc.duration ? doc.duration : undefined,
   youtubeId: doc.source === "youtube" ? youtubeId(doc.youtubeUrl) : undefined,
@@ -511,7 +511,7 @@ export const getProductions = async (format?: string) =>
         depth: 1,
         limit: 200,
         sort: ["-featured", "order", "-publishedAt"],
-        where: format ? { and: [PUBLISHED, { format: { equals: format } }] } : PUBLISHED,
+        where: format ? { and: [PUBLISHED, { format: { in: [format] } }] } : PUBLISHED,
       });
       return docs.map((doc) => toProduction(asRecord(doc)));
     },
@@ -532,8 +532,11 @@ export const getProductionCounts = async () =>
       });
       const counts: Record<string, number> = {};
       for (const doc of docs) {
-        const format = asRecord(doc).format;
-        if (typeof format === "string") counts[format] = (counts[format] ?? 0) + 1;
+        const formats = asRecord(doc).format;
+        if (!Array.isArray(formats)) continue;
+        for (const format of formats) {
+          if (typeof format === "string") counts[format] = (counts[format] ?? 0) + 1;
+        }
       }
       return counts;
     },

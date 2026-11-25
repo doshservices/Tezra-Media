@@ -443,9 +443,9 @@ export interface Production {
    */
   summary?: string | null;
   /**
-   * Which card on the Tezra Media page this appears under.
+   * Every card this should appear under. Pick more than one if it belongs in several.
    */
-  format: 'Selected Work' | 'Video' | 'Interviews' | 'Features' | 'Campaigns' | 'Documentary';
+  format: ('Selected Work' | 'Video' | 'Interviews' | 'Features' | 'Campaigns' | 'Documentary')[];
   source: 'youtube' | 'upload';
   /**
    * Any YouTube address — watch, youtu.be, shorts or embed. Required for a YouTube production.

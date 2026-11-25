@@ -37,9 +37,13 @@ export const Productions: CollectionConfig = {
         {
           name: "format",
           type: "select",
+          hasMany: true,
           required: true,
           options: mediaContentTypes.map((t) => ({ label: t, value: t })),
-          admin: { width: "50%", description: "Which card on the Tezra Media page this appears under." },
+          admin: {
+            width: "50%",
+            description: "Every card this should appear under. Pick more than one if it belongs in several.",
+          },
         },
         {
           name: "source",

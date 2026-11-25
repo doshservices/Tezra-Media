@@ -117,7 +117,8 @@ export type Production = {
   id: string;
   title: string;
   slug: string;
-  format: string;
+  /** Every format card this sits under. */
+  format: string[];
   summary?: string;
   duration?: string;
   /** Set for a YouTube production; the id, not the full address. */

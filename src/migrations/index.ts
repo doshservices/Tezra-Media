@@ -3,6 +3,7 @@ import * as migration_20261013_120347_news_byline from './20261013_120347_news_b
 import * as migration_20261024_153721_s3_object_key from './20261024_153721_s3_object_key';
 import * as migration_20261120_053154_news_coverage from './20261120_053154_news_coverage';
 import * as migration_20261125_210647_productions from './20261125_210647_productions';
+import * as migration_20261125_213943_productions_multi_format from './20261125_213943_productions_multi_format';
 
 export const migrations = [
   {
@@ -28,6 +29,11 @@ export const migrations = [
   {
     up: migration_20261125_210647_productions.up,
     down: migration_20261125_210647_productions.down,
-    name: '20261125_210647_productions'
+    name: '20261125_210647_productions',
+  },
+  {
+    up: migration_20261125_213943_productions_multi_format.up,
+    down: migration_20261125_213943_productions_multi_format.down,
+    name: '20261125_213943_productions_multi_format'
   },
 ];
