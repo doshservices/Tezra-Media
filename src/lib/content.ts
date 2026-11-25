@@ -10,7 +10,9 @@ import type {
   ArtworkDetail,
   ClientLogo,
   Leader,
+  Production,
   Settings,
+  VideoSource,
   WorkDetail,
   WorkItem,
 } from "./types";
@@ -455,4 +457,85 @@ export const getSettings = async () =>
       } satisfies Settings;
     },
     EMPTY_SETTINGS,
+  );
+
+/** Accepts any YouTube address an editor is likely to paste, and returns the bare id. */
+export const youtubeId = (value: unknown): string | undefined => {
+  if (typeof value !== "string") return undefined;
+  const match = value.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/))([A-Za-z0-9_-]{11})/,
+  );
+  return match?.[1];
+};
+
+const videoSources = (value: unknown): VideoSource[] => {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((row) => {
+    const record = asRecord(row);
+    const file = record.file as Media;
+    const url = mediaUrl(file);
+    if (!url) return [];
+    const mimeType =
+      file && typeof file === "object" && typeof (file as { mimeType?: unknown }).mimeType === "string"
+        ? (file as { mimeType: string }).mimeType
+        : undefined;
+    return [{
+      label: typeof record.label === "string" && record.label ? record.label : "Source",
+      url,
+      mimeType,
+    }];
+  });
+};
+
+const toProduction = (doc: Record<string, unknown>): Production => ({
+  id: String(doc.id),
+  title: typeof doc.title === "string" ? doc.title : "Untitled",
+  slug: typeof doc.slug === "string" ? doc.slug : String(doc.id),
+  format: typeof doc.format === "string" ? doc.format : "",
+  summary: typeof doc.summary === "string" && doc.summary ? doc.summary : undefined,
+  duration: typeof doc.duration === "string" && doc.duration ? doc.duration : undefined,
+  youtubeId: doc.source === "youtube" ? youtubeId(doc.youtubeUrl) : undefined,
+  sources: doc.source === "upload" ? videoSources(doc.videoSources) : [],
+  poster: mediaUrl(doc.poster as Media, "feature"),
+  posterAlt: mediaAlt(doc.poster as Media),
+});
+
+/** Productions for one format card, lead item first. */
+export const getProductions = async (format?: string) =>
+  safely(
+    `getProductions(${format ?? "all"})`,
+    async () => {
+      const payload = await payloadClient();
+      const { docs } = await payload.find({
+        collection: "productions",
+        depth: 1,
+        limit: 200,
+        sort: ["-featured", "order", "-publishedAt"],
+        where: format ? { and: [PUBLISHED, { format: { equals: format } }] } : PUBLISHED,
+      });
+      return docs.map((doc) => toProduction(asRecord(doc)));
+    },
+    [] as Production[],
+  );
+
+/** How many productions sit under each format card, so empty cards can be left unlinked. */
+export const getProductionCounts = async () =>
+  safely(
+    "getProductionCounts",
+    async () => {
+      const payload = await payloadClient();
+      const { docs } = await payload.find({
+        collection: "productions",
+        depth: 0,
+        limit: 500,
+        where: PUBLISHED,
+      });
+      const counts: Record<string, number> = {};
+      for (const doc of docs) {
+        const format = asRecord(doc).format;
+        if (typeof format === "string") counts[format] = (counts[format] ?? 0) + 1;
+      }
+      return counts;
+    },
+    {} as Record<string, number>,
   );

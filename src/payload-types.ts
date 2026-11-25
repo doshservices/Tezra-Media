@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     news: News;
     projects: Project;
+    productions: Production;
     artworks: Artwork;
     clients: Client;
     leadership: Leadership;
@@ -83,6 +84,7 @@ export interface Config {
   collectionsSelect: {
     news: NewsSelect<false> | NewsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    productions: ProductionsSelect<false> | ProductionsSelect<true>;
     artworks: ArtworksSelect<false> | ArtworksSelect<true>;
     clients: ClientsSelect<false> | ClientsSelect<true>;
     leadership: LeadershipSelect<false> | LeadershipSelect<true>;
@@ -424,6 +426,89 @@ export interface Client {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Video for Tezra Media. Pick the format card it belongs under, then either paste a YouTube link or upload the file.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "productions".
+ */
+export interface Production {
+  id: number;
+  title: string;
+  /**
+   * The web address for this page. Typed in any form, it is tidied into lower case with hyphens. Leave it alone once published — changing it breaks existing links.
+   */
+  slug: string;
+  /**
+   * One or two sentences, shown under the title and in the playlist.
+   */
+  summary?: string | null;
+  /**
+   * Which card on the Tezra Media page this appears under.
+   */
+  format: 'Selected Work' | 'Video' | 'Interviews' | 'Features' | 'Campaigns' | 'Documentary';
+  source: 'youtube' | 'upload';
+  /**
+   * Any YouTube address — watch, youtu.be, shorts or embed. Required for a YouTube production.
+   */
+  youtubeUrl?: string | null;
+  /**
+   * One row per quality, best first. Add a single row for one file — the quality menu only appears when there is more than one.
+   */
+  videoSources?:
+    | {
+        /**
+         * e.g. 1080p
+         */
+        label: string;
+        file: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Still shown before playback starts. Optional for YouTube, which supplies its own.
+   */
+  poster?: (number | null) | Media;
+  /**
+   * Shown on the card, e.g. 12:40. Optional.
+   */
+  duration?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  publishedAt?: string | null;
+  /**
+   * Lower numbers play first. Ties fall back to the date.
+   */
+  order?: number | null;
+  /**
+   * Lead item for its format card.
+   */
+  featured?: boolean | null;
+  /**
+   * Leave empty to use the title above. Around 60 characters shows in full.
+   */
+  metaTitle?: string | null;
+  /**
+   * Leave empty to use the summary. Around 155 characters shows in full.
+   */
+  metaDescription?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * Works for Tezra Arts. Enquiry only for now — nothing here takes a payment.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -569,6 +654,10 @@ export interface PayloadLockedDocument {
         value: number | Project;
       } | null)
     | ({
+        relationTo: 'productions';
+        value: number | Production;
+      } | null)
+    | ({
         relationTo: 'artworks';
         value: number | Artwork;
       } | null)
@@ -672,6 +761,36 @@ export interface ProjectsSelect<T extends boolean = true> {
       };
   body?: T;
   verified?: T;
+  featured?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "productions_select".
+ */
+export interface ProductionsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  summary?: T;
+  format?: T;
+  source?: T;
+  youtubeUrl?: T;
+  videoSources?:
+    | T
+    | {
+        label?: T;
+        file?: T;
+        id?: T;
+      };
+  poster?: T;
+  duration?: T;
+  description?: T;
+  publishedAt?: T;
+  order?: T;
   featured?: T;
   metaTitle?: T;
   metaDescription?: T;

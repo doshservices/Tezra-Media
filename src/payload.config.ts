@@ -11,6 +11,7 @@ import { Users } from "@/payload/collections/Users";
 import { Media } from "@/payload/collections/Media";
 import { News } from "@/payload/collections/News";
 import { Artworks } from "@/payload/collections/Artworks";
+import { Productions } from "@/payload/collections/Productions";
 import { Projects } from "@/payload/collections/Projects";
 import { Clients } from "@/payload/collections/Clients";
 import { Leadership } from "@/payload/collections/Leadership";
@@ -74,7 +75,7 @@ export default buildConfig({
       beforeLogin: ["/components/payload/BeforeLogin.tsx#BeforeLogin"],
     },
   },
-  collections: [News, Projects, Artworks, Clients, Leadership, Media, Users],
+  collections: [News, Projects, Productions, Artworks, Clients, Leadership, Media, Users],
   plugins: bucket ? [bucketStorage] : [],
   globals: [SiteSettings],
   editor: bodyEditor,

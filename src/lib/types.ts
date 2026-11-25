@@ -106,3 +106,24 @@ export type Settings = {
   hasPrivacyPolicy: boolean;
   hasTermsOfUse: boolean;
 };
+
+export type VideoSource = {
+  label: string;
+  url: string;
+  mimeType?: string;
+};
+
+export type Production = {
+  id: string;
+  title: string;
+  slug: string;
+  format: string;
+  summary?: string;
+  duration?: string;
+  /** Set for a YouTube production; the id, not the full address. */
+  youtubeId?: string;
+  /** Set for an uploaded production, best quality first. */
+  sources: VideoSource[];
+  poster?: string;
+  posterAlt?: string;
+};

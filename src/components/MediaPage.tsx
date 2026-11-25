@@ -1,7 +1,14 @@
 "use client";
 
 import { ArrowRight, Play } from "lucide-react";
-import { contactLink, getVertical, mediaContentTypes, mediaDirection } from "@/content/tezra";
+import Link from "next/link";
+import {
+  contactLink,
+  getVertical,
+  mediaContentTypes,
+  mediaDirection,
+  mediaFormatSlug,
+} from "@/content/tezra";
 import { images } from "@/content/images";
 import { iconFor } from "@/content/icons";
 import {
@@ -22,7 +29,7 @@ import {
 } from "./shared";
 
 /** Tezra Media. Keeps "Watch. Listen. Engage."; nothing shown as a specific production yet. */
-export function MediaPage() {
+export function MediaPage({ counts = {} }: { counts?: Record<string, number> }) {
   const vertical = getVertical("media")!;
 
   const formatImages: Record<string, string> = {
@@ -127,8 +134,16 @@ export function MediaPage() {
         <div className="formats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px" }}>
           {mediaContentTypes.map((type) => {
             const Icon = iconFor(type);
-            return (
-              <div key={type} style={{ position: "relative", overflow: "hidden", minHeight: "210px", display: "flex" }}>
+            const count = counts[type] ?? 0;
+            const cardStyle = {
+              position: "relative" as const,
+              overflow: "hidden",
+              minHeight: "210px",
+              display: "flex",
+              textDecoration: "none",
+            };
+            const inner = (
+              <>
                 <Photo
                   bare
                   src={formatImages[type]}
@@ -139,7 +154,22 @@ export function MediaPage() {
                 <div style={{ position: "relative", zIndex: 1, alignSelf: "flex-end", padding: "22px", display: "flex", alignItems: "center", gap: "12px" }}>
                   <Icon size={18} color="#FFFFFF" strokeWidth={1.6} />
                   <span style={{ fontFamily: FONT_HEADING, fontSize: "18px", fontWeight: 700, color: "#FFFFFF" }}>{type}</span>
+                  {count > 0 && (
+                    <span style={{ fontFamily: FONT_BODY, fontSize: "12px", color: "rgba(255,255,255,0.6)", marginLeft: "auto" }}>
+                      {count} {count === 1 ? "film" : "films"}
+                    </span>
+                  )}
                 </div>
+              </>
+            );
+            // A card only links once there is something under it; an empty page is worse than no link.
+            return count > 0 ? (
+              <Link key={type} href={`/media/${mediaFormatSlug(type)}`} style={cardStyle}>
+                {inner}
+              </Link>
+            ) : (
+              <div key={type} style={cardStyle}>
+                {inner}
               </div>
             );
           })}

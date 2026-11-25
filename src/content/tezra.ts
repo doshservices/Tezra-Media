@@ -373,3 +373,11 @@ export const cmsRoles = [
     canPublish: false,
   },
 ] as const;
+
+/** URL segment for a Tezra Media format card, e.g. "Selected Work" -> "selected-work". */
+export const mediaFormatSlug = (format: string): string =>
+  format.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
+/** The format a URL segment refers to, or undefined when it matches none. */
+export const mediaFormatFromSlug = (slug: string): string | undefined =>
+  mediaContentTypes.find((type) => mediaFormatSlug(type) === slug);
