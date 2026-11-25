@@ -41,8 +41,8 @@ export function Footer({ settings }: { settings: Settings }) {
       <div className="pad-section" style={{ maxWidth: "1440px", margin: "0 auto", padding: "64px 40px 0" }}>
         <div
           className="footer-links-grid"
-          // Connect gets the extra width — the email address breaks mid-word in a narrower column.
-          style={{ display: "grid", gridTemplateColumns: "1.8fr 1fr 1.4fr 1.35fr", gap: "40px", marginBottom: "48px" }}
+          // Connect keeps the extra width — the email address breaks mid-word in a narrower column.
+          style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr 1.2fr 1.3fr 1.1fr", gap: "40px", marginBottom: "48px" }}
         >
           {/* Master brand */}
           <div>
@@ -116,8 +116,13 @@ export function Footer({ settings }: { settings: Settings }) {
             >
               Work With Us
             </Link>
-            {socialLinks.length > 0 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "26px" }}>
+          </div>
+
+          {/* Follow — the whole column waits on the accounts, like Address and Legal. */}
+          {socialLinks.length > 0 && (
+            <div>
+              <div style={headingStyle}>FOLLOW</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {socialLinks.map((social) => (
                   <a
                     key={`${social.owner}-${social.platform}`}
@@ -145,8 +150,8 @@ export function Footer({ settings }: { settings: Settings }) {
                   </a>
                 ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Bottom bar */}
