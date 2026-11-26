@@ -85,6 +85,10 @@ export default buildConfig({
   },
   db: postgresAdapter({
     pool: { connectionString: process.env.DATABASE_URI ?? "" },
+    // Migrations own the schema. Left on, Payload pushes it on any connect where NODE_ENV is not
+    // "production" — including Railway's pre-deploy, where it stamps a `dev` row that then makes
+    // `payload migrate` prompt and hang. Set PAYLOAD_DB_PUSH=true to get it back locally.
+    push: process.env.PAYLOAD_DB_PUSH === "true",
   }),
   sharp,
   // Next serves /public, so nothing extra is needed to deliver uploaded images.

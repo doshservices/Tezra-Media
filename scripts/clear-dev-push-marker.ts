@@ -37,14 +37,20 @@ const run = async () => {
   const marker = rows.filter((r) => Number(r.batch) === -1);
 
   const unrecorded = onDisk.filter((name) => !recorded.has(name));
-  if (unrecorded.length > 0) {
+  if (unrecorded.length > 0 && process.env.ALLOW_PENDING !== "1") {
     console.error("REFUSING: these migrations are not recorded as applied —");
     unrecorded.forEach((n) => console.error(`  ${n}`));
-    console.error("\nRun the migrations first. The marker is the only warning that the");
-    console.error("schema was pushed rather than migrated; do not remove it blind.");
+    console.error("\nIf they are genuinely pending, clearing the marker lets `payload migrate`");
+    console.error("run them: re-run with ALLOW_PENDING=1. If instead the schema was pushed and");
+    console.error("already contains their tables, record them first — migrate would collide.");
     await db.end();
     process.exitCode = 1;
     return;
+  }
+  if (unrecorded.length > 0) {
+    console.log("Pending migrations, to be applied by the next `payload migrate`:");
+    unrecorded.forEach((n) => console.log(`  ${n}`));
+    console.log("");
   }
 
   if (marker.length === 0) {
@@ -54,7 +60,7 @@ const run = async () => {
   }
 
   const result = await db.query("delete from payload_migrations where batch = -1");
-  console.log(`All ${onDisk.length} migrations are recorded as applied.`);
+  console.log(`${recorded.size} of ${onDisk.length} migrations recorded as applied.`);
   console.log(`Removed ${result.rowCount} dev-push marker row.`);
   console.log("\n`payload migrate` will now run unattended, so Railway's pre-deploy works.");
 
