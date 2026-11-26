@@ -1,5 +1,5 @@
 import "./load-env";
-import { Client } from "pg";
+import { pgClient } from "./pg-client";
 
 /**
  * One-off repair. The productions tables reached production through a dev schema push,
@@ -33,10 +33,7 @@ const EXPECTED_ENUMS = [
 ];
 
 const run = async () => {
-  const connectionString = process.env.DATABASE_URI;
-  if (!connectionString) throw new Error("DATABASE_URI is not set");
-
-  const db = new Client({ connectionString, ssl: { rejectUnauthorized: false } });
+  const db = pgClient();
   await db.connect();
 
   const rows = async (sql: string, params: unknown[] = []) => (await db.query(sql, params)).rows;

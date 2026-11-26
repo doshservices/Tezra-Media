@@ -1,7 +1,7 @@
 import "./load-env";
 import fs from "node:fs";
 import path from "node:path";
-import { Client } from "pg";
+import { pgClient } from "./pg-client";
 
 /**
  * Removes the `dev` row (batch -1) that a dev-mode schema push leaves in payload_migrations.
@@ -18,9 +18,6 @@ import { Client } from "pg";
  */
 
 const run = async () => {
-  const connectionString = process.env.DATABASE_URI;
-  if (!connectionString) throw new Error("DATABASE_URI is not set");
-
   const dir = path.resolve(process.cwd(), "src/migrations");
   const onDisk = fs
     .readdirSync(dir)
@@ -30,7 +27,7 @@ const run = async () => {
 
   if (onDisk.length === 0) throw new Error(`no migration files found in ${dir}`);
 
-  const db = new Client({ connectionString, ssl: { rejectUnauthorized: false } });
+  const db = pgClient();
   await db.connect();
 
   const { rows } = await db.query("select name, batch from payload_migrations");
