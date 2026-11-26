@@ -77,28 +77,31 @@ const run = async () => {
       continue;
     }
 
-    let media = await payload.find({
+    // Payload renames a clashing upload (foo.jpg -> foo-1.jpg), so match on the stem, not the
+    // exact name, and take the id straight off create rather than looking it up again.
+    const stem = art.image.replace(/\.[^.]+$/, "");
+    const found = await payload.find({
       collection: "media",
-      where: { filename: { equals: art.image } },
+      where: { filename: { like: stem } },
       limit: 1,
     });
-    if (media.totalDocs === 0) {
+
+    let imageId: number | string;
+    if (found.totalDocs > 0) {
+      imageId = found.docs[0].id;
+    } else {
       if (!IMAGE_DIR) {
         console.error(`ABORT  ${art.slug}: ${art.image} is not in the media library and ARTWORK_DIR is not set`);
         process.exitCode = 1;
         return;
       }
-      await payload.create({
+      const uploaded = await payload.create({
         collection: "media",
         data: { alt: art.alt } as never,
         filePath: path.join(IMAGE_DIR, art.image),
       });
+      imageId = uploaded.id;
       console.log(`upload ${art.image}`);
-      media = await payload.find({
-        collection: "media",
-        where: { filename: { equals: art.image } },
-        limit: 1,
-      });
     }
 
     await payload.create({
@@ -106,7 +109,7 @@ const run = async () => {
       data: {
         title: art.title,
         slug: art.slug,
-        images: [{ image: media.docs[0].id }],
+        images: [{ image: imageId }],
         medium: art.medium,
         dimensions: art.dimensions,
         availability: art.availability,
