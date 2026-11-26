@@ -60,13 +60,14 @@ export function MediaFormatPage({ format, productions }: { format: string; produ
           {current.title}
         </h1>
         {current.summary && (
-          <p style={{ fontSize: "15px", lineHeight: 1.7, color: "rgba(255,255,255,0.6)", maxWidth: "720px", margin: "0 0 26px" }}>
+          <p style={{ fontSize: "15px", lineHeight: 1.7, color: "rgba(255,255,255,0.6)", maxWidth: "720px", margin: 0 }}>
             {current.summary}
           </p>
         )}
       </Section>
 
-      <Section background={NAVY} padding="0 40px 56px">
+      {/* The gap lives here, so it holds whether or not there is a summary above. */}
+      <Section background={NAVY} padding="28px 40px 56px">
         <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
           {current.youtubeId ? (
             <div style={{ position: "relative", aspectRatio: "16 / 9", background: "#000000", overflow: "hidden" }}>

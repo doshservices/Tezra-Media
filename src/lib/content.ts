@@ -323,6 +323,9 @@ const toArtwork = (doc: Record<string, unknown>, size: MediaSize = "card"): Artw
   };
 };
 
+/** Catalogue order: available first, sold last. Anything unrecognised sorts with the middle. */
+const AVAILABILITY_ORDER = ["enquire", "on-loan", "not-for-sale", "sold"];
+
 export const getArtworks = async (options: { featured?: boolean; limit?: number } = {}) =>
   safely(
     "getArtworks",
@@ -335,7 +338,18 @@ export const getArtworks = async (options: { featured?: boolean; limit?: number 
         sort: "-updatedAt",
         where: options.featured ? { and: [PUBLISHED, { featured: { equals: true } }] } : PUBLISHED,
       });
-      return docs.map((doc) => toArtwork(asRecord(doc)));
+      // What a buyer can still acquire leads; sold work stays on show, but after it.
+      const rank = (doc: Record<string, unknown>) => {
+        const at = AVAILABILITY_ORDER.indexOf(
+          typeof doc.availability === "string" ? doc.availability : "",
+        );
+        // An unrecognised value sorts with the middle, never ahead of what is for sale.
+        return at === -1 ? AVAILABILITY_ORDER.length - 1 : at;
+      };
+      return docs
+        .map((doc) => asRecord(doc))
+        .sort((a, b) => rank(a) - rank(b))
+        .map((doc) => toArtwork(doc));
     },
     [] as Artwork[],
   );
