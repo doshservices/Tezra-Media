@@ -573,3 +573,35 @@ export const getFormatCards = async () =>
     },
     {} as Record<string, FormatCard>,
   );
+
+/** The project whose picture the homepage Selected Work section uses, if an editor picked one. */
+export const getHomepageWorkImage = async () =>
+  safely<{ url: string; alt?: string } | null>(
+    "getHomepageWorkImage",
+    async () => {
+      const payload = await payloadClient();
+      const { docs } = await payload.find({
+        collection: "projects",
+        depth: 1,
+        limit: 1,
+        where: { and: [PUBLISHED, { homepageImage: { equals: "yes" } }] },
+      });
+      const doc = docs[0] ? asRecord(docs[0]) : undefined;
+      const url = doc ? mediaUrl(doc.image as Media, "feature") : undefined;
+      return url ? { url, alt: doc ? mediaAlt(doc.image as Media) : undefined } : null;
+    },
+    null,
+  );
+
+/** The newest production overall, and the newest interview, for the homepage Latest row. */
+export const getLatestProductions = async () =>
+  safely(
+    "getLatestProductions",
+    async () => {
+      const all = await getProductions();
+      const interview = all.find((p) => p.format.includes("Interviews"));
+      const latest = all.find((p) => p.id !== interview?.id) ?? all[0];
+      return { latest: latest ?? null, interview: interview ?? null };
+    },
+    { latest: null, interview: null } as { latest: Production | null; interview: Production | null },
+  );

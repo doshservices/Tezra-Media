@@ -380,6 +380,10 @@ export interface Project {
    */
   featured?: boolean | null;
   /**
+   * Only one project can hold it. Choosing it here releases whichever project had it before.
+   */
+  homepageImage?: ('no' | 'yes') | null;
+  /**
    * Leave empty to use the title above. Around 60 characters shows in full.
    */
   metaTitle?: string | null;
@@ -762,6 +766,7 @@ export interface ProjectsSelect<T extends boolean = true> {
   body?: T;
   verified?: T;
   featured?: T;
+  homepageImage?: T;
   metaTitle?: T;
   metaDescription?: T;
   updatedAt?: T;

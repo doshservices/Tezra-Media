@@ -84,9 +84,37 @@ export const Projects: CollectionConfig = {
       defaultValue: false,
       admin: { position: "sidebar", description: "Show in Selected Work on the homepage." },
     },
+    {
+      name: "homepageImage",
+      type: "radio",
+      label: "Homepage picture",
+      defaultValue: "no",
+      options: [
+        { label: "Not used on the homepage", value: "no" },
+        { label: "Use this project's picture in Selected Work", value: "yes" },
+      ],
+      admin: {
+        position: "sidebar",
+        description:
+          "Only one project can hold it. Choosing it here releases whichever project had it before.",
+      },
+    },
     seoFields,
   ],
   hooks: {
+    // Behaves like a radio across the collection: claiming the slot releases the previous holder.
+    afterChange: [
+      async ({ doc, req, previousDoc }) => {
+        if (doc.homepageImage !== "yes") return;
+        if (previousDoc?.homepageImage === "yes") return;
+        await req.payload.update({
+          collection: "projects",
+          where: { and: [{ id: { not_equals: doc.id } }, { homepageImage: { equals: "yes" } }] },
+          data: { homepageImage: "no" },
+          req,
+        });
+      },
+    ],
     beforeChange: [restrictPublishToAdmin],
     beforeValidate: [
       ({ data }) => {

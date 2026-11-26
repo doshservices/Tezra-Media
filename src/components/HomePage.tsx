@@ -4,9 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
-import { brand, overview, purpose, values, verticals } from "@/content/tezra";
+import { brand, mediaFormatSlug, overview, purpose, values, verticals } from "@/content/tezra";
 import { images, localImages, verticalImages } from "@/content/images";
-import type { Article, Artwork, ClientLogo, WorkItem } from "@/lib/types";
+import type { Article, Artwork, ClientLogo, Production, WorkItem } from "@/lib/types";
 import { valueIcons, verticalIcons } from "@/content/icons";
 import {
   Backdrop,
@@ -34,9 +34,61 @@ type HomePageProps = {
   projects: WorkItem[];
   artworks: Artwork[];
   clients: ClientLogo[];
+  /** Newest production, and the newest interview, for the Latest row. */
+  latestProduction?: Production | null;
+  latestInterview?: Production | null;
+  /** The picture an editor chose for Selected Work. */
+  workImage?: { url: string; alt?: string } | null;
 };
 
-export function HomePage({ articles, projects, artworks, clients }: HomePageProps) {
+/** One tile in the Latest row: a production when there is one, the standing line when not. */
+function ProductionCard({
+  production,
+  eyebrow,
+  fallbackImage,
+  fallbackTitle,
+}: {
+  production?: Production | null;
+  eyebrow: string;
+  fallbackImage: string;
+  fallbackTitle: string;
+}) {
+  // A production without its own poster borrows YouTube's still, else the standing photograph.
+  const image =
+    production?.poster ??
+    (production?.youtubeId ? `https://i.ytimg.com/vi/${production.youtubeId}/hqdefault.jpg` : undefined) ??
+    fallbackImage;
+  const body = (
+    <>
+      <Image src={image} alt="" fill sizes="(max-width: 900px) 100vw, 28vw" style={{ objectFit: "cover", objectPosition: "center" }} />
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(1,0,50,0.9) 0%, rgba(1,0,50,0.2) 70%)" }} />
+      <div style={{ position: "relative", zIndex: 1, height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "24px" }}>
+        <div style={{ fontFamily: FONT_BODY, fontSize: "11px", fontWeight: 600, color: "rgba(255,255,255,0.75)", marginBottom: "8px" }}>
+          {eyebrow}
+        </div>
+        <h3 style={{ fontFamily: FONT_HEADING, fontSize: "19px", fontWeight: 700, color: "#FFFFFF", lineHeight: 1.3 }}>
+          {production?.title ?? fallbackTitle}
+        </h3>
+        {production?.summary && (
+          <p style={{ fontFamily: FONT_BODY, fontSize: "13.5px", color: "rgba(255,255,255,0.7)", lineHeight: 1.6, marginTop: "8px" }}>
+            {production.summary}
+          </p>
+        )}
+      </div>
+    </>
+  );
+
+  const frame = { position: "relative" as const, minHeight: "320px", overflow: "hidden", backgroundColor: NAVY, display: "block", textDecoration: "none" };
+  const href = production ? `/media/${mediaFormatSlug(production.format[0] ?? "Video")}` : undefined;
+
+  return href ? (
+    <Link href={href} style={frame}>{body}</Link>
+  ) : (
+    <div style={frame}>{body}</div>
+  );
+}
+
+export function HomePage({ articles, projects, artworks, clients, latestProduction, latestInterview, workImage }: HomePageProps) {
   const router = useRouter();
 
   // The newest featured article takes over the large panel in News & Media.
@@ -286,8 +338,8 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
       <Section>
         <div className="home-split" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "72px", alignItems: "center" }}>
           <Photo
-            src={images.heroWork}
-            alt="Selected work"
+            src={workImage?.url ?? images.heroWork}
+            alt={workImage?.alt ?? "Selected work"}
             height="460px"
             sizes="(max-width: 860px) 100vw, 50vw"
           />
@@ -361,31 +413,19 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
             </div>
           </div>
 
-          <div style={{ position: "relative", minHeight: "320px", overflow: "hidden", backgroundColor: NAVY }}>
-            <Image src={images.production} alt="" fill sizes="(max-width: 900px) 100vw, 28vw" style={{ objectFit: "cover", objectPosition: "center" }} />
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(1,0,50,0.9) 0%, rgba(1,0,50,0.2) 70%)" }} />
-            <div style={{ position: "relative", zIndex: 1, height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "24px" }}>
-              <div style={{ fontFamily: FONT_BODY, fontSize: "11px", fontWeight: 600, color: "rgba(255,255,255,0.75)", marginBottom: "8px" }}>
-                TEZRA MEDIA
-              </div>
-              <h3 style={{ fontFamily: FONT_HEADING, fontSize: "19px", fontWeight: 700, color: "#FFFFFF", lineHeight: 1.3 }}>
-                Watch. Listen. Engage.
-              </h3>
-            </div>
-          </div>
+          <ProductionCard
+            production={latestProduction}
+            eyebrow="TEZRA MEDIA"
+            fallbackImage={images.production}
+            fallbackTitle="Watch. Listen. Engage."
+          />
 
-          <div style={{ position: "relative", minHeight: "320px", overflow: "hidden", backgroundColor: NAVY }}>
-            <Image src={images.interview} alt="" fill sizes="(max-width: 900px) 100vw, 28vw" style={{ objectFit: "cover", objectPosition: "center" }} />
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(1,0,50,0.9) 0%, rgba(1,0,50,0.2) 70%)" }} />
-            <div style={{ position: "relative", zIndex: 1, height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "24px" }}>
-              <div style={{ fontFamily: FONT_BODY, fontSize: "11px", fontWeight: 600, color: "rgba(255,255,255,0.75)", marginBottom: "8px" }}>
-                INTERVIEWS
-              </div>
-              <h3 style={{ fontFamily: FONT_HEADING, fontSize: "19px", fontWeight: 700, color: "#FFFFFF", lineHeight: 1.3 }}>
-                Business &amp; leadership features
-              </h3>
-            </div>
-          </div>
+          <ProductionCard
+            production={latestInterview}
+            eyebrow="INTERVIEWS"
+            fallbackImage={images.interview}
+            fallbackTitle="Business & leadership features"
+          />
         </div>
 
       </Section>
@@ -412,22 +452,34 @@ export function HomePage({ articles, projects, artworks, clients }: HomePageProp
               </SecondaryButton>
             </div>
           </div>
+          {/* Real work fills the mosaic as TEZRA adds it; stock holds the empty slots. */}
           <div className="arts-mosaic" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-            <Photo src={images.gallery} alt="Gallery" height="260px" sizes="(max-width: 860px) 50vw, 25vw" />
-            <Photo src={images.artwork} alt="Artwork" height="260px" sizes="(max-width: 860px) 50vw, 25vw" style={{ marginTop: "28px" }} />
-            <Photo src={images.culture} alt="Cultural experience" height="200px" sizes="(max-width: 860px) 50vw, 25vw" />
-            {artworks[0]?.image ? (
-              <Link href={`/arts/${artworks[0].slug}`} style={{ display: "block", textDecoration: "none" }}>
-                <Photo
-                  src={artworks[0].image}
-                  alt={artworks[0].imageAlt ?? artworks[0].title}
-                  height="200px"
-                  sizes="(max-width: 860px) 50vw, 25vw"
-                />
-              </Link>
-            ) : (
-              <ContentSlot label="TEZRA artwork to follow" aspectRatio="auto" />
-            )}
+            {[
+              { height: "260px", stock: images.gallery, label: "Gallery", style: undefined },
+              { height: "260px", stock: images.artwork, label: "Artwork", style: { marginTop: "28px" } },
+              { height: "200px", stock: images.culture, label: "Cultural experience", style: undefined },
+              { height: "200px", stock: undefined, label: "TEZRA artwork to follow", style: undefined },
+            ].map((slot, i) => {
+              const art = artworks[i];
+              if (art?.image) {
+                return (
+                  <Link key={slot.label} href={`/arts/${art.slug}`} style={{ display: "block", textDecoration: "none" }} title={art.title}>
+                    <Photo
+                      src={art.image}
+                      alt={art.imageAlt ?? art.title}
+                      height={slot.height}
+                      sizes="(max-width: 860px) 50vw, 25vw"
+                      style={slot.style}
+                    />
+                  </Link>
+                );
+              }
+              return slot.stock ? (
+                <Photo key={slot.label} src={slot.stock} alt={slot.label} height={slot.height} sizes="(max-width: 860px) 50vw, 25vw" style={slot.style} />
+              ) : (
+                <ContentSlot key={slot.label} label={slot.label} aspectRatio="auto" />
+              );
+            })}
           </div>
         </div>
       </Section>
