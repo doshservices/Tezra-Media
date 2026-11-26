@@ -10,6 +10,7 @@ import {
   mediaFormatSlug,
 } from "@/content/tezra";
 import { images } from "@/content/images";
+import type { FormatCard } from "@/lib/types";
 import { iconFor } from "@/content/icons";
 import {
   Backdrop,
@@ -29,7 +30,7 @@ import {
 } from "./shared";
 
 /** Tezra Media. Keeps "Watch. Listen. Engage."; nothing shown as a specific production yet. */
-export function MediaPage({ counts = {} }: { counts?: Record<string, number> }) {
+export function MediaPage({ cards = {} }: { cards?: Record<string, FormatCard> }) {
   const vertical = getVertical("media")!;
 
   const formatImages: Record<string, string> = {
@@ -134,7 +135,8 @@ export function MediaPage({ counts = {} }: { counts?: Record<string, number> }) 
         <div className="formats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px" }}>
           {mediaContentTypes.map((type) => {
             const Icon = iconFor(type);
-            const count = counts[type] ?? 0;
+            const card = cards[type];
+            const count = card?.count ?? 0;
             const cardStyle = {
               position: "relative" as const,
               overflow: "hidden",
@@ -146,8 +148,8 @@ export function MediaPage({ counts = {} }: { counts?: Record<string, number> }) 
               <>
                 <Photo
                   bare
-                  src={formatImages[type]}
-                  alt={type}
+                  src={card?.image ?? formatImages[type]}
+                  alt={card?.imageAlt ?? type}
                   sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
                 />
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(1,0,50,0.9) 0%, rgba(1,0,50,0.3) 75%)" }} />

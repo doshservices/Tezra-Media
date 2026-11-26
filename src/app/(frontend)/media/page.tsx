@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { MediaPage } from "@/components/MediaPage";
-import { getProductionCounts } from "@/lib/content";
+import { getFormatCards } from "@/lib/content";
 
 export const revalidate = 60;
 
@@ -11,6 +11,6 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const counts = await getProductionCounts();
-  return <MediaPage counts={counts} />;
+  const cards = await getFormatCards();
+  return <MediaPage cards={cards} />;
 }

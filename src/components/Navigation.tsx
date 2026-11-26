@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { brand, navLinks, primaryCta } from "@/content/tezra";
 import { BrandLockup } from "./BrandLockup";
-import { BORDER, FONT_BODY, NAVY } from "./shared";
+import { BORDER, FONT_BODY, NAVY, SHELL_WIDTH } from "./shared";
 
 /** Primary navigation. Real anchors, so crawlers can follow them. Drawer below 1100px. */
 export function Navigation() {
@@ -41,7 +41,7 @@ export function Navigation() {
           transition: "box-shadow 0.3s ease",
         }}
       >
-        <div className="pad-section" style={{ maxWidth: "1440px", margin: "0 auto", padding: "0 40px" }}>
+        <div className="pad-section" style={{ maxWidth: SHELL_WIDTH, margin: "0 auto", padding: "0 40px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "82px", gap: "24px" }}>
             {/* The group lockup — the master brand, not a vertical (brief 1) */}
             <Link
@@ -142,7 +142,7 @@ export function Navigation() {
             right: 0,
             bottom: 0,
             width: "min(320px, 85vw)",
-            backgroundColor: "#030053",
+            backgroundColor: "#11212D",
             transform: mobileOpen ? "translateX(0)" : "translateX(100%)",
             transition: "transform 0.35s ease",
             display: "flex",

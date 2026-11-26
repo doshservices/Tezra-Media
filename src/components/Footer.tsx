@@ -5,7 +5,7 @@ import { BrandLockup } from "./BrandLockup";
 import { brand, contact, footerColumns, socialLinks as defaultSocials } from "@/content/tezra";
 import type { Settings } from "@/lib/types";
 import { SocialMark, platformName } from "./SocialIcons";
-import { FONT_BODY } from "./shared";
+import { FONT_BODY, SHELL_WIDTH } from "./shared";
 
 /** Footer. Address, socials and Legal each appear only once TEZRA supply them. */
 export function Footer({ settings }: { settings: Settings }) {
@@ -38,7 +38,7 @@ export function Footer({ settings }: { settings: Settings }) {
 
   return (
     <footer style={{ backgroundColor: "#0D0D0D", color: "#FFFFFF" }}>
-      <div className="pad-section" style={{ maxWidth: "1440px", margin: "0 auto", padding: "64px 40px 0" }}>
+      <div className="pad-section" style={{ maxWidth: SHELL_WIDTH, margin: "0 auto", padding: "64px 40px 0" }}>
         <div
           className="footer-links-grid"
           // Connect keeps the extra width — the email address breaks mid-word in a narrower column.

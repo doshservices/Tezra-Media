@@ -128,3 +128,9 @@ export type Production = {
   poster?: string;
   posterAlt?: string;
 };
+
+export type FormatCard = {
+  count: number;
+  image?: string;
+  imageAlt?: string;
+};

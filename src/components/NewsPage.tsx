@@ -3,7 +3,7 @@
 import Link from "next/link";
 
 import { useMemo, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Newspaper } from "lucide-react";
 import {
   contactLink,
   getVertical,
@@ -13,14 +13,15 @@ import {
 } from "@/content/tezra";
 import { images } from "@/content/images";
 import type { Article } from "@/lib/types";
-import { iconFor } from "@/content/icons";
 import {
+  BODY_TEXT,
   BORDER,
-  ContentSlot,
   FONT_ACCENT,
   FONT_BODY,
   FONT_HEADING,
   GREY_BG,
+  INK,
+  MUTED_TEXT,
   NAVY,
   PageHero,
   Photo,
@@ -30,6 +31,9 @@ import {
   SectionHeading,
   SectionLabel,
 } from "./shared";
+
+/** Card frame. TEZRA's lead graphics are square and carry their headline in the lower third. */
+const NEWS_FRAME = "1 / 1";
 
 /** Tezra News. A general news platform, replacing Draft 1's four business sectors. */
 
@@ -47,6 +51,8 @@ export function NewsPage({ articles }: { articles: Article[] }) {
       ),
     [articles, category, format],
   );
+
+  const filtersApplied = category !== "All" || format !== "All";
 
   const pill = (label: string, active: boolean, onClick: () => void) => (
     <button
@@ -116,9 +122,9 @@ export function NewsPage({ articles }: { articles: Article[] }) {
                   <Photo
                     src={article.image}
                     alt={article.title}
-                    height="220px"
+                    height="auto"
                     sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                    style={{ marginBottom: "16px" }}
+                    style={{ aspectRatio: NEWS_FRAME, marginBottom: "16px" }}
                   />
                 )}
                 <div style={{ fontFamily: FONT_BODY, fontSize: "11px", fontWeight: 600, color: NAVY, marginBottom: "10px" }}>
@@ -140,27 +146,38 @@ export function NewsPage({ articles }: { articles: Article[] }) {
             ))}
           </div>
         ) : (
-          <>
-            <div className="articles-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "32px" }}>
-              {newsFormats.slice(0, 3).map((f) => {
-                const Icon = iconFor(f);
-                return (
-                  <div key={f} style={{ border: `1px solid ${BORDER}` }}>
-                    <ContentSlot label="Story" aspectRatio="16 / 10" />
-                    <div style={{ padding: "20px 18px" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-                        <Icon size={15} color={NAVY} strokeWidth={1.6} />
-                        <span style={{ fontFamily: FONT_BODY, fontSize: "11px", fontWeight: 600, color: NAVY }}>
-                          {f.toUpperCase()}
-                        </span>
-                      </div>
-                      <div style={{ height: "10px", width: "88%", backgroundColor: GREY_BG, marginBottom: "9px" }} />
-                      <div style={{ height: "10px", width: "64%", backgroundColor: GREY_BG }} />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>          </>
+          // A filter that matches nothing is the common case; an empty newsroom is the other.
+          <div style={{ textAlign: "center", maxWidth: "460px", margin: "0 auto", padding: "64px 0 72px" }}>
+            <Newspaper size={30} color={MUTED_TEXT} strokeWidth={1.4} style={{ marginBottom: "20px" }} />
+            <h3 style={{ fontFamily: FONT_HEADING, fontSize: "22px", fontWeight: 700, color: INK, marginBottom: "10px" }}>
+              {articles.length === 0 ? "The newsroom is just getting started" : "Nothing here yet"}
+            </h3>
+            <p style={{ fontFamily: FONT_BODY, fontSize: "15px", lineHeight: 1.7, color: BODY_TEXT, marginBottom: filtersApplied ? "24px" : 0 }}>
+              {articles.length === 0
+                ? "Tezra News is publishing its first stories. Check back shortly."
+                : "No stories match those filters yet. Try a different section or format."}
+            </p>
+            {filtersApplied && (
+              <button
+                onClick={() => {
+                  setCategory("All");
+                  setFormat("All");
+                }}
+                style={{
+                  fontFamily: FONT_BODY,
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: NAVY,
+                  background: "none",
+                  border: `1px solid ${BORDER}`,
+                  padding: "10px 20px",
+                  cursor: "pointer",
+                }}
+              >
+                Show all stories
+              </button>
+            )}
+          </div>
         )}
       </Section>
 

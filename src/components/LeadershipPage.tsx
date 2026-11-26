@@ -31,11 +31,11 @@ const GRID: CSSProperties = {
 /** Matches the column count above, so the browser requests the right size. */
 const CARD_SIZES = "(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 380px";
 
-/** Card frame. Between a 4:3 band and a full portrait. */
-const FRAME = "5 / 4";
+/** Portrait, because headshots are shot portrait — a landscape frame crops the sitter. */
+const FRAME = "4 / 5";
 
-/** Faces sit in the upper third, so crop from 25% down. A CMS focal point overrides it. */
-const DEFAULT_FOCUS = "50% 25%";
+/** Faces sit above the middle, so favour the top. A CMS focal point overrides it. */
+const DEFAULT_FOCUS = "50% 30%";
 
 export function LeadershipPage({ leaders }: { leaders: Leader[] }) {
 

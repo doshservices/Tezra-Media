@@ -10,6 +10,7 @@ import type {
   ArtworkDetail,
   ClientLogo,
   Leader,
+  FormatCard,
   Production,
   Settings,
   VideoSource,
@@ -227,17 +228,22 @@ const toWorkItem = (doc: Record<string, unknown>): WorkItem => ({
   imageAlt: mediaAlt(doc.image as Media),
 });
 
-export const getProjects = async (options: { featured?: boolean; limit?: number } = {}) =>
+export const getProjects = async (
+  options: { featured?: boolean; limit?: number; vertical?: string } = {},
+) =>
   safely(
     "getProjects",
     async () => {
       const payload = await payloadClient();
+      const filters: Where[] = [PUBLISHED];
+      if (options.featured) filters.push({ featured: { equals: true } });
+      if (options.vertical) filters.push({ vertical: { equals: options.vertical } });
       const { docs } = await payload.find({
         collection: "projects",
         depth: 1,
         limit: options.limit ?? 200,
         sort: "-updatedAt",
-        where: options.featured ? { and: [PUBLISHED, { featured: { equals: true } }] } : PUBLISHED,
+        where: { and: filters },
       });
       return docs.map((doc) => toWorkItem(asRecord(doc)));
     },
@@ -519,26 +525,37 @@ export const getProductions = async (format?: string) =>
   );
 
 /** How many productions sit under each format card, so empty cards can be left unlinked. */
-export const getProductionCounts = async () =>
+/** One summary per format card: how many productions sit under it, and the artwork to show. */
+export const getFormatCards = async () =>
   safely(
-    "getProductionCounts",
+    "getFormatCards",
     async () => {
       const payload = await payloadClient();
       const { docs } = await payload.find({
         collection: "productions",
-        depth: 0,
+        depth: 1,
         limit: 500,
+        sort: ["-featured", "order", "-publishedAt"],
         where: PUBLISHED,
       });
-      const counts: Record<string, number> = {};
+      const cards: Record<string, FormatCard> = {};
       for (const doc of docs) {
-        const formats = asRecord(doc).format;
+        const record = asRecord(doc);
+        const formats = record.format;
         if (!Array.isArray(formats)) continue;
         for (const format of formats) {
-          if (typeof format === "string") counts[format] = (counts[format] ?? 0) + 1;
+          if (typeof format !== "string") continue;
+          const card = cards[format] ?? { count: 0 };
+          card.count += 1;
+          // Sorted lead-first, so the first poster found is the one to show.
+          if (!card.image) {
+            card.image = mediaUrl(record.poster as Media, "card");
+            card.imageAlt = mediaAlt(record.poster as Media);
+          }
+          cards[format] = card;
         }
       }
-      return counts;
+      return cards;
     },
-    {} as Record<string, number>,
+    {} as Record<string, FormatCard>,
   );

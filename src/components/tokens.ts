@@ -14,5 +14,8 @@ export const MUTED_TEXT = "#888899";
 
 export const MAX_WIDTH = "1440px";
 
+/** Nav and footer pad inside their box, so the gutter is added back to line up with Section. */
+export const SHELL_WIDTH = `calc(${MAX_WIDTH} + 80px)`;
+
 /** The reading column for long-form pages. Narrower than MAX_WIDTH on purpose. */
 export const ARTICLE_WIDTH = "840px";

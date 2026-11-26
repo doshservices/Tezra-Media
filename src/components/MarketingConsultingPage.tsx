@@ -1,16 +1,22 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Briefcase } from "lucide-react";
 import { contactLink, getVertical } from "@/content/tezra";
+import type { WorkItem } from "@/lib/types";
 import { images, localImages } from "@/content/images";
 import { iconFor } from "@/content/icons";
 import {
   Backdrop,
   AreaTile,
+  BODY_TEXT,
   BORDER,
   ContentSlot,
   FONT_BODY,
+  FONT_HEADING,
   GREY_BG,
+  INK,
+  MUTED_TEXT,
   NAVY,
   PageHero,
   Photo,
@@ -23,7 +29,7 @@ import {
 } from "./shared";
 
 /** Tezra Marketing and Consulting. Promoted from a Services tab to a full vertical. */
-export function MarketingConsultingPage() {
+export function MarketingConsultingPage({ work = [] }: { work?: WorkItem[] }) {
   const vertical = getVertical("marketing-consulting")!;
 
   return (
@@ -81,17 +87,46 @@ export function MarketingConsultingPage() {
           </SecondaryButton>
         </div>
 
-        <div className="case-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px" }}>
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} style={{ border: `1px solid ${BORDER}` }}>
-              <ContentSlot label="Project" aspectRatio="16 / 10" />
-              <div style={{ padding: "20px 18px" }}>
-                <div style={{ height: "10px", width: "60%", backgroundColor: GREY_BG, marginBottom: "10px" }} />
-                <div style={{ height: "10px", width: "85%", backgroundColor: GREY_BG }} />
-              </div>
+        {work.length > 0 ? (
+          <div className="case-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px" }}>
+            {work.map((item) => (
+              <Link key={item.id} href={`/our-work/${item.slug}`} style={{ border: `1px solid ${BORDER}`, textDecoration: "none", display: "block" }}>
+                {item.image ? (
+                  <Photo
+                    src={item.image}
+                    alt={item.imageAlt ?? item.title}
+                    height="auto"
+                    sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                    style={{ aspectRatio: "16 / 10" }}
+                  />
+                ) : (
+                  <ContentSlot label="Project" aspectRatio="16 / 10" />
+                )}
+                <div style={{ padding: "20px 18px" }}>
+                  <div style={{ fontFamily: FONT_BODY, fontSize: "11px", fontWeight: 600, color: NAVY, marginBottom: "8px" }}>
+                    {item.category.toUpperCase()}
+                  </div>
+                  <div style={{ fontFamily: FONT_HEADING, fontSize: "17px", fontWeight: 700, color: INK, lineHeight: 1.35, marginBottom: "6px" }}>
+                    {item.title}
+                  </div>
+                  <div style={{ fontFamily: FONT_BODY, fontSize: "14px", lineHeight: 1.6, color: BODY_TEXT }}>
+                    {item.summary}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div style={{ border: `1px solid ${BORDER}`, padding: "56px 32px", textAlign: "center" }}>
+            <Briefcase size={28} color={MUTED_TEXT} strokeWidth={1.4} style={{ marginBottom: "16px" }} />
+            <div style={{ fontFamily: FONT_HEADING, fontSize: "19px", fontWeight: 700, color: INK, marginBottom: "8px" }}>
+              Campaign work is on its way
             </div>
-          ))}
-        </div>
+            <div style={{ fontFamily: FONT_BODY, fontSize: "15px", lineHeight: 1.7, color: BODY_TEXT, maxWidth: "440px", margin: "0 auto" }}>
+              The first marketing and consulting projects are being prepared for publication.
+            </div>
+          </div>
+        )}
       </Section>
 
       <section
